@@ -166,7 +166,7 @@
       try {
         const mood = document.getElementById('post-mood').value;
         const moodLevelMap = { calm: 25, anxious: 75, spiraling: 95, victory: 10 };
-        await fetch('/api/community/post', {
+        const res = await fetch('/api/community/post', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -175,6 +175,11 @@
             mood_level: moodLevelMap[mood] || null
           })
         });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error || 'Could not post. Try again.');
+          return;
+        }
         document.getElementById('post-text').value = '';
         await loadPosts();
       } catch(e) { alert('Could not post. Try again.'); }
