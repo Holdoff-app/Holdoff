@@ -1,5 +1,5 @@
 app = "holdoff"
-primary_region = "i"ord"
+primary_region = "ord"
 
 [build]
   dockerfile = "Dockerfile"
