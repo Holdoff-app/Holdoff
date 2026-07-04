@@ -4,7 +4,7 @@
 AI-powered message filter for all insecure attachment styles. Users compose texts late at night; the app intercepts and encourages delay before sending. Landing page converts visitors to sign up for the product.
 
 ## Stack
-Express.js + EJS + PostgreSQL (Neon)
+Express.js + EJS + PostgreSQL (Neon) + Fly.io
 
 ## Directory map
 - `server.js` — Express entry point, route mounting, middleware, auth-aware page rendering
