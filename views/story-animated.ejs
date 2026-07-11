@@ -236,49 +236,59 @@
 </head>
 <body>
     <div class="story-container">
-        <!-- Scene 1: The Beginning -->
+        <!-- Scene 1: Fearful-Avoidant Attachment -->
         <div class="story-scene scene-1">
             <div class="character-container">
                 <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
             </div>
             <div class="scene-narration">
-                <p>"I used to think my anxiety was a problem with me. Like something was broken."</p>
-                <p>"But it wasn't. It was actually trying to protect me."</p>
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">I have fearful-avoidant attachment.</h3>
+                <p>"That means I desperately want connection—but the moment someone gets close, my nervous system screams danger. So I push them away. Then the moment they're gone, the loneliness is unbearable and I pull them back."</p>
+                <p>"It's like being hungry but terrified of food. Like drowning and being afraid of water at the same time."</p>
             </div>
         </div>
 
-        <!-- Scene 2: The Realization -->
+        <!-- Scene 2: The Spiral -->
         <div class="story-scene scene-2">
             <div class="character-container">
-                <img src="/assets/story-characters/danny-cartoon.png" alt="Danny" class="character-image">
+                <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
             </div>
             <div class="scene-narration">
-                <p>"When Danny started pulling away, I went into overdrive. Double texts. Reading between the lines. Spiraling."</p>
-                <p>"I was convinced that if I just <span class="strong-text">understood</span> him better, I could fix it."</p>
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">The Spiral is Always the Same</h3>
+                <p>"A text that says 'I'm busy today'—I read it as 'They don't care. They're leaving. You're not worth their time.'"</p>
+                <p>"My body floods with cortisol and adrenaline. In that state, I send messages at 2 AM. Demand reassurance in ways that push people further away."</p>
+                <p>"The spiral is: Misinterpretation → Fear → Flooding → Reactive behavior → Damage → Shame → Isolation."</p>
+                <p>"And here's the part nobody talks about: <span class="strong-text">Once you're in it, it's almost impossible to see clearly.</span>"</p>
             </div>
         </div>
 
-        <!-- Scene 3: The Pattern -->
+        <!-- Scene 3: Addiction Made It Worse -->
         <div class="story-scene scene-3">
             <div class="character-container">
                 <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
             </div>
             <div class="scene-narration">
-                <p>"The hardest part wasn't seeing what I was doing. It was understanding <span class="strong-text">why</span>."</p>
-                <p>"And that's where things started to shift."</p>
-                <p>"I realized that understanding my patterns wasn't about fixing myself. It was about becoming the person I wanted to be. For me."</p>
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">I Struggled With Addiction</h3>
+                <p>"For me, addiction was one way I coped with the push-pull prison. Using numbed the panic. It quieted the alarm in my nervous system."</p>
+                <p>"It was a Band-Aid on an attachment wound."</p>
+                <p>"When you're fearful-avoidant AND struggling with addiction, the spirals get worse. You're already dysregulated. And when you crash, you crash harder."</p>
+                <p>"I did 7 months. But here's what I learned: <span class="strong-text">Whether you're in recovery or not, the real problem is the same. It's the spiral itself.</span>"</p>
             </div>
         </div>
 
-        <!-- Scene 4: Invitation with Branching -->
+        <!-- Scene 4: Why HoldOff Exists -->
         <div class="story-scene scene-4">
-            <h3>Now It's Your Turn</h3>
-            <p style="color: #d4c4f0; margin-bottom: 15px;">Your story might look different, but maybe you recognize yourself here.</p>
-            <p style="color: #d4c4f0; margin-bottom: 25px;">What if you could understand your patterns the way Stacy understood hers?</p>
+            <h3>The Moment That Changes Everything</h3>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">The spiral happens FAST. In seconds, your nervous system goes from baseline to catastrophe.</p>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">But there's a tiny window—maybe 30 seconds—where you can still choose your response.</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;"><span class="strong-text">That's what HoldOff is built for.</span></p>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">You're about to send: "I can't believe you would treat me like this. You never cared about me. I'm done."</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;">Instead, you paste it into HoldOff. Sadie reads it and asks: "Is this fear talking, or truth? What actually happened? Because I'm seeing your nervous system's story, not the facts. What if you told them what you actually need instead?"</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;"><span class="strong-text">That's the pause that changes everything.</span> Not judgment. Not shame. Just clarity—at the exact moment you need it most.</p>
             
             <div class="button-group">
-                <button onclick="goToCompanion()">Continue with Insights →</button>
-                <button class="personalization-button" onclick="openPersonalization()">🧢 Put On My Shoes</button>
+                <button onclick="goToFilter()">Try the Verdict Filter →</button>
+                <button class="personalization-button" onclick="openPersonalization()">🧢 Make This Personal</button>
             </div>
             
             <a href="/signup" class="back-link">← Back</a>
@@ -307,8 +317,8 @@
     </div>
 
     <script>
-        function goToCompanion() {
-            window.location.href = '/companion';
+        function goToFilter() {
+            window.location.href = '/filter';
         }
 
         function openPersonalization() {
