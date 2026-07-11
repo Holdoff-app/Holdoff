@@ -3,457 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HoldOff — Build Your Pause</title>
+  <title>Hold Off — The pause before you send</title>
+  <meta name="description" content="Hold Off helps you pause before impulsive messages so your relationships get your best self.">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #dbe4ee;
+      --accent: #6366f1;
+      --accent-soft: #e0e7ff;
+      --radius: 16px;
     }
+
+    * { box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
-      color: #e0e0e0;
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden;
     }
 
-    header {
-      padding: 20px 40px;
+    .shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 182, 193, 0.1);
-      background: rgba(10, 5, 25, 0.8);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 22px 0;
     }
 
-    .logo {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -1px;
+    .brand {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 1.15rem;
+      text-decoration: none;
+      color: var(--text);
     }
 
-    nav {
+    .nav-links {
       display: flex;
-      gap: 30px;
+      gap: 18px;
       align-items: center;
     }
 
-    nav a {
-      color: #b0b0b0;
+    .nav-links a {
       text-decoration: none;
-      font-size: 14px;
-      transition: color 0.3s;
-    }
-
-    nav a:hover {
-      color: #a78bfa;
-    }
-
-    .btn-signin {
-      background: rgba(167, 139, 250, 0.1);
-      color: #a78bfa;
-      border: 1px solid #a78bfa;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 14px;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-
-    .btn-signin:hover {
-      background: rgba(167, 139, 250, 0.2);
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
     .hero {
-      padding: 120px 40px;
+      background: linear-gradient(145deg, #eef2ff, #ffffff 45%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 72px 28px;
       text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
+      margin-bottom: 24px;
     }
 
     h1 {
-      font-size: 52px;
-      font-weight: 800;
-      margin-bottom: 20px;
-      line-height: 1.2;
-      color: #ffffff;
+      margin: 0;
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
     }
 
-    .highlight {
-      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero p {
+      margin: 18px auto 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1.05rem;
     }
 
-    .subheading {
-      font-size: 20px;
-      color: #c0c0c0;
-      margin-bottom: 30px;
-      font-weight: 400;
-    }
-
-    .cta-section {
+    .cta-row {
+      margin-top: 30px;
       display: flex;
-      gap: 20px;
+      gap: 12px;
       justify-content: center;
-      margin-bottom: 60px;
       flex-wrap: wrap;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-      color: #ffffff;
-      border: none;
-      padding: 16px 40px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
+    .btn {
       display: inline-block;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 600;
+      border: 1px solid transparent;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(167, 139, 250, 0.4);
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
     }
 
     .btn-secondary {
-      background: rgba(255, 182, 193, 0.05);
-      color: #e0e0e0;
-      border: 1px solid rgba(255, 182, 193, 0.2);
-      padding: 16px 40px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
+      background: #fff;
+      color: var(--text);
+      border-color: var(--line);
     }
 
-    .btn-secondary:hover {
-      border-color: rgba(255, 182, 193, 0.4);
-      background: rgba(255, 182, 193, 0.1);
+    section {
+      padding: 40px 0;
     }
 
-    .insight-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      margin-bottom: 80px;
-      padding: 0 40px;
-    }
-
-    .insight-card {
-      background: rgba(255, 182, 193, 0.03);
-      border: 1px solid rgba(255, 182, 193, 0.1);
-      padding: 30px;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s;
-    }
-
-    .insight-card:hover {
-      border-color: rgba(167, 139, 250, 0.3);
-      background: rgba(167, 139, 250, 0.05);
-      transform: translateY(-5px);
-    }
-
-    .insight-card h3 {
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #a78bfa;
-      font-weight: 600;
-    }
-
-    .insight-card p {
-      font-size: 14px;
-      color: #b0b0b0;
-      line-height: 1.7;
-    }
-
-    .section-title {
-      font-size: 40px;
-      font-weight: 700;
-      text-align: center;
-      margin: 100px 0 50px 0;
-      color: #ffffff;
-    }
-
-    .section-title .highlight {
-      display: block;
-      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      padding: 0 40px;
-      margin-bottom: 100px;
-    }
-
-    .feature {
-      border-left: 3px solid #a78bfa;
-      padding-left: 25px;
-    }
-
-    .feature h4 {
-      font-size: 20px;
-      margin-bottom: 10px;
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    .feature p {
-      font-size: 15px;
-      color: #b0b0b0;
-      line-height: 1.7;
-    }
-
-    .testimonial-section {
-      background: rgba(255, 182, 193, 0.03);
-      border-top: 1px solid rgba(255, 182, 193, 0.1);
-      border-bottom: 1px solid rgba(255, 182, 193, 0.1);
-      padding: 80px 40px;
-      margin: 80px 0;
-    }
-
-    .testimonial {
-      max-width: 600px;
+    .copy {
+      max-width: 720px;
       margin: 0 auto;
       text-align: center;
     }
 
-    .testimonial p {
-      font-size: 18px;
-      font-style: italic;
-      margin-bottom: 20px;
-      color: #e0e0e0;
-      line-height: 1.8;
+    .copy h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      letter-spacing: -0.02em;
     }
 
-    .testimonial-author {
-      font-size: 14px;
-      color: #a78bfa;
-      font-weight: 600;
+    .copy p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cta {
+      margin: 14px 0 52px;
+      background: var(--accent-soft);
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius);
+      padding: 34px 24px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    .cta p {
+      margin: 12px auto 0;
+      max-width: 560px;
+      color: var(--muted);
     }
 
     footer {
-      background: rgba(10, 5, 25, 0.8);
-      border-top: 1px solid rgba(255, 182, 193, 0.1);
-      padding: 40px;
+      border-top: 1px solid var(--line);
+      padding: 24px 0 34px;
+      color: var(--muted);
+      font-size: 0.9rem;
       text-align: center;
-      color: #808080;
-      font-size: 13px;
     }
 
-    .final-cta {
-      text-align: center;
-      padding: 80px 40px;
+    footer a {
+      color: inherit;
+      text-decoration: none;
+      margin: 0 8px;
     }
 
-    .final-cta h2 {
-      font-size: 36px;
-      margin-bottom: 20px;
-      color: #ffffff;
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 56px 22px; }
     }
 
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 36px;
-      }
-
-      .insight-cards {
-        grid-template-columns: 1fr;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      header {
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      nav {
-        flex-direction: column;
-        gap: 15px;
-      }
+    @media (max-width: 680px) {
+      .nav { flex-direction: column; gap: 12px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">HOLDOFF</div>
-    <nav>
-      <a href="#how-it-works">How It Works</a>
-      <a href="/pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="/login" class="btn-signin">Sign In</a>
-    </nav>
-  </header>
+  <div class="shell">
+    <header class="nav">
+      <a href="/" class="brand">Hold Off</a>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#features">Benefits</a>
+        <a href="#contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+      </nav>
+    </header>
 
-  <div class="hero">
-    <div style="margin-bottom: 20px;">
-      <img src="/assets/SADIE_COMPANION.png" alt="Sadie" style="width: 140px; height: 140px; object-fit: cover; object-position: top center; border-radius: 50%; border: 2px solid #a78bfa; background: transparent;">
-    </div>
-    <% if (variant === 'B') { %>
-    <%# Variant B: Quiz-first hero — leads with attachment style quiz CTA %>
-    <h1>What's Your <span class="highlight">Texting Style?</span></h1>
-    <p class="subheading">Take the free 2-minute attachment quiz and find out why you spiral before you send. Then let HoldOff be your pause.</p>
-    <div class="cta-section">
-      <a href="/quiz" class="btn-primary">Take the Free Quiz →</a>
-      <a href="/filter" class="btn-secondary">Try the App Free</a>
-    </div>
-    <% } else { %>
-    <%# Variant A (default): Demo-first hero %>
-    <h1>Build Your <span class="highlight">Pause</span></h1>
-    <p class="subheading">You know what you need. HoldOff is the space you design. Language you choose. Insights you control. The pause that works for you.</p>
-    <div class="cta-section">
-      <a href="/filter" class="btn-secondary">Try the App Free →</a>
-      <a href="/signup" class="btn-primary">Start Building</a>
-    </div>
-    <% } %>
+    <main>
+      <section class="hero" id="top">
+        <h1>The pause between feeling and sending.</h1>
+        <p>Hold Off helps you slow down before impulsive texts, so you can respond with clarity, not panic.</p>
+        <div class="cta-row">
+          <a href="/filter" class="btn btn-primary">Try Hold Off</a>
+          <a href="/signup" class="btn btn-secondary">Create free account</a>
+        </div>
+      </section>
+
+      <section id="about">
+        <div class="copy">
+          <h2>A calmer way to communicate</h2>
+          <p>When emotions spike, a tiny pause can protect your relationships. Hold Off gives you that pause with grounded, practical support before you press send.</p>
+        </div>
+      </section>
+
+      <section id="features">
+        <div class="copy">
+          <h2>Simple support, right when you need it</h2>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>Pause-first flow</h3>
+            <p>Capture the message, take a breath, and choose your response intentionally.</p>
+          </article>
+          <article class="card">
+            <h3>Clear rewrites</h3>
+            <p>Get suggestions that stay true to your voice while lowering emotional heat.</p>
+          </article>
+          <article class="card">
+            <h3>Pattern awareness</h3>
+            <p>Spot recurring texting loops so each conversation gets healthier over time.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="cta" id="contact">
+        <h2>Ready to build your pause?</h2>
+        <p>Questions, partnerships, or press: email <a href="mailto:holdoff@shouldiholdoff.live">holdoff@shouldiholdoff.live</a>. Want to start now? Open the app and take your first pause.</p>
+        <div class="cta-row">
+          <a href="/filter" class="btn btn-primary">Open Hold Off</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Hold Off</p>
+      <p>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+      </p>
+    </footer>
   </div>
-
-  <div class="insight-cards">
-    <div class="insight-card">
-      <h3>⚙️ Your Rules</h3>
-      <p>Clinical language or plain speak. Deep analysis or simple clarity. You choose every word. You design every feature.</p>
-    </div>
-    <div class="insight-card">
-      <h3>🎯 Your Way</h3>
-      <p>What matters to you? Which conditions? What insights? What pace? You decide. Every setting is yours to change.</p>
-    </div>
-    <div class="insight-card">
-      <h3>⏸️ Your Pause</h3>
-      <p>A space to breathe. To think. To understand. Before you send. Before you react. Before you stay stuck. Your pause, your way.</p>
-    </div>
-  </div>
-
-  <section class="testimonial-section">
-    <div class="testimonial">
-      <p>"I'm sick of being played. I'm sick of games. I'm sick of not respecting myself. HoldOff gave me a chance to understand why I was in the cycle in the first place. Now I finally get it."</p>
-      <p class="testimonial-author">— Someone who chose herself</p>
-    </div>
-  </section>
-
-  <h2 class="section-title">What You Build<span class="highlight">Everything Is Customizable</span></h2>
-
-  <div class="features-grid">
-    <div class="feature">
-      <h4>Your Conditions</h4>
-      <p>Pick what matters: RSD. Anxiety. ADHD. Depression. Attachment styles. Autism. You tell us. You change it anytime.</p>
-    </div>
-    <div class="feature">
-      <h4>Your Language</h4>
-      <p>Clinical terminology or plain speak. Every insight, every prompt, every analysis matches the language you choose.</p>
-    </div>
-    <div class="feature">
-      <h4>Your Insights</h4>
-      <p>How detailed? How often? What kind of feedback? You control the depth and pace of understanding.</p>
-    </div>
-    <div class="feature">
-      <h4>Your Real Contacts</h4>
-      <p>Connect your real threads. Real people. Real conversations. Not hypotheticals. Not templates. Your life, your patterns.</p>
-    </div>
-    <div class="feature">
-      <h4>Your Pause</h4>
-      <p>When you're about to text, HoldOff gives you space. Time to breathe. Time to think. Time to choose differently.</p>
-    </div>
-    <div class="feature">
-      <h4>Your Privacy</h4>
-      <p>Your conversations stay yours. No judgment. No sharing. No algorithms selling your data. Just you and your understanding.</p>
-    </div>
-  </div>
-
-  <div class="final-cta">
-    <h2>You're the one who knows what you need.</h2>
-    <p style="font-size: 16px; color: #b0b0b0; margin-bottom: 30px;">HoldOff works for you because you built it for you. Not for everyone else. For you.</p>
-    <a href="/signup" class="btn-primary">Build Your Pause</a>
-  </div>
-
-  <footer>
-    <p>&copy; 2026 HoldOff. All rights reserved. | <a href="/privacy" style="color: #a78bfa; text-decoration: none;">Privacy</a> | <a href="/terms" style="color: #a78bfa; text-decoration: none;">Terms</a></p>
-    <p style="margin-top: 15px; font-size: 12px;">HoldOff is not therapy. Not a diagnosis. Not a substitute for professional care. For mental health crises, reach out to a professional.</p>
-  </footer>
-
-  <script>
-    /**
-     * Verdict-based theme detection
-     * Listens for user input and shifts the page theme based on detected emotional state
-     */
-    
-    let verdictTimeout;
-    
-    // Try to detect verdict from message if we have an input field
-    document.addEventListener('DOMContentLoaded', () => {
-      const messageInput = document.querySelector('textarea, input[type="text"][placeholder*="message" i]');
-      
-      if (messageInput) {
-        messageInput.addEventListener('input', () => {
-          clearTimeout(verdictTimeout);
-          verdictTimeout = setTimeout(() => {
-            detectAndApplyVerdict(messageInput.value);
-          }, 500);
-        });
-      }
-    });
-    
-    async function detectAndApplyVerdict(text) {
-      if (!text || text.trim().length < 3) {
-        // Clear verdict if text is too short
-        document.body.removeAttribute('data-verdict');
-        return;
-      }
-      
-      try {
-        const response = await fetch('/api/verdict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ outgoingMessage: text })
-        });
-        
-        if (!response.ok) throw new Error('Verdict detection failed');
-        
-        const data = await response.json();
-        
-        // Use themeCode from backend, fallback to attachmentPattern
-        const themeCode = data.themeCode || data.attachmentPattern || 'SEC';
-        
-        // Apply theme
-        document.body.setAttribute('data-verdict', themeCode);
-      } catch (error) {
-        console.log('Verdict detection unavailable:', error);
-        document.body.removeAttribute('data-verdict');
-      }
-    }
-  </script>
-  <script src="/js/floating-companions.js" defer></script>
-  <script>
-    // Meta Pixel A/B variant tracking
-    if (typeof fbq === 'function') {
-      fbq('trackCustom', 'LandingVariant_<%= variant %>');
-    }
-  </script>
 </body>
 </html>
