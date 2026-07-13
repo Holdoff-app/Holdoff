@@ -24,4 +24,5 @@ router.use('/quiz', require('./quiz'));
 router.use('/verdict', require('./verdict'));
 router.use('/push', require('./push'));
 router.use('/abandoned-checkout', require('./abandoned-checkout'));
+router.use('/agent', require('./agent'));
 module.exports = router;
