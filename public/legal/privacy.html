@@ -208,7 +208,9 @@ Registered form and postal address: <strong>HoldOff is not incorporated.</strong
 
 <p>Contact for anything on this page, including privacy requests: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>. A real person reads it.</p>
 
-<p>We have not appointed a data protection officer; we're not required to. The controller is established in the United States, not the EU or UK, so there is no lead supervisory authority for HoldOff either. <span class="confirm">[[CONFIRM: whether HoldOff will be offered to users in the EU or UK. If yes, GDPR Art. 27 and UK GDPR Art. 27 each require a named representative in that territory &mdash; a paid service, roughly 100&ndash;300 a year in each. If the launch is US-only and the Play listing is geo-restricted to match, no representative is needed and this paragraph can simply say so]]</span></p>
+<p>We have not appointed a data protection officer; we're not required to. The controller is established in the United States, not the EU or UK, so there is no lead supervisory authority for HoldOff either.</p>
+
+<p><strong>HoldOff is not offered in the EU, Switzerland or the UK.</strong> That is not a preference &mdash; Google's <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">API terms</a> say "You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom", and HoldOff is currently on the unpaid tier. The distribution listing is restricted to match. If that changes, this page and the app's consent screen change with it.</p>
 
 <h2 id="gemini">Your draft goes to Google. So do the other person's messages.</h2>
 
@@ -388,9 +390,13 @@ Registered form and postal address: <strong>HoldOff is not incorporated.</strong
 
 <p><strong>Our analyse server.</strong> The text passes through a server we run at <span class="nowrap">api.smsholdoff.com</span>. <strong>We have not verified whether that server writes prompts to a log.</strong> Its source has not been inspected. We are not going to tell you it logs nothing when we haven't checked — so treat it as possible that a copy of the text you sent exists in a server log until we can say otherwise. Confirming and publishing this is on our list, and this section will be updated when it is. <span class="confirm">[[CONFIRM: inspect the PHP proxy at api.smsholdoff.com/api/analyze — does it write prompt text to any log, file, or database, and with what rotation/retention? This is the single biggest open question in this policy]]</span></p>
 
-<p><strong>Google.</strong> How long Google retains the content, and whether it may be used to improve their models, depends on the terms attached to the API tier our key sits on. <strong>We have not confirmed which tier that is.</strong> On Google's paid API tiers, content is excluded from model training; on the free tier it is not. Until we've confirmed it, we can't tell you which applies to your messages. <span class="confirm">[[CONFIRM: which Gemini API tier the production key is on — paid tiers exclude training use, the free tier does not. This determines whether we can say your messages are not used to train Google's models]]</span></p>
+<p><strong>Google &mdash; and this is the part you should read twice.</strong> HoldOff calls the Gemini API on Google's <strong>free tier</strong>. We confirmed this on 2026-08-02 from Google's own quota response, not from our notes. On that tier, Google's <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">API terms</a> state that Google "uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services and machine learning technologies", and that "human reviewers may read, annotate, and process your API input and output". The same terms instruct developers: "Do not submit sensitive, confidential, or personal information to the Unpaid Services."</p>
 
-<p>We know that's not the answer anyone wants. It's the one we can stand behind.</p>
+<p><strong>A text you are anxious about sending is exactly that kind of information.</strong> So: today, if you tap for a verdict, your draft and the recent messages in that thread &mdash; including the other person's &mdash; go somewhere they are used to develop Google's models and may be read by a person at Google. We are not going to dress that up.</p>
+
+<p>On Google's paid tier, Google states it does not use prompts or responses to improve its products. Moving to the paid tier is the fix and it is on our list. When it is done, this paragraph changes and the in-app consent screen will ask you again, because agreeing to this is not the same as agreeing to that.</p>
+
+<p><strong>If you would rather not, say no.</strong> The pause, the countdown, your threads and your trusted contacts all work with the AI turned off, and nothing leaves your phone.</p>
 
 <h2 id="transfers">Sending data to other countries</h2>
 

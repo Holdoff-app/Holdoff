@@ -289,7 +289,7 @@ footer a{color:var(--link)}
 <p>Two honest caveats, because we'd rather under-claim than be caught out:</p>
 
 <ul>
-  <li>What Google does with text sent to the Gemini API — including how long they keep it and whether it can be used to improve their models — is governed by <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">Google's API terms</a>, not by us. <span class="confirm">[[CONFIRM: which Gemini API tier the key sits on — paid tiers exclude training use, the free tier does not; this determines what we're able to state here]]</span></li>
+  <li><strong>Google uses this content to develop their AI, and their staff may read it.</strong> HoldOff currently calls the Gemini API on Google's free tier. Google's <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">API terms</a> say that on the unpaid tier they use submitted content "to provide, improve, and develop Google products and services and machine learning technologies", and that "human reviewers may read, annotate, and process" it. Those same terms tell developers not to send sensitive or personal information on the unpaid tier. We are moving to the paid tier, where Google states it does not use prompts to improve its products. Until we have, this is the position, and we would rather you knew it than didn't.</li>
   <li>We have not verified whether our own analysis endpoint keeps a copy of the text it forwards, so we are not going to tell you it doesn't. <span class="confirm">[[CONFIRM: whether the /api/analyze service on IONOS logs prompt content, and if so for how long]]</span></li>
 </ul>
 

@@ -22,8 +22,14 @@ import android.content.SharedPreferences
  */
 object AiConsent {
 
-    /** Bump only when the disclosure changes materially. Re-asks everyone. */
-    const val VERSION = 1
+    /**
+     * Bump only when the disclosure changes materially. Re-asks everyone.
+     *
+     * v2: the free-tier finding. Google's terms say content sent on the unpaid tier trains their
+     * models and may be read by human reviewers. Anyone who agreed under v1 agreed to a weaker
+     * statement than the truth, so their consent no longer counts.
+     */
+    const val VERSION = 2
 
     enum class Decision { UNDECIDED, GRANTED, REFUSED }
 

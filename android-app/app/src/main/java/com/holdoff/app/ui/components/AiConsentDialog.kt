@@ -61,9 +61,22 @@ fun AiConsentDialog(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    "What we can't tell you yet: how long Google keeps it. That depends on the " +
-                        "API terms our key sits under, and we haven't confirmed which tier that " +
-                        "is. We'd rather say so than guess.",
+                    "Google uses it to train their AI.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = OnDarkText,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "HoldOff is on Google's free tier. Google's own terms say content sent on " +
+                        "that tier is used to develop their products and machine learning, and " +
+                        "that human reviewers may read and annotate it. Google's terms also say " +
+                        "not to send sensitive or personal information on the free tier \u2014 " +
+                        "which is exactly what a text you're anxious about tends to be.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    "We're telling you this instead of hiding it. Moving to Google's paid tier " +
+                        "stops the training, and that's on our list.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = OnDarkTextMuted
                 )
