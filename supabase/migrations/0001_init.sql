@@ -11,7 +11,39 @@
 -- Apply with: psql "$SUPABASE_DB_URL" -f 0001_init.sql
 -- or paste into the Supabase SQL editor.
 
+-- IMPORTANT — holdoff-production is not an empty project. The previous agent created
+-- `leads`, `email_events`, `sms_events`, `routing_tasks`, `webhook_log` and `waitlist` in
+-- the public schema for the marketing and outreach side of the business. This migration must
+-- not touch any of them.
+--
+-- In particular there is ALREADY a `public.waitlist`. An earlier draft of this file created it
+-- with `if not exists`, which would have silently skipped the existing table and then applied
+-- this file's indexes and grants to a table with different columns. That is the worst kind of
+-- failure: it reports success and leaves the schema half-changed. Waitlist handling is
+-- therefore deliberately NOT in this migration — see 0002 below.
+
 begin;
+
+-- Refuse to run if anything this file creates is already present, rather than merging into it
+-- blind. Better to stop and be read by a human than to half-apply.
+do $$
+declare
+    clashes text;
+begin
+    select string_agg(c.relname, ', ')
+      into clashes
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+     where n.nspname = 'public'
+       and c.relkind = 'r'
+       and c.relname in ('profiles', 'deletion_requests');
+
+    if clashes is not null then
+        raise exception
+            'Refusing to run: public.% already exists. Inspect it before applying this file.',
+            clashes;
+    end if;
+end $$;
 
 -- citext gives case-insensitive email comparison, so Alex@ and alex@ cannot both sign up.
 -- Supabase ships the extension but does not enable it by default.
@@ -41,29 +73,6 @@ create table if not exists public.profiles (
 
 comment on table public.profiles is
     'One row per signed-up user. Deliberately contains no message content and no contacts.';
-
--- ── waitlist ───────────────────────────────────────────────────────────────────
--- Pre-launch email capture from the website. Anyone may add themselves; nobody can
--- read the list back except the service role. That asymmetry is the point — a public
--- signup form must not double as a public email-harvesting endpoint.
-
-create table if not exists public.waitlist (
-    id         bigint generated always as identity primary key,
-    email      citext      not null,
-    source     text,                              -- 'site' | 'apk-page' | 'in-app' | ...
-    created_at timestamptz not null default now(),
-
-    constraint waitlist_email_shape_check
-        check (length(email) between 3 and 254 and position('@' in email) > 1),
-    constraint waitlist_source_check
-        check (source is null or length(source) <= 40)
-);
-
--- One signup per address. Re-submitting is not an error the user should ever see.
-create unique index if not exists waitlist_email_key on public.waitlist (email);
-
-comment on table public.waitlist is
-    'Website and in-app signups. Insert-only for the public; readable only by the service role.';
 
 -- ── deletion_requests ──────────────────────────────────────────────────────────
 -- Google Play requires a reachable way to request account and data deletion, and
@@ -142,7 +151,6 @@ create trigger on_auth_user_created
 -- treated as known to an attacker, so these policies are the only real boundary.
 
 alter table public.profiles          enable row level security;
-alter table public.waitlist          enable row level security;
 alter table public.deletion_requests enable row level security;
 
 -- profiles: a user sees and edits their own row, and nothing else. No policy for anon,
@@ -158,12 +166,6 @@ create policy profiles_update_own on public.profiles
     using (auth.uid() = id)
     with check (auth.uid() = id);
 
--- waitlist: anyone may add an address, nobody may read the list.
-drop policy if exists waitlist_public_insert on public.waitlist;
-create policy waitlist_public_insert on public.waitlist
-    for insert to anon, authenticated
-    with check (true);
-
 -- deletion_requests: anyone may file one, nobody may read them back.
 drop policy if exists deletion_requests_public_insert on public.deletion_requests;
 create policy deletion_requests_public_insert on public.deletion_requests
@@ -178,11 +180,11 @@ create policy deletion_requests_public_insert on public.deletion_requests
 revoke update on public.profiles from anon, authenticated;
 grant  update (attachment_style) on public.profiles to authenticated;
 
--- The public never needs to enumerate these two.
+-- The public never needs to enumerate this.
 --
 -- Consequence for the client: supabase-js and PostgREST ask for the inserted row back by
--- default, which needs SELECT and will therefore fail here. Inserts into these two tables must
--- send `Prefer: return=minimal` — in supabase-js, .insert(row) with no .select() chained.
-revoke select on public.waitlist, public.deletion_requests from anon, authenticated;
+-- default, which needs SELECT and will therefore fail here. Inserts into deletion_requests
+-- must send `Prefer: return=minimal` — in supabase-js, .insert(row) with no .select() chained.
+revoke select on public.deletion_requests from anon, authenticated;
 
 commit;
