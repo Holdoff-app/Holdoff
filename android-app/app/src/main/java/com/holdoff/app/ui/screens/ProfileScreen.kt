@@ -191,7 +191,7 @@ fun ProfileScreen(
                 Triple(Icons.Default.Description, "Terms & Privacy") {
                     runCatching {
                         context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse("https://smsholdoff.com/terms"))
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://smsholdoff.com/legal/terms.html"))
                         )
                     }
                     Unit

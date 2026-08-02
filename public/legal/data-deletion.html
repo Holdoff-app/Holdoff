@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delete Your Account &amp; Data | HoldOff</title>
+<meta name="description" content="How to delete your HoldOff account and your data. Most of it lives on your own phone. Step-by-step instructions, the exact email to send us, and an honest account of what can't be pulled back.">
+<style>
+:root{
+  --bg:#0A0A1A; --surface:#231040; --text:#F0E6FF; --muted:#9E8FBB;
+  --accent:#7B35C1; --link:#B39DDB; --divider:#2A1845;
+  --warning:#FFCA28; --danger:#EF5350;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:17px; line-height:1.75;
+}
+.wrap{max-width:44rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+a{color:var(--link)}
+a:hover,a:focus{color:var(--text)}
+h1{font-size:1.9rem;line-height:1.25;margin:1.25rem 0 .4rem;color:var(--accent);font-weight:700}
+h2{font-size:1.3rem;line-height:1.3;margin:2.5rem 0 .5rem;color:var(--accent);font-weight:700;
+   border-top:1px solid var(--divider);padding-top:1.6rem}
+h3{font-size:1.05rem;margin:1.6rem 0 .3rem;color:var(--accent);font-weight:700}
+p,ul,ol,table{margin:0 0 1.1rem}
+ul,ol{padding-left:1.3rem}
+li{margin-bottom:.5rem}
+strong{color:var(--text);font-weight:700}
+.lede{color:var(--muted);font-size:1rem;margin-bottom:1.5rem}
+.dateline{color:var(--muted);font-size:.9rem;margin:0 0 1.5rem}
+nav.pages{
+  display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.9rem;
+  padding:.75rem 0;border-bottom:1px solid var(--divider);
+}
+nav.pages a{text-decoration:none;border-bottom:1px solid transparent}
+nav.pages a:hover{border-bottom-color:var(--link)}
+nav.pages span[aria-current]{color:var(--muted)}
+.box{
+  background:var(--surface);border:1px solid var(--divider);
+  border-left:4px solid var(--accent);border-radius:10px;
+  padding:1rem 1.1rem;margin:1.5rem 0;
+}
+.box :last-child{margin-bottom:0}
+.box h2,.box h3{margin-top:0;border-top:0;padding-top:0}
+.box.warn{border-left-color:var(--warning)}
+.box.warn h2,.box.warn h3{color:var(--warning)}
+.box.danger{border-left-color:var(--danger)}
+.box.danger h2,.box.danger h3{color:var(--danger)}
+.confirm{
+  display:inline-block;color:var(--warning);background:rgba(255,202,40,.08);
+  border:1px dashed var(--warning);border-radius:5px;
+  padding:0 .35rem;font-size:.9em;line-height:1.5;
+}
+.email{
+  background:var(--surface);border:1px solid var(--divider);border-radius:10px;
+  padding:1rem 1.1rem;margin:1.25rem 0;font-size:.97rem;
+}
+.email p{margin:0 0 .8rem}
+.email p:last-child{margin-bottom:0}
+.email .field{color:var(--muted)}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 1.1rem}
+table{border-collapse:collapse;width:100%;min-width:33rem;font-size:.93rem;line-height:1.55}
+th,td{text-align:left;vertical-align:top;padding:.6rem .7rem;border-bottom:1px solid var(--divider)}
+th{color:var(--accent);font-weight:700;border-bottom:2px solid var(--divider)}
+tbody tr:nth-child(odd){background:rgba(35,16,64,.55)}
+.scrollnote{color:var(--muted);font-size:.85rem;margin:-.6rem 0 1.4rem}
+ol.steps{counter-reset:none}
+ol.steps li{margin-bottom:.6rem}
+hr{border:0;border-top:1px solid var(--divider);margin:2.5rem 0}
+footer{color:var(--muted);font-size:.9rem;margin-top:2.5rem;border-top:1px solid var(--divider);padding-top:1.25rem}
+footer a{color:var(--link)}
+@media (max-width:400px){body{font-size:16px}.wrap{padding:1.25rem .9rem 3rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="pages" aria-label="Legal pages">
+  <a href="/legal/terms.html">Terms of Service</a>
+  <a href="/legal/privacy.html">Privacy Policy</a>
+  <span aria-current="page">Delete Your Data</span>
+  <a href="/legal/safety.html">Safety &amp; Mental Health</a>
+</nav>
+
+<h1>Delete your account and your data</h1>
+<p class="dateline">HoldOff &middot; Effective 2 August 2026</p>
+
+<p class="lede">This page is meant to actually work, not to exist. Below is what to do, what each step really removes, and the parts we can't pull back — said plainly, because you deserve to know where your words ended up.</p>
+
+<div class="box">
+  <h2>The two-minute version</h2>
+  <ol>
+    <li><strong>Most of your HoldOff data is on your own phone.</strong> Uninstalling the app, or clearing its storage, removes it. We never had it.</li>
+    <li><strong>If you made an account</strong>, email <a href="mailto:hello@smsholdoff.com?subject=Delete%20my%20HoldOff%20account%20and%20data">hello@smsholdoff.com</a> from the address on the account. Exact wording is <a href="#email">below</a>.</li>
+    <li><strong>Drafts already checked by the AI can't be recalled.</strong> Once text has gone to Google's Gemini API, it's out of our hands. <a href="#gemini">Why, in detail.</a></li>
+  </ol>
+</div>
+
+<h2 id="where">Where your data actually lives</h2>
+
+<p>HoldOff was built to keep as little as possible off your phone. That's not just a privacy stance — it changes what "delete my data" means, because there isn't much on our side to delete.</p>
+
+<div class="tablewrap">
+<table>
+  <thead>
+    <tr><th scope="col">Data type</th><th scope="col">Where it lives</th><th scope="col">How to delete it</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Your SMS messages and contact names</td>
+      <td>Your phone only — Android's own SMS database and contacts. HoldOff reads them to draw your conversation list. Never uploaded.</td>
+      <td>Delete them in your messaging or contacts app. Revoking HoldOff's permissions or uninstalling stops HoldOff reading them, but does <strong>not</strong> delete the messages themselves. <a href="#sms-note">Read this first.</a></td>
+    </tr>
+    <tr>
+      <td>Your trusted-contacts list (names and numbers you typed in)</td>
+      <td>Your phone — inside HoldOff's own storage. Never uploaded.</td>
+      <td><a href="#clear">Clear the app's storage</a> or <a href="#uninstall">uninstall</a>.</td>
+    </tr>
+    <tr>
+      <td>Counters: drafts checked, times you held off, first-use day</td>
+      <td>Your phone — HoldOff's storage. Never uploaded.</td>
+      <td><a href="#clear">Clear storage</a> or <a href="#uninstall">uninstall</a>.</td>
+    </tr>
+    <tr>
+      <td>Attachment-style quiz result</td>
+      <td>Your phone — HoldOff's storage. A copy is also sent with each draft check (see last two rows).</td>
+      <td><a href="#clear">Clear storage</a> or <a href="#uninstall">uninstall</a>. Copies already sent for analysis: see <a href="#gemini">below</a>.</td>
+    </tr>
+    <tr>
+      <td>Onboarding-complete flag</td>
+      <td>Your phone — HoldOff's storage.</td>
+      <td><a href="#clear">Clear storage</a> or <a href="#uninstall">uninstall</a>.</td>
+    </tr>
+    <tr>
+      <td>Your signed-in email and session token on the device</td>
+      <td>Your phone — HoldOff's storage (only if you created an account and signed in).</td>
+      <td>Sign out in the app, or <a href="#clear">clear storage</a> / <a href="#uninstall">uninstall</a>. This removes the local copy; it does not delete the account.</td>
+    </tr>
+    <tr>
+      <td>Account email address, password hash, session records</td>
+      <td>Supabase Inc. servers, United States (US-West region), project <code>holdoff-production</code>.</td>
+      <td><a href="#account">Email us</a> — this is the only part that requires us.</td>
+    </tr>
+    <tr>
+      <td>A draft you asked HoldOff to check, plus up to the last 12 messages of that conversation (max 4,000 characters, including messages the other person sent) and your attachment style</td>
+      <td>Sent to our endpoint at <code>api.smsholdoff.com</code> (IONOS hosting), which forwards it to Google's Gemini API.</td>
+      <td><strong>Cannot be recalled once sent.</strong> See <a href="#gemini">the honest limits</a>. To stop sending any more, see <a href="#withdraw">withdrawing consent</a>.</td>
+    </tr>
+    <tr>
+      <td>Companion chat: what you typed, plus up to the last 12 turns of that chat</td>
+      <td>Same route — our endpoint, then Google's Gemini API.</td>
+      <td>Same: <strong>cannot be recalled once sent</strong>. See <a href="#gemini">below</a>.</td>
+    </tr>
+    <tr>
+      <td>Emails you send us (support, deletion requests)</td>
+      <td>The hello@smsholdoff.com mailbox.</td>
+      <td>Ask us to delete the correspondence and we will, subject to <a href="#retention">retention for legal obligations</a>.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="scrollnote">On a narrow screen, scroll the table sideways to see all three columns.</p>
+
+<p><strong>What HoldOff never sends anywhere, at all:</strong> your name, phone number, email address, contact names, device identifiers, advertising ID, location, or the conversation's thread ID. There is also no analytics, no ad SDK and no crash reporting in the Android app, so there is no behavioural profile of you to delete.</p>
+
+<h2 id="phone">Deleting the data on your phone</h2>
+
+<p>Two options. Clearing storage keeps the app but wipes it back to new. Uninstalling removes both.</p>
+
+<h3 id="clear">Option A — clear HoldOff's storage (keep the app)</h3>
+
+<ol class="steps">
+  <li>Open <strong>Settings</strong> on your phone.</li>
+  <li>Tap <strong>Apps</strong> (on some phones: <em>Apps &amp; notifications</em>, then <em>See all apps</em>).</li>
+  <li>Find and tap <strong>HoldOff</strong> in the list.</li>
+  <li>Tap <strong>Storage</strong> (or <em>Storage &amp; cache</em>).</li>
+  <li>Tap <strong>Clear storage</strong> (on some phones: <em>Clear data</em>), then confirm.</li>
+</ol>
+
+<p><strong>Clear storage, not just clear cache.</strong> Clearing the cache alone frees up space and deletes nothing that matters here.</p>
+
+<p>This removes your trusted-contacts list, your counters, your quiz result, your onboarding flag and any signed-in session held on the device. The app stays installed and starts over as if new. It does <strong>not</strong> delete a server-side account, and it does <strong>not</strong> delete your text messages.</p>
+
+<h3 id="uninstall">Option B — uninstall HoldOff</h3>
+
+<div class="box warn">
+  <p><strong>If HoldOff is currently your default SMS app, change that back first.</strong> Go to <em>Settings &rarr; Apps &rarr; Default apps &rarr; SMS app</em> (the exact path varies by phone) and pick your other messaging app. Otherwise you may end up with no default messaging app and miss incoming texts.</p>
+</div>
+
+<ol class="steps">
+  <li>Change your default SMS app back, as above.</li>
+  <li>Press and hold the <strong>HoldOff</strong> icon on your home screen or app drawer.</li>
+  <li>Tap <strong>App info</strong> (or drag it to <em>Uninstall</em>).</li>
+  <li>Tap <strong>Uninstall</strong>, then confirm.</li>
+</ol>
+
+<p>Or from Settings: <strong>Settings &rarr; Apps &rarr; HoldOff &rarr; Uninstall</strong>.</p>
+
+<p>Uninstalling removes the app and everything in its private storage. Android does not keep a backup of it for us, and we never had a copy.</p>
+
+<div class="box" id="sms-note">
+  <h3>One thing uninstalling does not do</h3>
+  <p><strong>It does not delete your text messages.</strong> Your SMS live in Android's system message database, which belongs to your phone, not to HoldOff. While HoldOff was your default messaging app it wrote incoming messages into that database — and those stay there after HoldOff is gone. Your next default messaging app will show them.</p>
+  <p>If you want a conversation gone, delete it in whichever messaging app you're using now. And remember your carrier and the other person still have their own records; nothing on this page reaches those.</p>
+</div>
+
+<h2 id="account">Deleting your server-side account</h2>
+
+<p>You only have an account if you deliberately created one — HoldOff works fully without one. If you never signed up, there is nothing on our servers to delete, and you're done after the steps above.</p>
+
+<p>If you did sign up, we don't have a self-serve delete button in the app yet, so this runs through email. To make sure we're not deleting the wrong person's account, <strong>send it from the email address the account is registered to</strong>. That address is the only proof of ownership we have.</p>
+
+<h3 id="email">Send exactly this</h3>
+
+<div class="email">
+  <p><span class="field">To:</span> <a href="mailto:hello@smsholdoff.com?subject=Delete%20my%20HoldOff%20account%20and%20data">hello@smsholdoff.com</a></p>
+  <p><span class="field">From:</span> the email address your HoldOff account uses</p>
+  <p><span class="field">Subject:</span> Delete my HoldOff account and data</p>
+  <p><span class="field">Body:</span></p>
+  <p>Hi,</p>
+  <p>Please delete my HoldOff account and all data associated with it.</p>
+  <p>The account email is: [your email address]</p>
+  <p>I confirm I am the owner of this account and I understand this cannot be undone.</p>
+  <p>Thanks,<br>[your name or first name]</p>
+</div>
+
+<p>You don't have to give a reason, and we won't ask for one or try to talk you out of it. If you want to tell us why, we'll read it, but it changes nothing about the deletion.</p>
+
+<h3>What we delete</h3>
+
+<ul>
+  <li>Your account record in Supabase — email address and password hash.</li>
+  <li>Your session records.</li>
+  <li>Your premium entitlement flag, if you have one.</li>
+  <li>The deletion correspondence itself, once the request is closed and the <a href="#retention">retention window</a> has passed.</li>
+</ul>
+
+<p>That is the complete list, because that is all the account is. It does not hold your messages, your drafts, your counters, your trusted contacts or your quiz result — none of that ever syncs to our servers.</p>
+
+<h3>What deleting the account does not do</h3>
+
+<ul>
+  <li><strong>It doesn't clear your phone.</strong> The app's local data stays until you clear storage or uninstall. Do <a href="#phone">that</a> too.</li>
+  <li><strong>It doesn't delete your text messages.</strong> Those are your phone's, and your carrier's.</li>
+  <li><strong>It doesn't reach back into the AI.</strong> Drafts already analysed are covered <a href="#gemini">below</a>.</li>
+  <li><strong>It doesn't undo a purchase</strong> — there are none. No payment processor is integrated in the app and premium cannot be bought, so there's nothing to refund or cancel.</li>
+</ul>
+
+<h3 id="response">How fast we'll respond</h3>
+
+<p>We'll acknowledge your request and confirm when the deletion is done.</p>
+
+<p><span class="confirm">[[CONFIRM: the response-time commitment to publish. Proposal: acknowledge within 7 days, complete within 30 days of verifying the request, which lines up with the GDPR one-month deadline. This is a promise to users, so it needs Stacy's sign-off, not an assumption]]</span></p>
+
+<p>If you haven't heard back in that window, send the email again — one person reads that mailbox, and things occasionally get buried. Chasing us is not a nuisance.</p>
+
+<h2 id="gemini">The part we can't get back: text already sent to Google</h2>
+
+<div class="box warn">
+  <p><strong>When you asked HoldOff to check a draft, that text left your phone. We cannot reach into Google's systems and pull it out. Nobody can promise you otherwise, and we're not going to.</strong></p>
+</div>
+
+<p>Here's the whole chain, so you can judge it yourself.</p>
+
+<p>Each check sent: the draft; up to the last 12 messages of that conversation, truncated to 4,000 characters, including messages the other person sent you; and your attachment-style result if you'd taken the quiz. For the companion chat, what you typed plus up to the last 12 turns. It went to our endpoint at <code>api.smsholdoff.com</code> on IONOS hosting, which forwarded it to <strong>Google's Gemini API</strong>.</p>
+
+<p>What that means for deletion:</p>
+
+<ul>
+  <li><strong>Google's retention is governed by Google, not by us.</strong> How long they hold API content, and whether it can be used to improve their models, is set by <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">Google's API terms</a> and by the API tier the request was made on. We can't override it and we can't delete on your behalf. <span class="confirm">[[CONFIRM: which Gemini API tier the HoldOff key sits on — paid tiers exclude training use, the free tier does not. This determines what we can truthfully tell users here]]</span></li>
+  <li><strong>We have not verified whether our own endpoint keeps a copy.</strong> The analyse service on IONOS forwards the text; we have not inspected whether it logs the prompt. Rather than reassure you about something we haven't checked, we're flagging it. <span class="confirm">[[CONFIRM: whether /api/analyze logs prompt content, and for how long. If it does, that log needs to be included in deletion requests and described here]]</span></li>
+  <li><strong>There is a real limit on what could be found even in principle.</strong> HoldOff never sends your name, phone number, email, contact names, device ID, advertising ID, location or thread ID. So a request to check a draft carries no identifier that ties it to you. That is good for your privacy — and it is also exactly why an old request can't be located and deleted by name. The privacy protection and the deletion limit are the same fact.</li>
+</ul>
+
+<p>The one thing entirely in your control is whether any more of it goes: see <a href="#withdraw">withdrawing consent</a>.</p>
+
+<h2 id="withdraw">Withdrawing consent without deleting anything</h2>
+
+<p>If you don't want to delete your account or lose your settings, but you do want your text to stop leaving your phone, you can turn things off one at a time.</p>
+
+<ul>
+  <li><strong>Stop asking for checks.</strong> Nothing is sent unless you ask HoldOff to look at a draft or you type to the companion chat. If you don't use those, nothing leaves your phone.</li>
+  <li><strong>Stop being the default SMS app.</strong> <em>Settings &rarr; Apps &rarr; Default apps &rarr; SMS app</em>, choose another app. HoldOff stops receiving and sending your messages. (This also restores incoming picture and group messages, which HoldOff does not retrieve.)</li>
+  <li><strong>Revoke permissions.</strong> <em>Settings &rarr; Apps &rarr; HoldOff &rarr; Permissions</em>, and turn off SMS, Contacts or Notifications. The app will lose features that depend on them, which is the point.</li>
+  <li><strong>Take the app off the network.</strong> <em>Settings &rarr; Apps &rarr; HoldOff &rarr; Mobile data &amp; Wi-Fi</em> (path varies by phone) and turn off background and mobile data. The AI check can't run without a connection.</li>
+  <li><strong>Sign out</strong> in the app, and your session token is removed from the device while the account itself stays.</li>
+  <li><strong>Clear just your quiz result or your counters</strong> — <span class="confirm">[[CONFIRM: whether the app has an in-app control to reset the attachment-style result and the counters individually. If not, the only route today is clearing all app storage, and this page should say so plainly]]</span> Until that's confirmed, use <a href="#clear">clear storage</a>, which removes all of the local data at once.</li>
+</ul>
+
+<p>You can also email <a href="mailto:hello@smsholdoff.com?subject=Withdrawing%20consent">hello@smsholdoff.com</a> and say you're withdrawing consent for AI processing. Withdrawing consent isn't retroactive — it stops future processing; it doesn't undo what's already been sent.</p>
+
+<h2 id="retention">What we keep after deletion, and why</h2>
+
+<p>Deleting means deleting. There's no shadow copy, no "deactivated" account we quietly hold onto, and nothing of yours gets sold or handed on.</p>
+
+<p>Two narrow exceptions, both boring and both real:</p>
+
+<ul>
+  <li><strong>Backups.</strong> Your account record may persist for a short time in our database provider's routine backups before those roll over. It isn't accessible to us as a live account and it gets overwritten in the normal cycle. <span class="confirm">[[CONFIRM: the backup retention window on the Supabase project holdoff-production — the number of days to publish here]]</span></li>
+  <li><strong>Records of the request itself.</strong> Where the law requires us to show we handled a deletion request properly, we keep a minimal record that the request was made and completed — the date and the fact of it — rather than the content of your account. <span class="confirm">[[CONFIRM: how long to retain deletion-request records, which depends on the governing law that is still open in the Terms]]</span></li>
+</ul>
+
+<p>Beyond that, we may retain something only if we're legally obliged to — for example a specific legal hold or a valid legal request. If that ever applied to you, we'd tell you unless we were legally barred from doing so.</p>
+
+<h2 id="rights">Your other rights</h2>
+
+<p>Depending on where you live, you may also have the right to ask what we hold about you, to get a copy of it, to correct it, or to object to how it's processed. Same address, same commitment: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
+
+<p>Fair warning on the "copy of my data" one: for most people the honest answer is an email address and a password hash, because that's genuinely all there is on our side. The <a href="/legal/privacy.html">Privacy Policy</a> sets out the full picture.</p>
+
+<h2 id="contact">Contact</h2>
+
+<p><a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> — for deletion, privacy questions, or if any step above didn't work on your phone. Tell us what happened; a step that doesn't match your device is our problem to fix, not yours.</p>
+
+<p>This mailbox isn't monitored around the clock and it is not a way to reach anyone in an emergency. If you're having a hard time, the <a href="/legal/safety.html">Safety &amp; Mental Health page</a> has helplines that are.</p>
+
+<hr>
+
+<footer>
+  <p><strong>HoldOff</strong> &middot; The Pause That Saves &middot; Effective 2 August 2026</p>
+  <p>
+    <a href="/legal/terms.html">Terms of Service</a> &middot;
+    <a href="/legal/privacy.html">Privacy Policy</a> &middot;
+    <span aria-current="page">Delete Your Data</span> &middot;
+    <a href="/legal/safety.html">Safety &amp; Mental Health</a> &middot;
+    <a href="https://smsholdoff.com">smsholdoff.com</a>
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

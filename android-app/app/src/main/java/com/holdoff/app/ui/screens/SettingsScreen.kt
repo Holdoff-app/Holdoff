@@ -19,8 +19,11 @@ import com.holdoff.app.data.network.HoldOffApi
 import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.ui.theme.*
 
-private const val TERMS_URL = "https://smsholdoff.com/terms"
-private const val PRIVACY_URL = "https://smsholdoff.com/privacy"
+// These must match where the pages are actually published. /terms and /privacy previously
+// soft-404'd — they returned 200 but served the site's index.html, so the links went nowhere.
+private const val TERMS_URL = "https://smsholdoff.com/legal/terms.html"
+private const val PRIVACY_URL = "https://smsholdoff.com/legal/privacy.html"
+private const val DELETION_URL = "https://smsholdoff.com/legal/data-deletion.html"
 
 /** Pause length choices, in minutes. */
 private val HOLD_CHOICES = listOf(1, 5, 10, 30)
@@ -108,6 +111,11 @@ fun SettingsScreen(onBack: () -> Unit) {
                 }
                 TextButton(onClick = { openUrl(ctx, PRIVACY_URL) }) {
                     Text("Privacy Policy", color = SoftLavender)
+                }
+                // Play requires a reachable route to delete an account and its data, and wants
+                // it findable from inside the app, not only on the website.
+                TextButton(onClick = { openUrl(ctx, DELETION_URL) }) {
+                    Text("Delete my account and data", color = SoftLavender)
                 }
                 Spacer(Modifier.height(8.dp))
                 Text(

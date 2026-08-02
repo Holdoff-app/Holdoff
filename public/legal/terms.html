@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Service | HoldOff</title>
+<meta name="description" content="The terms for using HoldOff, the app that pauses a text before you send something you'll regret. Plain language: what you're agreeing to, what the app can't do, and what we won't pretend about.">
+<style>
+:root{
+  --bg:#0A0A1A; --surface:#231040; --text:#F0E6FF; --muted:#9E8FBB;
+  --accent:#7B35C1; --link:#B39DDB; --divider:#2A1845;
+  --warning:#FFCA28; --danger:#EF5350;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:17px; line-height:1.75;
+}
+.wrap{max-width:44rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+a{color:var(--link)}
+a:hover,a:focus{color:var(--text)}
+h1{font-size:1.9rem;line-height:1.25;margin:1.25rem 0 .4rem;color:var(--accent);font-weight:700}
+h2{font-size:1.3rem;line-height:1.3;margin:2.5rem 0 .5rem;color:var(--accent);font-weight:700;
+   border-top:1px solid var(--divider);padding-top:1.6rem}
+h3{font-size:1.05rem;margin:1.6rem 0 .3rem;color:var(--accent);font-weight:700}
+p,ul,ol,table{margin:0 0 1.1rem}
+ul,ol{padding-left:1.3rem}
+li{margin-bottom:.5rem}
+strong{color:var(--text);font-weight:700}
+.lede{color:var(--muted);font-size:1rem;margin-bottom:1.5rem}
+.dateline{color:var(--muted);font-size:.9rem;margin:0 0 1.5rem}
+nav.pages{
+  display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.9rem;
+  padding:.75rem 0;border-bottom:1px solid var(--divider);
+}
+nav.pages a{text-decoration:none;border-bottom:1px solid transparent}
+nav.pages a:hover{border-bottom-color:var(--link)}
+nav.pages span[aria-current]{color:var(--muted)}
+.box{
+  background:var(--surface);border:1px solid var(--divider);
+  border-left:4px solid var(--accent);border-radius:10px;
+  padding:1rem 1.1rem;margin:1.5rem 0;
+}
+.box :last-child{margin-bottom:0}
+.box h2,.box h3{margin-top:0;border-top:0;padding-top:0}
+.box.warn{border-left-color:var(--warning)}
+.box.warn h2,.box.warn h3{color:var(--warning)}
+.box.danger{border-left-color:var(--danger)}
+.box.danger h2,.box.danger h3{color:var(--danger)}
+.confirm{
+  display:inline-block;color:var(--warning);background:rgba(255,202,40,.08);
+  border:1px dashed var(--warning);border-radius:5px;
+  padding:0 .35rem;font-size:.9em;line-height:1.5;
+}
+.toc{background:var(--surface);border:1px solid var(--divider);border-radius:10px;padding:1rem 1.1rem 1rem 2.2rem;font-size:.95rem}
+.toc li{margin-bottom:.25rem}
+hr{border:0;border-top:1px solid var(--divider);margin:2.5rem 0}
+footer{color:var(--muted);font-size:.9rem;margin-top:2.5rem;border-top:1px solid var(--divider);padding-top:1.25rem}
+footer a{color:var(--link)}
+@media (max-width:400px){body{font-size:16px}.wrap{padding:1.25rem .9rem 3rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="pages" aria-label="Legal pages">
+  <span aria-current="page">Terms of Service</span>
+  <a href="/legal/privacy.html">Privacy Policy</a>
+  <a href="/legal/data-deletion.html">Delete Your Data</a>
+  <a href="/legal/safety.html">Safety &amp; Mental Health</a>
+</nav>
+
+<h1>Terms of Service</h1>
+<p class="dateline">HoldOff &middot; Effective 2 August 2026</p>
+
+<p class="lede">This is a contract, so parts of it read like one. But it was written by a person who built this app after sending messages she wished she could take back, and the goal here is that you actually understand what you're agreeing to. Where something about HoldOff is unfinished or unproven, it says so on this page rather than in a footnote.</p>
+
+<div class="box">
+  <h2>The short version</h2>
+  <ul>
+    <li>You have to be <strong>18 or older</strong>.</li>
+    <li>HoldOff is a <strong>sideloaded, debug-signed app</strong>. It is not on Google Play. That has real consequences for you — see <a href="#sideload">section 5</a>.</li>
+    <li>If you make HoldOff your default texting app, <strong>picture messages and group messages will not arrive</strong>. See <a href="#default-sms">section 7</a>.</li>
+    <li><strong>HoldOff never permanently blocks a message.</strong> You can always override the pause and send.</li>
+    <li>An account is optional. The app works fully without one.</li>
+    <li>To analyse a draft, the app sends the draft and a slice of that conversation to our server, which forwards it to Google's Gemini API. See <a href="#third-party">section 11</a> and the <a href="/legal/privacy.html">Privacy Policy</a>.</li>
+    <li><strong>HoldOff is not therapy, not medical advice, not a diagnosis and not a crisis service.</strong> See <a href="#not-therapy">section 13</a> and the <a href="/legal/safety.html">Safety page</a>.</li>
+    <li>Nothing is for sale. No payment is being taken.</li>
+  </ul>
+</div>
+
+<ol class="toc">
+  <li><a href="#accept">Accepting these terms</a></li>
+  <li><a href="#who">Who you're agreeing with</a></li>
+  <li><a href="#age">You must be 18 or older</a></li>
+  <li><a href="#licence">Your licence to use HoldOff</a></li>
+  <li><a href="#sideload">Sideloaded and debug-signed: what that means for you</a></li>
+  <li><a href="#accounts">Accounts are optional</a></li>
+  <li><a href="#default-sms">Making HoldOff your default SMS app</a></li>
+  <li><a href="#override">The pause can always be overridden</a></li>
+  <li><a href="#acceptable-use">Acceptable use</a></li>
+  <li><a href="#content">Your drafts, your words</a></li>
+  <li><a href="#third-party">Third parties who process your text</a></li>
+  <li><a href="#premium">Premium, and why you can't buy it</a></li>
+  <li><a href="#not-therapy">HoldOff is not therapy or a crisis service</a></li>
+  <li><a href="#warranty">Disclaimer of warranties</a></li>
+  <li><a href="#liability">Limitation of liability</a></li>
+  <li><a href="#indemnity">Indemnity</a></li>
+  <li><a href="#termination">Suspension and termination</a></li>
+  <li><a href="#changes">Changes to these terms</a></li>
+  <li><a href="#severability">Severability and the rest</a></li>
+  <li><a href="#law">Governing law and disputes</a></li>
+  <li><a href="#contact">Contact</a></li>
+</ol>
+
+<h2 id="accept">1. Accepting these terms</h2>
+
+<p>By installing HoldOff, opening it, or using any part of it, you agree to these terms. If you don't agree with them, don't install it — and if it's already installed, uninstall it. That's the whole mechanism; there's nothing to cancel.</p>
+
+<p>These terms apply whether or not you create an account.</p>
+
+<h2 id="who">2. Who you're agreeing with</h2>
+
+<p>HoldOff is the app and the business name. It is a solo operation.</p>
+
+<p><span class="confirm">[[CONFIRM: registered legal entity name and suffix, if any — LLC / Ltd / sole trader / none — and the postal address to publish here as the contracting party]]</span></p>
+
+<p>Until that's filled in, the contact point for everything in these terms is <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
+
+<h2 id="age">3. You must be 18 or older</h2>
+
+<p><strong>HoldOff is for adults only. You must be at least 18 years old to use it.</strong></p>
+
+<p>This isn't box-ticking. HoldOff reads your text messages to show you your conversations, and it sends a slice of those conversations to an AI model to be analysed. That is not something a minor can meaningfully consent to, and it's not something we want to be handling.</p>
+
+<p>Two consequences, and we want to be blunt about the second one:</p>
+
+<ul>
+  <li>If you are under 18, you may not use HoldOff. Uninstall it.</li>
+  <li><strong>Creating an account when you are under 18 is a breach of these terms.</strong> If we learn that an account belongs to someone under 18, we will terminate it and delete the account data without notice. Doing this also means the account was created on a false representation of your age, which may cost you any rights these terms would otherwise have given you.</li>
+</ul>
+
+<p>If you're a parent or guardian and you think a minor is using HoldOff, email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> and we'll deal with it.</p>
+
+<h2 id="licence">4. Your licence to use HoldOff</h2>
+
+<p><strong>What you get:</strong> a personal, limited, non-exclusive, non-transferable, revocable licence to install and use one copy of HoldOff on a device you own or control, for your own personal, non-commercial use.</p>
+
+<p><strong>What you don't get:</strong> ownership of anything. HoldOff, its name, its code, its interface, its wording and its design stay with us. This licence is permission to use the app, not a sale of it.</p>
+
+<p>Unless the law where you live specifically says you may anyway, you agree not to:</p>
+
+<ul>
+  <li>copy, sell, rent, sublicense, or redistribute the app or the APK;</li>
+  <li>reverse engineer, decompile or attempt to extract the source code;</li>
+  <li>modify the app, or build something derived from it;</li>
+  <li>strip out or alter any notices in it;</li>
+  <li>use the app, or our API endpoint, as a backend for some other product;</li>
+  <li>hammer, scrape or automate our servers, or route traffic through them that didn't come from the app.</li>
+</ul>
+
+<p>The licence ends automatically if you breach these terms, and it ends when you uninstall the app.</p>
+
+<h2 id="sideload">5. Sideloaded and debug-signed: what that means for you</h2>
+
+<div class="box warn">
+  <h3>Read this before you install</h3>
+  <p><strong>HoldOff is distributed today as a sideloaded APK, and that APK is debug-signed. It is not on the Google Play Store.</strong></p>
+</div>
+
+<p>You are installing software from outside the app store. In plain terms:</p>
+
+<ul>
+  <li><strong>No Play Store review.</strong> Google has not reviewed this build. None of Play's safety, policy or malware checks have been applied to it.</li>
+  <li><strong>No automatic updates.</strong> Nothing will update HoldOff for you. If there's a fix — including a security fix — you have to come back and install the new APK yourself.</li>
+  <li><strong>Debug-signed.</strong> A debug signature is a development signing key, not a release key. It is not a mark of a verified publisher, and Android may warn you about it. Your device or a security tool may flag the app or refuse to install it.</li>
+  <li><strong>You had to lower a setting to install it.</strong> Installing an APK means allowing installs from an unknown source. Turn that permission back off afterwards, and only ever install an APK you actually meant to download.</li>
+  <li><strong>Only install it from us.</strong> Get the APK from <a href="https://smsholdoff.com">smsholdoff.com</a>. A copy of "HoldOff" from anywhere else is not something we can vouch for, and a debug-signed app is easier for someone else to tamper with and re-sign.</li>
+  <li><strong>A future Play release may not upgrade this one.</strong> If HoldOff is ever published on Google Play, it will be signed with a different key, and Android will most likely refuse to install it over the sideloaded version. You may have to uninstall first — which, as the <a href="/legal/data-deletion.html">deletion page</a> explains, wipes the app's local data.</li>
+</ul>
+
+<p>If any of that isn't a trade you want to make, that's a completely reasonable call. Wait for a store release.</p>
+
+<h2 id="accounts">6. Accounts are optional</h2>
+
+<p><strong>You do not need an account to use HoldOff.</strong> The app is fully usable with no account at all, including the pause itself. We mean that as a feature: the fewer of your details we hold, the less there is to leak.</p>
+
+<p>If you do create one, it's an email address and a password, held by Supabase (see <a href="#third-party">section 11</a>). Today an account exists only to carry a premium entitlement. It does not back up your messages, your drafts, your counters or your settings — none of that syncs anywhere.</p>
+
+<p>If you create an account, you agree to give a real email address you control, keep your password to yourself, and tell us at <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> if you think someone else has got into it. You're responsible for what happens under your account.</p>
+
+<p>You can delete the account at any time. See the <a href="/legal/data-deletion.html">data deletion page</a> for exactly how, and for what deletion does and doesn't reach.</p>
+
+<h2 id="default-sms">7. Making HoldOff your default SMS app</h2>
+
+<p>For the pause to work at the moment you hit send, HoldOff asks to become your device's <strong>default SMS app</strong>. Android only allows one at a time, so saying yes moves your texting from your current app to HoldOff.</p>
+
+<p>Here is exactly what you're agreeing to when you allow that. Please read all of it before you tap yes.</p>
+
+<h3>What HoldOff will be able to do</h3>
+
+<ul>
+  <li><strong>Receive your incoming SMS</strong> and write them into the Android system SMS database.</li>
+  <li><strong>Send SMS on your behalf</strong> — that's how a message actually goes out after you decide to send it.</li>
+  <li><strong>Read your SMS history and your contact names</strong>, so it can draw your conversation list and show a thread. This reading happens on your phone.</li>
+</ul>
+
+<p>Standard carrier message and data rates apply to every message you send or receive. That's between you and your carrier; we don't see or control it.</p>
+
+<div class="box danger">
+  <h3>Incoming MMS will not arrive</h3>
+  <p><strong>While HoldOff is your default messaging app, incoming MMS is not retrieved. Picture messages and group messages will not reach you.</strong></p>
+  <p>They won't appear in HoldOff, and they won't be sitting in your old messaging app either — Android hands incoming messages to whichever app is the default, and MMS retrieval in HoldOff is not finished.</p>
+  <p>This is not a design decision. It is an unfinished part of the app, and we would rather you heard it here, in writing, before you switch, than discover it when you miss something that mattered.</p>
+  <p>If picture messages or group threads matter to you, do not make HoldOff your default SMS app.</p>
+</div>
+
+<h3>You can undo it</h3>
+
+<p>You can change your default messaging app back at any time in Android Settings (typically <em>Settings &rarr; Apps &rarr; Default apps &rarr; SMS app</em>, though the exact path varies by phone). Once you switch back, incoming messages go to that app again. Messages that arrived — or failed to arrive — while HoldOff was default are not retroactively recovered.</p>
+
+<h3>What HoldOff does not do with any of it</h3>
+
+<p>Your SMS history, your contact names, and your trusted-contacts list stay on your phone and are not uploaded. What does leave your phone is described in <a href="#third-party">section 11</a> and, in full detail, in the <a href="/legal/privacy.html">Privacy Policy</a>.</p>
+
+<h2 id="override">8. The pause can always be overridden</h2>
+
+<div class="box">
+  <p><strong>HoldOff never permanently blocks a message. Whatever the app says, you can always choose to send.</strong></p>
+</div>
+
+<p>This is a deliberate product decision, and it belongs in the terms rather than in marketing copy, because it defines what you are and aren't buying into.</p>
+
+<p>HoldOff introduces a pause. It gives you a moment and a second opinion. It does not have a veto. There is no mode, no setting and no premium tier that takes the send button away from you, locks you out of a conversation, or makes a message unsendable. If you want to send it, you send it.</p>
+
+<p>Two things follow from that, and you should hold both:</p>
+
+<ul>
+  <li><strong>You stay in control</strong> — of your phone, your words and your relationships. An app that could genuinely stop you from speaking would be a worse thing to install than one that can't.</li>
+  <li><strong>You stay responsible.</strong> Every message that goes out is one you chose to send. HoldOff is not a safeguard against sending something harmful, and it is not a filter that failed if something you regret goes out. The decision was always yours.</li>
+</ul>
+
+<h2 id="acceptable-use">9. Acceptable use</h2>
+
+<p>Use HoldOff for what it's for. Don't use it to:</p>
+
+<ul>
+  <li>break the law, or help anyone else break it;</li>
+  <li>harass, threaten, stalk, intimidate, defame or abuse anyone, or send anything designed to frighten someone;</li>
+  <li>monitor, intercept or analyse another person's messages without their knowledge and consent — including a partner's, an ex's, an employee's or a child's;</li>
+  <li>send bulk, automated, commercial or spam messages, or run any kind of messaging campaign;</li>
+  <li>impersonate someone else;</li>
+  <li>upload content you have no right to share;</li>
+  <li>probe, overload, disrupt or attack the app, our API endpoint or our infrastructure, or try to get around any limit we've set;</li>
+  <li>try to make the AI produce illegal content, or use its output to build or train a competing product.</li>
+</ul>
+
+<p>One of those deserves saying twice: HoldOff is built for looking at <em>your own</em> drafts before <em>you</em> send them. Installing it on someone else's phone to read their messages is a serious misuse of it, and depending on where you live it may be a crime.</p>
+
+<h2 id="content">10. Your drafts, your words</h2>
+
+<p><strong>You own what you write.</strong> Your drafts, your messages, your quiz answers and anything you type to the in-app companion remain yours. We don't claim ownership of them, we don't get any right to publish them, and we don't get any right to use them for advertising.</p>
+
+<p>You give us one narrow permission, and it is only what's needed to make the feature work: when you ask HoldOff to check a draft, you permit us to transmit that text — and the conversation excerpt described in <a href="#third-party">section 11</a> — to our analysis endpoint and to Google's Gemini API, and to return the result to you. That permission exists for that request. It isn't a licence to do anything else with your words.</p>
+
+<p>You are responsible for the content you put through the app. In particular, when you ask HoldOff to check a draft, the request includes messages the other person sent you. You confirm you have the right to share that excerpt for that purpose.</p>
+
+<h2 id="third-party">11. Third parties who process your text</h2>
+
+<p>When you ask HoldOff to check a draft, this is what leaves your phone:</p>
+
+<ul>
+  <li>the <strong>draft message</strong> you're asking about;</li>
+  <li>up to the <strong>last 12 messages of that conversation, truncated to 4,000 characters</strong> — this <strong>includes messages the other person sent you</strong>;</li>
+  <li>your <strong>self-reported attachment style</strong> from the in-app quiz, if you took it;</li>
+  <li>for the companion chat: what you type, plus up to the last 12 turns of that chat.</li>
+</ul>
+
+<p>It goes to our own endpoint at <code>api.smsholdoff.com</code>, hosted on IONOS, which forwards it to <strong>Google's Gemini API</strong> and returns the answer.</p>
+
+<p><strong>Not sent, ever:</strong> your name, phone number, email address, contact names, device identifiers, advertising ID, location, or the conversation's thread ID.</p>
+
+<p>The third parties involved are Google (Gemini API), Supabase Inc. (account email, password hash and session records, in the United States) and IONOS (hosting for the site and the API).</p>
+
+<p>Two honest caveats, because we'd rather under-claim than be caught out:</p>
+
+<ul>
+  <li>What Google does with text sent to the Gemini API — including how long they keep it and whether it can be used to improve their models — is governed by <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">Google's API terms</a>, not by us. <span class="confirm">[[CONFIRM: which Gemini API tier the key sits on — paid tiers exclude training use, the free tier does not; this determines what we're able to state here]]</span></li>
+  <li>We have not verified whether our own analysis endpoint keeps a copy of the text it forwards, so we are not going to tell you it doesn't. <span class="confirm">[[CONFIRM: whether the /api/analyze service on IONOS logs prompt content, and if so for how long]]</span></li>
+</ul>
+
+<p>The <a href="/legal/privacy.html">Privacy Policy</a> is the full picture and takes precedence over this summary. If you're not comfortable with a draft leaving your phone, don't use the check — and see the <a href="/legal/data-deletion.html">data deletion page</a> for how to withdraw consent.</p>
+
+<h2 id="premium">12. Premium, and why you can't buy it</h2>
+
+<p><strong>HoldOff is not taking any money right now.</strong> No payment processor is integrated in the app. Premium cannot be purchased. There is no subscription, no trial that converts, no card on file and no charge coming. The paywall screen in the app says so too.</p>
+
+<p>If that changes, it will not happen quietly. Prices, what's included, billing terms, renewal and refunds would all be set out before anything could be bought, and you'd have to actively agree.</p>
+
+<p>If you are ever charged anything by anyone claiming to be HoldOff, that did not come from us. Email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
+
+<h2 id="not-therapy">13. HoldOff is not therapy or a crisis service</h2>
+
+<div class="box danger">
+  <h3>Please read this part properly</h3>
+  <p><strong>HoldOff is not therapy. It is not counselling. It is not medical or mental-health advice. It does not diagnose anything. It is not a crisis service and it is not a suicide-prevention service.</strong></p>
+  <p><strong>No human being is monitoring what you type into HoldOff.</strong> Nothing you write in the app reaches a clinician, a counsellor, a crisis line or an emergency service. If you are in danger, the app will not raise an alarm, because there is no alarm to raise.</p>
+  <p><strong>If someone is in immediate danger, call your local emergency number.</strong></p>
+</div>
+
+<p>HoldOff is a pause before you send a text. That's the whole product. The response you get is generated by an AI model. It has no training, no licence, no duty of care and no idea who you are. It can be confidently wrong.</p>
+
+<p>Nothing in the app is a substitute for a doctor, therapist, counsellor, psychiatrist, pharmacist or crisis line. Never delay getting help, or ignore advice you've been given by a professional, because of something HoldOff said.</p>
+
+<p>The <a href="/legal/safety.html">Safety &amp; Mental Health page</a> goes into this properly — what the app is genuinely good for, how it can be wrong in both directions, and how to find a helpline where you live. If you're having a hard night, read that one instead of this one.</p>
+
+<h2 id="warranty">14. Disclaimer of warranties</h2>
+
+<p>To the fullest extent the law allows, HoldOff is provided <strong>"as is" and "as available"</strong>, with no warranty of any kind — express, implied or statutory. We specifically disclaim any implied warranties of merchantability, fitness for a particular purpose, accuracy and non-infringement.</p>
+
+<p>Concretely, we do not promise that:</p>
+
+<ul>
+  <li>the app will work, be available, be uninterrupted, or be free of bugs or security flaws;</li>
+  <li>the pause will trigger every time, or at the right moment;</li>
+  <li>the AI's assessment of a draft will be accurate, appropriate, safe or useful;</li>
+  <li>using it will improve any relationship or any outcome;</li>
+  <li>messages will send, arrive, or arrive intact.</li>
+</ul>
+
+<p>And one specific thing you're entitled to know rather than infer:</p>
+
+<div class="box warn">
+  <p><strong>The core pause has not been verified end to end on a physical device.</strong> It has been built and deployed; it has not been tested on real hardware with real messages. We are telling you that instead of describing the app as working. <strong>Do not rely on HoldOff to catch a message that would be damaging if it went out.</strong> Treat it as an experiment you're trying, not a safety net you're standing on.</p>
+</div>
+
+<p>Some jurisdictions don't allow the exclusion of certain warranties, so parts of this section may not apply to you. Nothing here limits any right you have as a consumer that can't be waived by contract.</p>
+
+<h2 id="liability">15. Limitation of liability</h2>
+
+<p>To the fullest extent the law allows:</p>
+
+<ul>
+  <li>We are not liable for any indirect, incidental, special, consequential, exemplary or punitive damages, or for lost profits, lost data, lost opportunities, loss of goodwill, or damage to any relationship or reputation, arising out of or connected with HoldOff — even if we were told such damage was possible.</li>
+  <li>We are not liable for any message you send or don't send, for anything that follows from sending or not sending it, for advice the AI gave you, for a pause that didn't fire, or for a message — including an MMS — that didn't reach you.</li>
+  <li>We are not liable for a decision you made about your health, safety or relationships based on anything HoldOff said.</li>
+  <li>Our total aggregate liability for all claims relating to HoldOff is limited to the greater of (a) the total amount you have actually paid us in the twelve months before the claim — which, today, is nothing, since nothing is for sale — and (b) US$50.</li>
+</ul>
+
+<p><strong>Nothing in these terms excludes or limits liability for death or personal injury caused by negligence, for fraud or fraudulent misrepresentation, or for anything else that cannot lawfully be excluded.</strong> Some jurisdictions don't allow some of these limits, so they may not fully apply to you.</p>
+
+<h2 id="indemnity">16. Indemnity</h2>
+
+<p>You agree to indemnify and hold harmless HoldOff and anyone working with it from any claim, loss, liability, damage, cost or reasonable legal fee arising from: your use of the app; your breach of these terms; content you sent through the app; your use of the app to handle someone else's messages without their consent; or your violation of anyone's rights or of any law.</p>
+
+<p>We'll tell you promptly about any such claim, and you get to control the defence — but we can take part in it with our own lawyers at our own cost, and you can't settle in a way that admits fault on our behalf or leaves us on the hook without our written agreement.</p>
+
+<h2 id="termination">17. Suspension and termination</h2>
+
+<p><strong>You can leave whenever you want.</strong> Uninstall the app; that ends the licence. If you have an account, follow the <a href="/legal/data-deletion.html">data deletion page</a> to have it deleted.</p>
+
+<p>We can suspend or terminate your access, or your account, if you breach these terms, if you use HoldOff to harm someone, if we're required to by law, or if we shut the service down. Where it's practical and lawful and no one is at risk, we'll give you notice first and explain why. For a clear breach — abuse, misuse of someone else's messages, an account belonging to a minor — we may act immediately.</p>
+
+<p>Because this is a pre-launch app run by one person, you should also assume the service could change substantially or stop. We'd aim to give notice on <a href="https://smsholdoff.com">smsholdoff.com</a> if that happened, but we can't guarantee it.</p>
+
+<p>Sections that by their nature should outlive the agreement — ownership, disclaimers, liability, indemnity, governing law — survive termination.</p>
+
+<h2 id="changes">18. Changes to these terms</h2>
+
+<p>We may update these terms. When we do, we'll change the effective date at the top and post the new version here. For a change that materially affects your rights, we'll make a reasonable effort to flag it in the app or on the site rather than letting it slide by.</p>
+
+<p>Continuing to use HoldOff after a change means you accept the updated terms. If you don't accept them, uninstall the app and, if you have an account, ask us to delete it.</p>
+
+<h2 id="severability">19. Severability and the rest</h2>
+
+<p><strong>Severability.</strong> If any part of these terms is found unenforceable, that part is limited or removed to the minimum extent needed, and everything else stays in force.</p>
+
+<p><strong>No waiver.</strong> If we don't enforce something straight away, we haven't given up the right to enforce it later.</p>
+
+<p><strong>Entire agreement.</strong> These terms, together with the <a href="/legal/privacy.html">Privacy Policy</a>, are the whole agreement between you and us about HoldOff, and replace anything said earlier.</p>
+
+<p><strong>Assignment.</strong> You can't transfer your rights under these terms. We can transfer ours to a successor if the business is sold or restructured; your rights under these terms travel with it.</p>
+
+<p><strong>Force majeure.</strong> We're not liable for failures caused by things genuinely outside our control — network and carrier outages, hosting or platform failures, an upstream API going down, natural events.</p>
+
+<p><strong>Headings and summaries.</strong> The headings and "the short version" box exist to help you read this. If one of them conflicts with the detailed section, the detailed section wins.</p>
+
+<h2 id="law">20. Governing law and disputes</h2>
+
+<p><span class="confirm">[[CONFIRM: governing law / jurisdiction — do not guess a state or country. Needs: (1) which law governs these terms, (2) which courts have jurisdiction, (3) whether to require informal resolution first, (4) whether to include an arbitration clause and class-action waiver — note these are unenforceable or restricted in some places, including much of the EU and UK, for consumers]]</span></p>
+
+<p>Until that is settled, here's what we'll commit to regardless of where it lands:</p>
+
+<ul>
+  <li><strong>Talk to us first.</strong> Email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> with what went wrong and what you want done. Most things end there, and neither of us wants lawyers.</li>
+  <li><strong>Your local consumer rights stand.</strong> If you're a consumer, nothing here takes away the protections or the courts your own country's law gives you, whatever this section eventually says.</li>
+</ul>
+
+<h2 id="contact">21. Contact</h2>
+
+<p>Questions about these terms, a problem with the app, a privacy request, or something that reads as unfair — one address, and a real person reads it:</p>
+
+<p><a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a></p>
+
+<p>It's not monitored around the clock, and it is <strong>not</strong> a way to reach anyone in an emergency. For that, see the <a href="/legal/safety.html">Safety &amp; Mental Health page</a> or call your local emergency number.</p>
+
+<hr>
+
+<footer>
+  <p><strong>HoldOff</strong> &middot; The Pause That Saves &middot; Effective 2 August 2026</p>
+  <p>
+    <span aria-current="page">Terms of Service</span> &middot;
+    <a href="/legal/privacy.html">Privacy Policy</a> &middot;
+    <a href="/legal/data-deletion.html">Delete Your Data</a> &middot;
+    <a href="/legal/safety.html">Safety &amp; Mental Health</a> &middot;
+    <a href="https://smsholdoff.com">smsholdoff.com</a>
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety &amp; Mental Health | HoldOff</title>
+<meta name="description" content="HoldOff is a pause before you send a text. It is not therapy, it cannot diagnose you, and it is not a crisis service. What the app is good for, how it can be wrong, and where to find a real person to talk to.">
+<style>
+:root{
+  --bg:#0A0A1A; --surface:#231040; --text:#F0E6FF; --muted:#9E8FBB;
+  --accent:#7B35C1; --link:#B39DDB; --divider:#2A1845;
+  --warning:#FFCA28; --danger:#EF5350;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:17px; line-height:1.75;
+}
+.wrap{max-width:44rem;margin:0 auto;padding:1.5rem 1.15rem 4rem}
+a{color:var(--link)}
+a:hover,a:focus{color:var(--text)}
+h1{font-size:1.9rem;line-height:1.25;margin:1.25rem 0 .4rem;color:var(--accent);font-weight:700}
+h2{font-size:1.3rem;line-height:1.3;margin:2.5rem 0 .5rem;color:var(--accent);font-weight:700;
+   border-top:1px solid var(--divider);padding-top:1.6rem}
+h3{font-size:1.05rem;margin:1.6rem 0 .3rem;color:var(--accent);font-weight:700}
+p,ul,ol{margin:0 0 1.1rem}
+ul,ol{padding-left:1.3rem}
+li{margin-bottom:.55rem}
+strong{color:var(--text);font-weight:700}
+.lede{color:var(--muted);font-size:1rem;margin-bottom:1.5rem}
+.dateline{color:var(--muted);font-size:.9rem;margin:0 0 1.5rem}
+nav.pages{
+  display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.9rem;
+  padding:.75rem 0;border-bottom:1px solid var(--divider);
+}
+nav.pages a{text-decoration:none;border-bottom:1px solid transparent}
+nav.pages a:hover{border-bottom-color:var(--link)}
+nav.pages span[aria-current]{color:var(--muted)}
+.box{
+  background:var(--surface);border:1px solid var(--divider);
+  border-left:4px solid var(--accent);border-radius:10px;
+  padding:1rem 1.1rem;margin:1.5rem 0;
+}
+.box :last-child{margin-bottom:0}
+.box h2,.box h3{margin-top:0;border-top:0;padding-top:0}
+.box.warn{border-left-color:var(--warning)}
+.box.warn h2,.box.warn h3{color:var(--warning)}
+.box.danger{border-left-color:var(--danger)}
+.box.danger h2,.box.danger h3{color:var(--danger)}
+.crisis{
+  background:var(--surface);border:2px solid var(--danger);border-radius:12px;
+  padding:1.1rem 1.15rem;margin:1.25rem 0 2rem;
+}
+.crisis h2{margin-top:0;border-top:0;padding-top:0;color:var(--danger);font-size:1.15rem}
+.crisis :last-child{margin-bottom:0}
+.helpline{
+  background:var(--surface);border:1px solid var(--divider);border-left:4px solid var(--link);
+  border-radius:10px;padding:.9rem 1.05rem;margin:1rem 0;
+}
+.helpline p{margin:0 0 .35rem}
+.helpline p:last-child{margin-bottom:0}
+.helpline .num{font-size:1.15rem;font-weight:700;color:var(--text);letter-spacing:.02em}
+.helpline .who{color:var(--muted);font-size:.92rem}
+.confirm{
+  display:inline-block;color:var(--warning);background:rgba(255,202,40,.08);
+  border:1px dashed var(--warning);border-radius:5px;
+  padding:0 .35rem;font-size:.9em;line-height:1.5;
+}
+.pair{margin:1.25rem 0}
+.pair p{margin-bottom:.5rem}
+hr{border:0;border-top:1px solid var(--divider);margin:2.5rem 0}
+footer{color:var(--muted);font-size:.9rem;margin-top:2.5rem;border-top:1px solid var(--divider);padding-top:1.25rem}
+footer a{color:var(--link)}
+@media (max-width:400px){body{font-size:16px}.wrap{padding:1.25rem .9rem 3rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="pages" aria-label="Legal pages">
+  <a href="/legal/terms.html">Terms of Service</a>
+  <a href="/legal/privacy.html">Privacy Policy</a>
+  <a href="/legal/data-deletion.html">Delete Your Data</a>
+  <span aria-current="page">Safety &amp; Mental Health</span>
+</nav>
+
+<div class="crisis">
+  <h2>If someone is in immediate danger right now</h2>
+  <p><strong>Call your local emergency number</strong> — 911, 999, 112, or whatever it is where you are. That includes if the person in danger is you.</p>
+  <p>If you need to talk to someone tonight and it isn't an emergency, there are real humans awake right now. <a href="#help">Jump straight to the helplines.</a></p>
+  <p>Please don't spend that time reading the rest of this page.</p>
+</div>
+
+<h1>Safety and mental health</h1>
+<p class="dateline">HoldOff &middot; Effective 2 August 2026</p>
+
+<p class="lede">HoldOff was built by someone who has sent messages at 2am that she'd have given a lot to take back. That's where the app comes from, and it's also why this page exists: an app built out of that feeling can very easily be mistaken for more than it is. So here's exactly what it is, what it isn't, and when to close it and talk to a person.</p>
+
+<h2 id="what-it-is">What HoldOff actually is</h2>
+
+<p><strong>HoldOff is a pause before you send a text.</strong> That's the whole product.</p>
+
+<p>You've written something. Before it goes, HoldOff stops for a moment and shows you a second opinion from an AI model — a read on the draft, and a suggestion to send it or sit with it a bit longer. Then you decide.</p>
+
+<p>The pause is the mechanism. The value, if there is any, is in the few seconds where you're not acting on the feeling. Everything else is decoration.</p>
+
+<h2 id="what-it-isnt">What HoldOff is not</h2>
+
+<div class="box danger">
+  <p><strong>HoldOff is not therapy. It is not counselling. It is not medical or mental-health advice. It cannot diagnose you with anything. It is not a crisis service and it is not a suicide-prevention service.</strong></p>
+  <p><strong>No human being is reading what you type into HoldOff.</strong> Nothing you write reaches a clinician, a counsellor, a helpline or an emergency service. There is no alert, no escalation and nobody on the other end. If you write something frightening into this app, the app does not know, cannot act, and no one is coming.</p>
+  <p>That isn't neglect — it's what the app is. But you should know it clearly, tonight, rather than assume otherwise.</p>
+</div>
+
+<p>The response you get is generated by an AI language model. It has no training, no licence, no clinical judgement, no duty of care, and no idea who you are, what your history is, or what's actually happening in the conversation you're in. It is a text prediction system that has read a lot of text.</p>
+
+<p>Nothing in HoldOff replaces a doctor, therapist, counsellor, psychiatrist, pharmacist, crisis line, sponsor or friend. Never delay getting help, and never set aside advice a professional has given you, because of something an app said.</p>
+
+<p><span class="confirm">[[CONFIRM: whether the app itself surfaces crisis resources in-app — e.g. a helpline link when a draft suggests risk. If it doesn't, that is a gap worth closing before any wider release, and this page should link to whatever it does]]</span></p>
+
+<h2 id="good-for">What it's genuinely good for</h2>
+
+<p>Being honest about a small tool means being honest about the small things it does well. HoldOff can help when:</p>
+
+<ul>
+  <li>You've typed something furious and you know, somewhere underneath, that sending it will make tomorrow worse.</li>
+  <li>You've sent three messages and you're about to send a fourth, and you want something to interrupt the momentum.</li>
+  <li>It's late, you're spiralling, and the send button feels like relief.</li>
+  <li>You want a beat of distance between the feeling and the action — long enough to reread your own words as someone else would.</li>
+  <li>You want an outside read on a draft when there's nobody awake to ask.</li>
+</ul>
+
+<p>The underlying idea is not clever. Most regretted messages are sent fast. A few seconds of friction is worth more than it sounds like.</p>
+
+<h2 id="not-good-for">What it's not good for</h2>
+
+<ul>
+  <li><strong>Deciding whether to stay in a relationship</strong>, leave one, forgive someone, or trust someone. It sees a handful of texts. It doesn't know the person, the history or you.</li>
+  <li><strong>Working out whether someone is treating you badly.</strong> If you're using an app to check whether your reaction is reasonable, over and over, that's worth talking to a person about — and it's a question the app is genuinely unqualified to answer.</li>
+  <li><strong>Anything involving your safety.</strong> If you're afraid of the person you're texting, this is not the tool. Get a human involved.</li>
+  <li><strong>Crisis of any kind.</strong> See the top of this page.</li>
+  <li><strong>Managing a mental health condition.</strong> HoldOff was built with anxiety, ADHD and recovery in mind, but "built with you in mind" is not treatment and shouldn't be mistaken for it.</li>
+  <li><strong>Being your only source of reassurance.</strong> An app you check before every message can quietly become another compulsion. Watch for that.</li>
+</ul>
+
+<h2 id="wrong">The AI can be wrong, in both directions</h2>
+
+<p>This part matters more than anything else on the page, so it gets its own section.</p>
+
+<p>The model will sometimes tell you to hold off on a message that was completely fine and needed saying. And it will sometimes tell you a message is fine when it will land badly, hurt someone, or blow something up. Both kinds of error happen. Neither is rare enough to ignore.</p>
+
+<div class="pair">
+  <div class="box">
+    <h3>"Reach out" is not permission</h3>
+    <p>A green light from HoldOff is not consent, not approval, and not a sign that the timing is right. It doesn't know whether that person asked for space, whether you're breaching a boundary, whether there's a court order, whether you're twelve messages deep into a night you'll regret.</p>
+    <p>If you're using the app to get permission for something you already suspect you shouldn't send — you know the answer. The app is not the authority you're looking for.</p>
+  </div>
+
+  <div class="box">
+    <h3>"Hold off" is not a judgement about you</h3>
+    <p>A hold-off verdict is a guess about one piece of text. It is not a verdict on your feelings, your character, whether you're "too much", or whether you have a right to be upset. It cannot see your worth and it isn't trying to.</p>
+    <p>If a hold-off makes you feel ashamed — of needing to say it, of feeling it at all — please put that down. Your feelings are not the thing being assessed. A draft is. And you were allowed to write it.</p>
+  </div>
+</div>
+
+<p>Treat every response as one opinion from something that can be confidently wrong. Your own read on your own life beats it.</p>
+
+<h2 id="override">You can always override the pause</h2>
+
+<p><strong>HoldOff never permanently blocks a message.</strong> There's no setting, no mode and no version that takes the send button away from you. Whatever it says, you can send.</p>
+
+<p>That's deliberate. An app that could genuinely stop you speaking would be a worse thing to have on your phone — and if you need to say something urgent, difficult or brave, you should not have to argue with software to say it.</p>
+
+<p>The flip side is honest too: because you can always send, HoldOff is not a safety net. It cannot stop you doing something you'll regret. It can only give you a moment. What you do with the moment is yours.</p>
+
+<div class="box warn">
+  <h3>And a specific caution, because you're entitled to it</h3>
+  <p><strong>HoldOff's pause has not been verified end to end on a physical device.</strong> It has been built and deployed; it has not been tested on real hardware with real messages. It may not fire when you expect it to.</p>
+  <p>We would rather tell you that than let you rely on it. Do not treat HoldOff as the thing standing between you and a message that would do real damage. If a message is that consequential, don't send it tonight at all.</p>
+</div>
+
+<h2 id="stop">When to close the app and talk to a person</h2>
+
+<p>No app is the right tool for most of what a hard night is actually about. Some signs it's time to talk to a human being instead:</p>
+
+<ul>
+  <li>You're checking the app compulsively, or you can't send anything without running it past something first.</li>
+  <li>You feel worse after using it, or you've started using it to argue with yourself.</li>
+  <li>You're thinking about hurting yourself, or you don't want to be here.</li>
+  <li>You're frightened of someone, or someone is frightening you into or out of messages.</li>
+  <li>The same spiral is happening every night, and the pause is only delaying it.</li>
+  <li>You're using alcohol or drugs to get through the evenings, or you're texting while using.</li>
+  <li>You're not sleeping, not eating, or not managing the ordinary parts of your day.</li>
+  <li>The messages you want to send are getting more extreme.</li>
+  <li>Someone who cares about you has said they're worried.</li>
+</ul>
+
+<p>A person can be a therapist or a doctor — and it can also be a friend, a family member, a sponsor, a support group, a helpline volunteer at 3am. It doesn't have to be professional to count. It has to be a person.</p>
+
+<p>If you're in recovery: the impulse to send a message and the impulse you already know how to name often come from the same place. Use what already works for you. Call your person. An app is not a substitute for that call.</p>
+
+<h2 id="help">Finding someone to talk to</h2>
+
+<p>We're not going to print a wall of phone numbers, because a wrong or out-of-date crisis number is worse than no number at all. These directories are kept current by people whose job it is, and they cover almost every country.</p>
+
+<div class="helpline">
+  <p><span class="num"><a href="https://findahelpline.com" rel="noopener">findahelpline.com</a></span></p>
+  <p class="who">Free, confidential helplines wherever you are. Pick your country and it shows you what's available by phone, text or online chat, and what hours. This is the best first stop for most people.</p>
+</div>
+
+<div class="helpline">
+  <p><span class="num"><a href="https://www.iasp.info/resources/Crisis_Centres/" rel="noopener">iasp.info/resources/Crisis_Centres/</a></span></p>
+  <p class="who">The International Association for Suicide Prevention's directory of crisis centres, organised by country and region.</p>
+</div>
+
+<p>Two specific ones we're confident about:</p>
+
+<div class="helpline">
+  <p><span class="num">988</span></p>
+  <p class="who"><strong>United States</strong> — the 988 Suicide &amp; Crisis Lifeline. Call or text 988, free and confidential, 24 hours a day. You can also chat at <a href="https://988lifeline.org" rel="noopener">988lifeline.org</a>. It's for any kind of mental-health crisis or distress, not only suicide, and you don't have to be at the worst point to call.</p>
+</div>
+
+<div class="helpline">
+  <p><span class="num">116 123</span></p>
+  <p class="who"><strong>UK and Republic of Ireland</strong> — Samaritans. Free to call from any phone, 24 hours a day, every day. You don't have to be suicidal to ring them; they'll talk to you about whatever's going on. More at <a href="https://www.samaritans.org" rel="noopener">samaritans.org</a>.</p>
+</div>
+
+<p class="lede">Those two numbers were checked on 2 August 2026. We're only listing services we're confident about — if you're anywhere else, use the directories above rather than a number you half-remember. And if the situation is urgent, your local emergency number is always the right call.</p>
+
+<h2 id="someone-else">If you're worried about someone else</h2>
+
+<p>You can call a helpline about another person. Most of them will talk to you, and you don't need to have the right words ready.</p>
+
+<p>A few things that generally help: ask directly and plainly, including about suicide — asking does not put the idea in someone's head. Listen more than you fix. Don't promise to keep a secret that puts them in danger. Stay with them if you can. And if you believe they're in immediate danger, call your local emergency number.</p>
+
+<p>Look after yourself in it too. Supporting someone through this is heavy, and the helplines are for you as well.</p>
+
+<h2 id="privacy">What happens to what you type</h2>
+
+<p>Briefly, because it's part of feeling safe using this: when you ask HoldOff to check a draft, that draft — plus up to the last 12 messages of the conversation and your attachment-style result if you took the quiz — is sent to our server and on to Google's Gemini API to be analysed. Your name, phone number, email, contact names, device identifiers and location are never sent.</p>
+
+<p>Full detail is in the <a href="/legal/privacy.html">Privacy Policy</a>, and the <a href="/legal/data-deletion.html">deletion page</a> explains what can and can't be pulled back afterwards. It's worth two minutes when you're not in the middle of something.</p>
+
+<h2 id="contact">Contact</h2>
+
+<p><a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> — for questions about the app, or if something in it made things worse for you. That last one we especially want to hear about.</p>
+
+<div class="box danger">
+  <p><strong>This mailbox is not a crisis line.</strong> It's read by one person, not around the clock, and there is no guarantee of a fast reply. Please don't use it to reach anyone in an emergency. Use the <a href="#help">helplines</a>, or call your local emergency number.</p>
+</div>
+
+<hr>
+
+<footer>
+  <p><strong>HoldOff</strong> &middot; The Pause That Saves &middot; Effective 2 August 2026</p>
+  <p>
+    <a href="/legal/terms.html">Terms of Service</a> &middot;
+    <a href="/legal/privacy.html">Privacy Policy</a> &middot;
+    <a href="/legal/data-deletion.html">Delete Your Data</a> &middot;
+    <span aria-current="page">Safety &amp; Mental Health</span> &middot;
+    <a href="https://smsholdoff.com">smsholdoff.com</a>
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy — HoldOff</title>
+<meta name="description" content="How HoldOff handles your messages: what never leaves your phone, what is sent to Google's Gemini API to analyse a draft, how long it is kept, and the rights you have over it.">
+<meta name="robots" content="index, follow">
+<meta name="color-scheme" content="dark">
+<style>
+  :root {
+    --bg: #0A0A1A;
+    --surface: #231040;
+    --text: #F0E6FF;
+    --muted: #9E8FBB;
+    --accent: #7B35C1;
+    --link: #B39DDB;
+    --divider: #2A1845;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 2rem 1.125rem 5rem;
+  }
+
+  header.masthead {
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brand {
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    line-height: 1.25;
+    margin: 0 0 0.75rem;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 1.3125rem;
+    line-height: 1.3;
+    margin: 3rem 0 0.875rem;
+    color: var(--accent);
+    font-weight: 700;
+    scroll-margin-top: 1rem;
+  }
+
+  h3 {
+    font-size: 1.0625rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  p, li { margin: 0 0 1rem; }
+  ul, ol { padding-left: 1.25rem; margin: 0 0 1.25rem; }
+  li { margin-bottom: 0.5rem; }
+
+  a { color: var(--link); text-decoration: underline; text-underline-offset: 0.15em; }
+  a:hover, a:focus { color: var(--text); }
+
+  strong { color: #FFFFFF; font-weight: 700; }
+
+  .meta {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--divider);
+    border-radius: 12px;
+    padding: 1.25rem 1.125rem 0.5rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .panel h2 { margin-top: 0.25rem; }
+
+  .panel--loud {
+    border-left: 4px solid var(--accent);
+  }
+
+  .lede {
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
+
+  .confirm {
+    display: inline-block;
+    background: #3A1B2E;
+    border: 1px dashed #C1356B;
+    color: #FFD9E6;
+    border-radius: 6px;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .toc ul { list-style: none; padding-left: 0; }
+  .toc li { margin-bottom: 0.375rem; }
+
+  .table-scroll { overflow-x: auto; margin: 0 0 1.5rem; -webkit-overflow-scrolling: touch; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 30rem;
+    font-size: 0.9375rem;
+  }
+
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--divider);
+  }
+
+  th {
+    color: var(--accent);
+    font-weight: 700;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  td { color: var(--text); }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--divider);
+    margin: 3rem 0;
+  }
+
+  footer {
+    border-top: 1px solid var(--divider);
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  footer a { color: var(--link); }
+
+  .nowrap { white-space: nowrap; }
+
+  @media (max-width: 380px) {
+    body { font-size: 1rem; }
+    .wrap { padding: 1.5rem 0.875rem 4rem; }
+    h1 { font-size: 1.625rem; }
+    h2 { font-size: 1.1875rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="brand">HoldOff</p>
+  <h1>Privacy Policy</h1>
+  <p class="meta">Effective 2 August 2026 · Last updated 2 August 2026</p>
+</header>
+
+<p class="lede">This explains what HoldOff does with your messages. It is written to be read, not to be survived. If you only read one section, read <a href="#gemini">“Your draft goes to Google”</a> — that is the part people don't expect.</p>
+
+<div class="panel toc">
+  <h2>The short version</h2>
+  <ul>
+    <li>When you ask HoldOff whether to send a draft, <strong>the draft and up to the last 12 messages in that conversation — including the other person's messages — are sent off your phone</strong> to be analysed by Google's Gemini AI.</li>
+    <li>Almost everything else stays on your phone: your whole message history, your contacts, your trusted-contacts list, your counters, your quiz result.</li>
+    <li>No name, phone number, email address, contact name, device ID, advertising ID or location is ever sent with a draft.</li>
+    <li>There is no analytics SDK, no crash reporting, no ad network, and no tracking in the app.</li>
+    <li>An account is optional. HoldOff works fully — including the pause — without one.</li>
+    <li>We can't currently tell you exactly how long the analysed text is kept. We explain why in <a href="#retention">“How long it's kept”</a> instead of guessing.</li>
+    <li>HoldOff is for adults. 18+ only.</li>
+  </ul>
+</div>
+
+<h2 id="who">Who we are</h2>
+
+<p>HoldOff is an Android app made by a solo founder, Stacy Ann Martin. HoldOff is the “data controller” for the personal data described here — meaning we decide what is collected and why, and we're the ones you hold responsible.</p>
+
+<p>Business name: <strong>HoldOff</strong>.<br>
+Registered form and postal address: <span class="confirm">[[CONFIRM: registered legal suffix, if any — LLC / Ltd / none — and the postal address to publish as the controller identity that GDPR Art. 13(1)(a) requires]]</span></p>
+
+<p>Contact for anything on this page, including privacy requests: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>. A real person reads it.</p>
+
+<p>We have not appointed a data protection officer; we're not required to. <span class="confirm">[[CONFIRM: whether an EU and/or UK Art. 27 representative is required — this depends on where the controller is established, which is not yet confirmed]]</span></p>
+
+<h2 id="gemini">Your draft goes to Google. So do the other person's messages.</h2>
+
+<div class="panel panel--loud">
+<p>When you ask HoldOff to look at a message before you send it, this is what happens:</p>
+
+<ol>
+  <li>HoldOff takes <strong>the draft you wrote</strong>.</li>
+  <li>It takes <strong>up to the last 12 messages of that conversation</strong>, trimmed to 4,000 characters. That includes <strong>the messages the other person sent you</strong> — their actual words, not a summary.</li>
+  <li>If you took the attachment-style quiz, it adds <strong>your quiz result</strong>.</li>
+  <li>It sends all of that as text to <span class="nowrap">https://api.smsholdoff.com/api/analyze</span>, a server we run, which passes it to <strong>Google's Gemini API</strong> and sends the answer back to your phone.</li>
+</ol>
+
+<p>The same thing happens when you talk to the in-app companion: what you type, plus up to the last 12 turns of that chat, plus your quiz result if you have one, goes the same route.</p>
+</div>
+
+<h3>Say the uncomfortable part out loud</h3>
+
+<p>The other person in that conversation did not agree to any of this. They texted you. They have no idea their words are being read by an AI model, and they had no way to say no.</p>
+
+<p>We're not going to dress that up. If you use HoldOff on a conversation, you are making a decision about someone else's words as well as your own. Under UK and EU data protection law, you are the one who chose to share their message with us, and we process it as part of giving you the service you asked for.</p>
+
+<p>What we do to keep it as small as it can be:</p>
+
+<ul>
+  <li>We send <strong>text only</strong>. Not their name. Not their number. Not the conversation's ID. The messages are labelled only “You:” and “Them:”.</li>
+  <li>We send <strong>at most 12 messages</strong>, and at most 4,000 characters of them — not the thread, not your history, not your other conversations.</li>
+  <li>We send only when <strong>you</strong> ask for a verdict. HoldOff does not analyse messages in the background, and does not analyse conversations you never asked about.</li>
+</ul>
+
+<p>What we can't do is promise the other person's words are deleted the moment they're used. See <a href="#retention">“How long it's kept”</a>. If that's not acceptable to you for a particular conversation, don't run a verdict on that conversation. The pause, the countdown and the trusted-contact prompt all work without it.</p>
+
+<h3>Messages can be sensitive by nature</h3>
+
+<p>HoldOff is built for people with anxiety, ADHD and people in recovery. A draft you're anxious about at 2am can easily contain information about your health, your relationships, your recovery or your beliefs — the kind of data the law treats as special category data. Your attachment-style quiz result is similar.</p>
+
+<p>Because of that, the lawful basis we rely on for sending message content to be analysed is <strong>your explicit consent</strong>, given when you choose to run a verdict. You can withdraw it at any time by not running verdicts, and by turning the feature off. Withdrawing does not undo an analysis that already happened.</p>
+
+<p><span class="confirm">[[CONFIRM: does the app show an explicit, specific consent screen — naming Google/Gemini — before the first analysis, and is that consent recorded? If not, this paragraph describes something the app does not yet do and the consent screen must be built before publishing this policy]]</span></p>
+
+<h2 id="stays">What never leaves your phone</h2>
+
+<p>This is the part we're proud of, so it deserves to be clear. All of the following is read or stored only on your device, in the app's private storage, and is <strong>never uploaded anywhere</strong>:</p>
+
+<ul>
+  <li><strong>Your SMS messages.</strong> HoldOff reads them through Android permissions to draw your conversation list and threads. They stay in Android's own message database on your phone. Only the excerpt described above, only when you ask for a verdict, ever goes anywhere.</li>
+  <li><strong>Your contacts.</strong> HoldOff reads contact names and numbers so a conversation shows a name instead of a number. Your contact list is never transmitted, never uploaded, never backed up to us.</li>
+  <li><strong>Your trusted-contacts list</strong> — the names and numbers you type in yourself.</li>
+  <li><strong>Your counters</strong> — how many drafts you've checked, how many times you held off, the day you first used the app.</li>
+  <li><strong>Your attachment-style quiz result</strong> (a copy is sent with an analysis, as described above; the stored result itself lives on the phone).</li>
+  <li><strong>Your settings</strong>, including how long the hold countdown runs, and whether you've finished onboarding.</li>
+</ul>
+
+<p>And there is nothing else running in the background collecting you. The Android app contains <strong>no analytics SDK, no crash reporting, no advertising SDK and no attribution SDK</strong> — no Firebase, no Crashlytics, no AdMob, no Meta SDK, no Sentry, no Mixpanel, no Amplitude, no AppsFlyer. We don't read your advertising ID. We don't collect your location. There is no tracking pixel in the app.</p>
+
+<h2 id="account">If you make an account</h2>
+
+<p>An account is <strong>optional</strong>. HoldOff is fully usable without one, including the pause.</p>
+
+<p>If you do create one, you give us an <strong>email address and a password</strong>. Those go to our server so the account can be created and you can sign in. Your email address and a session token are then stored on your phone so you stay signed in. The account exists to carry a premium entitlement — it does not sync your messages, your contacts, or anything else off the device.</p>
+
+<p>Where that account data is stored: <span class="confirm">[[CONFIRM: which backend actually holds accounts. DATA_FACTS.md says Supabase Inc., project holdoff-production, US-West. The shipped Android code posts sign-in to https://shouldiholdoff.live/api/auth/login and contains no Supabase SDK, and the web codebase describes a self-hosted PostgreSQL database. These cannot both be right — confirm the real store, its operator, and its region before publishing]]</span></p>
+
+<p>Lawful basis: performance of the contract between you and us — you asked for an account, we have to hold an email address and a password to give you one.</p>
+
+<h2 id="payments">Payments</h2>
+
+<p>There are none in the app. No payment processor is integrated, no card details are collected, and premium cannot currently be bought. If that changes, this policy changes with it and the change will be listed under <a href="#changes">“What changed”</a>.</p>
+
+<h2 id="collect">Everything at a glance</h2>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr><th>What</th><th>Where it goes</th><th>Why</th><th>Lawful basis (UK/EU)</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Your draft message</td>
+      <td>Our analyse server → Google Gemini API</td>
+      <td>To give you a verdict on whether to send it</td>
+      <td>Explicit consent</td>
+    </tr>
+    <tr>
+      <td>Up to 12 recent messages in that conversation, including the other person's</td>
+      <td>Our analyse server → Google Gemini API</td>
+      <td>Without context the verdict is meaningless</td>
+      <td>Explicit consent</td>
+    </tr>
+    <tr>
+      <td>Attachment-style quiz result</td>
+      <td>Sent with an analysis; stored on the phone</td>
+      <td>To make the advice fit you</td>
+      <td>Explicit consent</td>
+    </tr>
+    <tr>
+      <td>Companion chat messages, plus up to 12 previous turns</td>
+      <td>Our analyse server → Google Gemini API</td>
+      <td>To generate a reply</td>
+      <td>Explicit consent</td>
+    </tr>
+    <tr>
+      <td>Email address and password</td>
+      <td>Our server (account store)</td>
+      <td>To create and sign you into an optional account</td>
+      <td>Contract</td>
+    </tr>
+    <tr>
+      <td>SMS messages and contacts</td>
+      <td><strong>Stays on the phone</strong></td>
+      <td>To show your conversations with names</td>
+      <td>Consent, via the Android permission you grant</td>
+    </tr>
+    <tr>
+      <td>Trusted contacts, counters, settings, onboarding flag</td>
+      <td><strong>Stays on the phone</strong></td>
+      <td>To make the app work and remember your choices</td>
+      <td>Contract</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>We do not collect your name, your phone number, your location, a device identifier or an advertising ID at all.</p>
+
+<h2 id="sharing">Who else touches it</h2>
+
+<p>We do not sell your personal information, and we do not share it for advertising. Nobody buys data from us and nobody is paying us for access to your messages. The only third parties involved are the ones needed to run the app:</p>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr><th>Who</th><th>What they process</th><th>Where</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Google (Gemini API)</td>
+      <td>Your draft, the recent conversation excerpt, your attachment style, companion chat text</td>
+      <td>Google infrastructure. <span class="confirm">[[CONFIRM: processing region(s) for the Gemini API key in use]]</span></td>
+    </tr>
+    <tr>
+      <td>The account store operator</td>
+      <td>Account email, password hash, session records</td>
+      <td><span class="confirm">[[CONFIRM: operator and region — see “If you make an account” above]]</span></td>
+    </tr>
+    <tr>
+      <td>IONOS</td>
+      <td>Hosting for the website and for the analyse endpoint that passes text to Google</td>
+      <td>IONOS infrastructure. <span class="confirm">[[CONFIRM: hosting region]]</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Your message content is handled by Google under <a href="https://ai.google.dev/gemini-api/terms" rel="noopener">Google's Gemini API terms</a>. What Google keeps, and for how long, is governed by those terms and not by us. See the next section.</p>
+
+<p>We would also disclose data if we were legally required to — a court order, a lawful request from a regulator. We'd tell you unless we were legally barred from doing so. And if HoldOff were ever sold or merged, your data would move with it; you'd be told before that happened, and you'd be able to delete your account first.</p>
+
+<h2 id="retention">How long it's kept — including what we don't know</h2>
+
+<p>We'd rather tell you the truth than a comfortable number.</p>
+
+<h3>On your phone</h3>
+<p>Everything stored locally — messages, contacts, trusted contacts, counters, quiz result, settings, your session token — stays until you delete it in the app or uninstall HoldOff. Uninstalling removes the app's local storage. We have no copy.</p>
+
+<h3>Your account</h3>
+<p>If you have an account, your email address and password hash are kept for as long as the account exists, and deleted when you delete the account. <span class="confirm">[[CONFIRM: the backup retention window at the account store — how long deleted rows survive in backups before they age out]]</span></p>
+
+<h3>The text sent for analysis — the honest answer</h3>
+
+<p>Two things happen to that text, and we can only account for one of them today.</p>
+
+<p><strong>Our analyse server.</strong> The text passes through a server we run at <span class="nowrap">api.smsholdoff.com</span>. <strong>We have not verified whether that server writes prompts to a log.</strong> Its source has not been inspected. We are not going to tell you it logs nothing when we haven't checked — so treat it as possible that a copy of the text you sent exists in a server log until we can say otherwise. Confirming and publishing this is on our list, and this section will be updated when it is. <span class="confirm">[[CONFIRM: inspect the PHP proxy at api.smsholdoff.com/api/analyze — does it write prompt text to any log, file, or database, and with what rotation/retention? This is the single biggest open question in this policy]]</span></p>
+
+<p><strong>Google.</strong> How long Google retains the content, and whether it may be used to improve their models, depends on the terms attached to the API tier our key sits on. <strong>We have not confirmed which tier that is.</strong> On Google's paid API tiers, content is excluded from model training; on the free tier it is not. Until we've confirmed it, we can't tell you which applies to your messages. <span class="confirm">[[CONFIRM: which Gemini API tier the production key is on — paid tiers exclude training use, the free tier does not. This determines whether we can say your messages are not used to train Google's models]]</span></p>
+
+<p>We know that's not the answer anyone wants. It's the one we can stand behind.</p>
+
+<h2 id="transfers">Sending data to other countries</h2>
+
+<p>If you are in the UK or the EEA, your data leaves that area. Google's Gemini API and our account store are operated on infrastructure that includes the United States.</p>
+
+<p>Transfers of that kind need a legal safeguard — normally the UK/EU Standard Contractual Clauses or the UK Addendum, backed by the transfer risk assessment the law expects. <span class="confirm">[[CONFIRM: which transfer mechanism is actually in place with Google, the account store operator and IONOS — and whether signed DPAs exist with each. If they are not signed, this section is a statement we cannot make]]</span></p>
+
+<h2 id="rights">Your rights, and how to actually use them</h2>
+
+<p>If you're in the UK or EEA you have all of these by law. If you're elsewhere, including in US states with privacy laws, we'll honour them anyway — it's simpler and it's fairer.</p>
+
+<ul>
+  <li><strong>Access.</strong> Ask what we hold about you and get a copy.</li>
+  <li><strong>Correction.</strong> Tell us something is wrong and have it fixed.</li>
+  <li><strong>Deletion.</strong> Have your account and the data tied to it erased. Start at our <a href="/legal/data-deletion.html">data deletion page</a>.</li>
+  <li><strong>Objection.</strong> Object to processing we do on a legitimate-interests basis.</li>
+  <li><strong>Restriction.</strong> Ask us to hold processing while a dispute is sorted out.</li>
+  <li><strong>Portability.</strong> Get the data you gave us in a machine-readable file, or ask us to send it somewhere else.</li>
+  <li><strong>Withdraw consent.</strong> Stop running verdicts, and revoke the SMS and contacts permissions in Android settings. Withdrawal applies going forward; it doesn't reverse an analysis already run.</li>
+  <li><strong>No automated decisions with legal effect.</strong> The verdict is advice. It never sends, blocks or deletes anything on its own — the send button is always yours.</li>
+</ul>
+
+<p>To use any of these, email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> from the address on your account, or from any address if you don't have an account and tell us what you need. We'll reply within <strong>30 days</strong>. It's free. We will not charge you, and we will not make the app worse for you because you asked.</p>
+
+<p>One honest limit: most of what HoldOff knows about you is on your phone and not accessible to us. For local data, deleting it is instant and entirely yours — clear it in the app or uninstall.</p>
+
+<h3>Complaining about us</h3>
+
+<p>If you think we've mishandled your data, please tell us first — we'd like the chance to fix it. You also have the right to complain to a data protection authority without going through us. In the UK that's the Information Commissioner's Office (<a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>). In the EEA it's the supervisory authority in the country where you live or work. <span class="confirm">[[CONFIRM: the lead supervisory authority for HoldOff, which follows from where the controller is established]]</span></p>
+
+<h2 id="us-states">For people in California and other US states</h2>
+
+<p>In the last 12 months we have collected the categories described above: identifiers (an account email address, only if you make an account), and the contents of electronic messages when you ask for a verdict. We collect them for the purposes in the table above and keep them as described in <a href="#retention">“How long it's kept”</a>.</p>
+
+<p><strong>We do not sell your personal information, and we do not share it for cross-context behavioural advertising.</strong> There is no ad SDK and no advertising identifier in the app. We have never received money for anyone's data.</p>
+
+<p>One caveat we won't hide behind: Google acts as our service provider for the analysis. Whether Google may also use that content to improve their own models depends on the API tier described in <a href="#retention">“How long it's kept”</a>, which we have not yet confirmed. We'll state it plainly here once we have.</p>
+
+<p>You have the right to know, to delete, to correct, to opt out of sale or sharing (there is none), and not to be discriminated against for exercising any of them. You can use an authorised agent. Email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
+
+<h2 id="children">HoldOff is for adults. 18+.</h2>
+
+<p>HoldOff is not directed at children and is not designed for them. <strong>You must be 18 or older to use HoldOff, and no account may be created by anyone under 18.</strong></p>
+
+<p>We do not knowingly collect data from anyone under 18. If we learn that an account belongs to a minor, we will delete it and the data attached to it. If you're a parent or guardian and you think that's happened, email <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a> and we'll deal with it.</p>
+
+<h2 id="permissions">The permissions HoldOff asks for, and why</h2>
+
+<ul>
+  <li><strong>Read SMS / Receive SMS / Receive MMS / Receive WAP push</strong> — to show your conversations and to notice a new message arriving. This is the app's whole purpose.</li>
+  <li><strong>Send SMS</strong> — so you can send the message from inside HoldOff once you've decided to.</li>
+  <li><strong>Read contacts</strong> — so conversations show a name rather than a number. Never transmitted.</li>
+  <li><strong>Internet / network state</strong> — to reach the analyse endpoint.</li>
+  <li><strong>Notifications</strong> — to tell you a message arrived, and to bring back a hold you started.</li>
+</ul>
+
+<h3>Making HoldOff your default messaging app</h3>
+
+<p>HoldOff asks to become your default SMS app. While it is, it receives your incoming SMS, writes them into Android's own message database on your phone, and sends SMS on your behalf when you tap send. You can hand the default role back to another app at any time in Android settings, and HoldOff will stop receiving your messages.</p>
+
+<p><strong>A limitation you should know before you switch:</strong> while HoldOff is your default messaging app, <strong>incoming MMS is not retrieved</strong>. Picture messages and group messages will not arrive. This is unfinished work, not a design choice, and we'd rather you heard it here than found out by missing something.</p>
+
+<h2 id="security">Security, described accurately</h2>
+
+<p>Everything the app sends goes over HTTPS. Data stored on your phone lives in the app's private storage, which Android keeps separated from other apps, and is protected by your device's own encryption and lock screen. Your session token and settings are stored there in the standard Android way, without an extra layer of encryption on top.</p>
+
+<p>We're a one-person operation. We're not going to claim enterprise security posture we don't have. What we will do is keep the amount of data that ever leaves your phone as small as we can, which is the only security control that can't fail.</p>
+
+<p>Related reading: our <a href="/legal/terms.html">Terms of Use</a> and our <a href="/legal/safety.html">safety page</a> — the second one matters if you're in crisis. HoldOff is not a therapist, not a medical device and not a crisis service.</p>
+
+<h2 id="changes">Changes to this policy</h2>
+
+<p>If we change something material — a new sub-processor, a new category of data, a change to what leaves your phone — we'll update this page, change the effective date at the top, and list the change here. Where the law requires it, we'll ask for your consent again rather than assume it.</p>
+
+<h3>What changed</h3>
+<ul>
+  <li><strong>2 August 2026</strong> — First version.</li>
+</ul>
+
+<h2 id="contact">Contact</h2>
+
+<p>Privacy questions, rights requests, or anything on this page: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
+
+<p>Postal address: <span class="confirm">[[CONFIRM: postal address for the controller — GDPR Art. 13 expects one, and Google Play expects a reachable contact]]</span></p>
+
+<footer>
+  <p>HoldOff — The Pause That Saves.<br>
+  <a href="/legal/terms.html">Terms of Use</a> · <a href="/legal/data-deletion.html">Delete your data</a> · <a href="/legal/safety.html">Safety</a></p>
+  <p>Effective 2 August 2026.</p>
+</footer>
+
+</div>
+</body>
+</html>

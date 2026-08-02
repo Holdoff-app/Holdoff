@@ -132,8 +132,12 @@ fun LoginScreen(
                         successMsg = null
                         when {
                             forgotMode -> {
-                                // TODO: call /api/auth/forgot-password
-                                successMsg = "If that email is registered, a reset link is on its way."
+                                // No password-reset service exists yet. This used to claim a
+                                // reset link had been sent, which was false — a locked-out user
+                                // would wait for mail that was never going to arrive. Say the
+                                // true thing and give them a route that a human actually reads.
+                                errorMsg = "Password reset isn't running yet. Email " +
+                                    "hello@smsholdoff.com and it will be handled by hand."
                                 isLoading = false
                             }
                             isSignUp -> {
