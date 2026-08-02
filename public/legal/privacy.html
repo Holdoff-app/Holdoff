@@ -204,11 +204,11 @@
 <p>HoldOff is an Android app made by a solo founder, Stacy Ann Martin. HoldOff is the “data controller” for the personal data described here — meaning we decide what is collected and why, and we're the ones you hold responsible.</p>
 
 <p>Business name: <strong>HoldOff</strong>.<br>
-Registered form and postal address: <span class="confirm">[[CONFIRM: registered legal suffix, if any — LLC / Ltd / none — and the postal address to publish as the controller identity that GDPR Art. 13(1)(a) requires]]</span></p>
+Registered form and postal address: <strong>HoldOff is not incorporated.</strong> There is no LLC, Ltd or other company behind it &mdash; the controller is Stacy Ann Martin, trading as HoldOff, in Clovis, New Mexico, United States.<br>Postal address: <span class="confirm">[[CONFIRM: the postal address to publish &mdash; deferred by Stacy on 2026-08-02. GDPR Art. 13(1)(a) and Google Play both expect a reachable one. A registered-agent address or a PO box satisfies this without putting a home address on a public page]]</span></p>
 
 <p>Contact for anything on this page, including privacy requests: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>. A real person reads it.</p>
 
-<p>We have not appointed a data protection officer; we're not required to. <span class="confirm">[[CONFIRM: whether an EU and/or UK Art. 27 representative is required — this depends on where the controller is established, which is not yet confirmed]]</span></p>
+<p>We have not appointed a data protection officer; we're not required to. The controller is established in the United States, not the EU or UK, so there is no lead supervisory authority for HoldOff either. <span class="confirm">[[CONFIRM: whether HoldOff will be offered to users in the EU or UK. If yes, GDPR Art. 27 and UK GDPR Art. 27 each require a named representative in that territory &mdash; a paid service, roughly 100&ndash;300 a year in each. If the launch is US-only and the Play listing is geo-restricted to match, no representative is needed and this paragraph can simply say so]]</span></p>
 
 <h2 id="gemini">Your draft goes to Google. So do the other person's messages.</h2>
 
@@ -270,7 +270,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 
 <p>If you do create one, you give us an <strong>email address and a password</strong>. Those go to our server so the account can be created and you can sign in. Your email address and a session token are then stored on your phone so you stay signed in. The account exists to carry a premium entitlement — it does not sync your messages, your contacts, or anything else off the device.</p>
 
-<p>Where that account data is stored: <strong>Supabase</strong> (Supabase Inc.), project <code>holdoff-production</code>. Verified reachable on 2026-08-02. The earlier contradiction in our own notes is resolved: the old sign-in address <code>shouldiholdoff.live</code> is dead and no longer in the app, and the separate self-hosted database described in the web codebase is not deployed and holds no accounts. <span class="confirm">[[CONFIRM: the storage region only. Our inventory says US-West but that has not been checked against the dashboard, and an edge probe cannot reveal it. Do not publish a region until it is read off the project settings page.]]</span></p>
+<p>Where that account data is stored: <strong>Supabase</strong> (Supabase Inc.), project <code>holdoff-production</code>. Verified reachable on 2026-08-02. The earlier contradiction in our own notes is resolved: the old sign-in address <code>shouldiholdoff.live</code> is dead and no longer in the app, and the separate self-hosted database described in the web codebase is not deployed and holds no accounts. Storage region: <strong>US West (Northern California)</strong> &mdash; AWS <code>us-west-1</code>, read from the Supabase project API on 2026-08-02, not from our own notes.</p>
 
 <p>Lawful basis: performance of the contract between you and us — you asked for an account, we have to hold an email address and a password to give you one.</p>
 
@@ -352,7 +352,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
     <tr>
       <td>The account store operator</td>
       <td>Account email, password hash, session records</td>
-      <td>Supabase Inc. <span class="confirm">[[CONFIRM: region only — see “If you make an account” above]]</span></td>
+      <td>Supabase Inc. US West (N. California), <code>us-west-1</code></td>
     </tr>
     <tr>
       <td>IONOS</td>
@@ -375,7 +375,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 <p>Everything stored locally — messages, contacts, trusted contacts, counters, quiz result, settings, your session token — stays until you delete it in the app or uninstall HoldOff. Uninstalling removes the app's local storage. We have no copy.</p>
 
 <h3>Your account</h3>
-<p>If you have an account, your email address and password hash are kept for as long as the account exists, and deleted when you delete the account. <span class="confirm">[[CONFIRM: the backup retention window at the account store — how long deleted rows survive in backups before they age out]]</span></p>
+<p>If you have an account, your email address and password hash are kept for as long as the account exists, and deleted when you delete the account. <strong>There are no backups.</strong> The database sits on Supabase's Free plan, which does not include the daily backups their paid plans get. That cuts both ways, and you should know both halves: nothing you delete survives in a restore point we hold, and equally, if the database were ever lost we could not bring your account back.</p>
 
 <h3>The text sent for analysis — the honest answer</h3>
 
@@ -414,7 +414,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 
 <h3>Complaining about us</h3>
 
-<p>If you think we've mishandled your data, please tell us first — we'd like the chance to fix it. You also have the right to complain to a data protection authority without going through us. In the UK that's the Information Commissioner's Office (<a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>). In the EEA it's the supervisory authority in the country where you live or work. <span class="confirm">[[CONFIRM: the lead supervisory authority for HoldOff, which follows from where the controller is established]]</span></p>
+<p>If you think we've mishandled your data, please tell us first — we'd like the chance to fix it. You also have the right to complain to a data protection authority without going through us. In the UK that's the Information Commissioner's Office (<a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>). In the EEA it's the supervisory authority in the country where you live or work. There is no lead supervisory authority for HoldOff: the controller is established in the United States, not in any EEA country, so the one-stop-shop mechanism does not apply. You complain to your own national authority.</p>
 
 <h2 id="us-states">For people in California and other US states</h2>
 
@@ -469,7 +469,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 
 <p>Privacy questions, rights requests, or anything on this page: <a href="mailto:hello@smsholdoff.com">hello@smsholdoff.com</a>.</p>
 
-<p>Postal address: <span class="confirm">[[CONFIRM: postal address for the controller — GDPR Art. 13 expects one, and Google Play expects a reachable contact]]</span></p>
+<p>Postal address: <span class="confirm">[[CONFIRM: the postal address to publish &mdash; deferred by Stacy on 2026-08-02. GDPR Art. 13(1)(a) and Google Play both expect a reachable one. A registered-agent address or a PO box satisfies this without putting a home address on a public page]]</span></p>
 
 <footer>
   <p>HoldOff — The Pause That Saves.<br>

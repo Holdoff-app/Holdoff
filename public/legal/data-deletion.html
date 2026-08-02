@@ -251,9 +251,7 @@ footer a{color:var(--link)}
 
 <h3 id="response">How fast we'll respond</h3>
 
-<p>We'll acknowledge your request and confirm when the deletion is done.</p>
-
-<p><span class="confirm">[[CONFIRM: the response-time commitment to publish. Proposal: acknowledge within 7 days, complete within 30 days of verifying the request, which lines up with the GDPR one-month deadline. This is a promise to users, so it needs Stacy's sign-off, not an assumption]]</span></p>
+<p>We'll acknowledge your request within <strong>7 days</strong>, and complete the deletion within <strong>30 days</strong> of confirming it's really you. That matches the one-month deadline the GDPR sets. It is the outside limit, not the target &mdash; one person reads that mailbox and most requests are done the same week.</p>
 
 <p>If you haven't heard back in that window, send the email again — one person reads that mailbox, and things occasionally get buried. Chasing us is not a nuisance.</p>
 
@@ -296,11 +294,11 @@ footer a{color:var(--link)}
 
 <p>Deleting means deleting. There's no shadow copy, no "deactivated" account we quietly hold onto, and nothing of yours gets sold or handed on.</p>
 
-<p>Two narrow exceptions, both boring and both real:</p>
+<p>Two things people usually ask about, answered plainly:</p>
 
 <ul>
-  <li><strong>Backups.</strong> Your account record may persist for a short time in our database provider's routine backups before those roll over. It isn't accessible to us as a live account and it gets overwritten in the normal cycle. <span class="confirm">[[CONFIRM: the backup retention window on the Supabase project holdoff-production — the number of days to publish here]]</span></li>
-  <li><strong>Records of the request itself.</strong> Where the law requires us to show we handled a deletion request properly, we keep a minimal record that the request was made and completed — the date and the fact of it — rather than the content of your account. <span class="confirm">[[CONFIRM: how long to retain deletion-request records, which depends on the governing law that is still open in the Terms]]</span></li>
+  <li><strong>Backups &mdash; there aren't any.</strong> People assume a deleted account lingers in a nightly backup somewhere. Here it doesn't: the database runs on a plan with no backup retention, so there is no restore point holding a copy of your account once it's gone. The flip side is that we can't recover it for you either. Deletion is final.</li>
+  <li><strong>Records of the request itself.</strong> Where the law requires us to show we handled a deletion request properly, we keep a minimal record that the request was made and completed — the date and the fact of it — rather than the content of your account. We keep that record for <strong>two years</strong>, then delete it too.</li>
 </ul>
 
 <p>Beyond that, we may retain something only if we're legally obliged to — for example a specific legal hold or a valid legal request. If that ever applied to you, we'd tell you unless we were legally barred from doing so.</p>
