@@ -28,6 +28,8 @@ object HoldOffApi {
     private const val KEY_TOKEN  = "auth_token"
     private const val KEY_PREMIUM = "is_premium"
     private const val KEY_ATTACHMENT_STYLE = "attachment_style"
+    private const val KEY_EMAIL = "account_email"
+    private const val KEY_ONBOARDED = "seen_onboarding"
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
@@ -54,7 +56,18 @@ object HoldOffApi {
         prefs(ctx).getBoolean(KEY_PREMIUM, false)
 
     fun clearSession(ctx: Context) =
-        prefs(ctx).edit().remove(KEY_TOKEN).remove(KEY_PREMIUM).apply()
+        prefs(ctx).edit().remove(KEY_TOKEN).remove(KEY_PREMIUM).remove(KEY_EMAIL).apply()
+
+    fun getAccountEmail(ctx: Context): String? =
+        prefs(ctx).getString(KEY_EMAIL, null)
+
+    // Onboarding completion is tracked on its own, not inferred from having a token:
+    // an account is optional, so "no token" must not mean "first launch" forever.
+    fun setOnboarded(ctx: Context) =
+        prefs(ctx).edit().putBoolean(KEY_ONBOARDED, true).apply()
+
+    fun hasOnboarded(ctx: Context): Boolean =
+        prefs(ctx).getBoolean(KEY_ONBOARDED, false)
 
     fun saveAttachmentStyle(ctx: Context, quizResult: String) =
         prefs(ctx).edit().putString(KEY_ATTACHMENT_STYLE, quizResult).apply()
@@ -101,6 +114,7 @@ object HoldOffApi {
                 }.getOrDefault("free")
                 val premium = tier != "free" && tier.isNotBlank()
                 savePremium(ctx, premium)
+                prefs(ctx).edit().putString(KEY_EMAIL, email.trim().lowercase()).apply()
 
                 LoginResult(ok = true, isPremium = premium)
 

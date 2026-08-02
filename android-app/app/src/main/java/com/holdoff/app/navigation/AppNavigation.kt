@@ -54,20 +54,21 @@ fun AppNavigation(
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Routes.ONBOARDING) {
+            val context = LocalContext.current
             OnboardingScreen(onFinish = {
-                navController.navigate(Routes.LOGIN) {
+                HoldOffApi.setOnboarded(context)
+                navController.navigate(Routes.HOME) {
                     popUpTo(Routes.ONBOARDING) { inclusive = true }
                 }
             })
         }
 
+        // An account buys premium and the Sadie companion, nothing else. The pause runs
+        // against the analyser with no identity, so login must never block reaching it.
         composable(Routes.LOGIN) {
             LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
-                },
+                onLoginSuccess = { navController.popBackStack() },
+                onDismiss = { navController.popBackStack() },
                 onPremiumChanged = onPremiumChanged
             )
         }
@@ -139,6 +140,8 @@ fun AppNavigation(
                 onInsightsClick = { navController.navigate(Routes.INSIGHTS) { launchSingleTop = true } },
                 onQuizClick = { navController.navigate(Routes.QUIZ) { launchSingleTop = true } },
                 onTrustedContactsClick = { navController.navigate(Routes.TRUSTED) { launchSingleTop = true } },
+                onSignInClick = { navController.navigate(Routes.LOGIN) { launchSingleTop = true } },
+                onSignedOut = { onPremiumChanged(false) },
                 isPremium = isPremium
             )
         }

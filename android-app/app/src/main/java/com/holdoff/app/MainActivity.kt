@@ -31,8 +31,7 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
                     // Read premium status from saved prefs (set during login)
                     var isPremium by remember { mutableStateOf(HoldOffApi.isPremium(context)) }
-                    val hasToken = remember { HoldOffApi.getToken(context) != null }
-                    val isFirstLaunch by remember { mutableStateOf(!hasToken) }
+                    val isFirstLaunch = remember { !HoldOffApi.hasOnboarded(context) }
                     AppNavigation(
                         navController = navController,
                         startDestination = if (isFirstLaunch) Routes.ONBOARDING else Routes.HOME,

@@ -25,9 +25,13 @@ import com.holdoff.app.ui.components.SadieSize
 import com.holdoff.app.ui.theme.*
 import kotlinx.coroutines.launch
 
-/** Sign In / Sign Up / Forgot Password — all in one. Calls real backend. */
+/** Sign In / Sign Up / Forgot Password — all in one. Optional: the pause works signed out. */
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, onPremiumChanged: (Boolean) -> Unit = {}) {
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    onDismiss: () -> Unit = {},
+    onPremiumChanged: (Boolean) -> Unit = {}
+) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -176,14 +180,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onPremiumChanged: (Boolean) -> Unit 
                 }
             }
 
-            if (!forgotMode) {
-                Spacer(Modifier.height(16.dp))
-                OutlinedButton(
-                    onClick = { /* Google SSO — coming soon */ },
-                    modifier = Modifier.fillMaxWidth().height(52.dp)
-                ) {
-                    Text("  Continue with Google", color = OnDarkText)
-                }
+            Spacer(Modifier.height(16.dp))
+            TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                Text("Skip — use HoldOff without an account", color = SoftLavender, fontSize = 14.sp)
             }
 
             Spacer(Modifier.height(24.dp))

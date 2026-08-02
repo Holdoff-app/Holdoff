@@ -21,17 +21,24 @@ import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.holdoff.app.data.network.HoldOffApi
 import com.holdoff.app.ui.theme.*
 
 @Composable
@@ -42,11 +49,14 @@ fun ProfileScreen(
     onInsightsClick: () -> Unit = {},
     onQuizClick: () -> Unit = {},
     onTrustedContactsClick: () -> Unit = {},
+    onSignInClick: () -> Unit = {},
+    onSignedOut: () -> Unit = {},
     isPremium: Boolean = false
 ) {
-    // TODO: load from auth/DataStore
-    val userName = "Stacy Ann Martin"
-    val userEmail = "stacyfoster30@gmail.com"
+    val context = LocalContext.current
+    var accountEmail by remember { mutableStateOf(HoldOffApi.getAccountEmail(context)) }
+    val userEmail = accountEmail ?: "Not signed in"
+    val userName = accountEmail?.substringBefore('@') ?: "You"
 
     Scaffold(
         containerColor = MidnightNavy,
@@ -83,7 +93,6 @@ fun ProfileScreen(
             Spacer(Modifier.height(16.dp))
             Text(userName, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
             Text(userEmail, color = OnDarkTextMuted)
-            Text("User ID: holdoff_stacy_001", color = OnDarkTextMuted, fontSize = 11.sp)
             Spacer(Modifier.height(12.dp))
 
             if (isPremium) {
@@ -183,7 +192,14 @@ fun ProfileScreen(
                 Triple(Icons.Default.People, "Affiliate Program") { /* TODO */ },
                 Triple(Icons.Default.Handshake, "Partner With Us") { /* TODO */ },
                 Triple(Icons.Default.Description, "Terms & Privacy") { /* TODO */ },
-                Triple(Icons.AutoMirrored.Filled.Logout, "Sign Out") { /* TODO */ }
+                if (accountEmail == null)
+                    Triple(Icons.Default.Login, "Sign In", onSignInClick)
+                else
+                    Triple(Icons.AutoMirrored.Filled.Logout, "Sign Out") {
+                        HoldOffApi.clearSession(context)
+                        accountEmail = null
+                        onSignedOut()
+                    }
             )
             Card(
                 colors = CardDefaults.cardColors(containerColor = SurfaceVariant),
