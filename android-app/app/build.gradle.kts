@@ -18,6 +18,23 @@ android {
         versionCode = 3
         versionName = "1.2.0"
         vectorDrawables { useSupportLibrary = true }
+
+        // Injected at build time from the CI secrets store, never committed. An empty key is a
+        // valid build: HoldOffApi.isAuthConfigured goes false and the app hides the account
+        // screens instead of offering a sign-up that cannot work. The pause needs no account.
+        //
+        // The anon key is not a secret in the usual sense — it ships inside every APK and is
+        // meant to be public. Everything it can reach is bounded by the row-level security
+        // policies in supabase/migrations. It is kept out of the repo so that rotating the
+        // project does not mean rewriting git history.
+        buildConfigField(
+            "String", "SUPABASE_URL",
+            "\"${System.getenv("SUPABASE_URL") ?: ""}\""
+        )
+        buildConfigField(
+            "String", "SUPABASE_ANON_KEY",
+            "\"${System.getenv("SUPABASE_ANON_KEY") ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -44,7 +61,8 @@ android {
         )
     }
 
-    buildFeatures { compose = true }
+    // buildConfig is off by default in AGP 8; the buildConfigField entries above need it on.
+    buildFeatures { compose = true; buildConfig = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.3" }
 
     packaging {

@@ -43,6 +43,10 @@ fun LoginScreen(
     var errorMsg by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
     var successMsg by remember { mutableStateOf<String?>(null) }
+    // HoldOff is 18+. That was a term in the documents with nothing in the app enforcing it;
+    // this is the enforcement. Self-declared, which is the normal standard for an app that
+    // collects no age data, but it has to be an explicit act rather than an assumption.
+    var confirmedAdult by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -112,6 +116,36 @@ fun LoginScreen(
                 }
             }
 
+            if (isSignUp) {
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = confirmedAdult,
+                        onCheckedChange = { confirmedAdult = it; errorMsg = null },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = GlowPurple, uncheckedColor = SoftLavender,
+                            checkmarkColor = OnDarkText
+                        )
+                    )
+                    Text(
+                        "I am 18 or older.",
+                        color = OnDarkText, fontSize = 13.sp
+                    )
+                }
+                Spacer(Modifier.height(4.dp))
+                // Saying this plainly costs a few sign-ups and avoids a fair complaint: right
+                // now an account stores an email and unlocks nothing, because premium cannot
+                // be bought yet.
+                Text(
+                    "An account isn’t needed for the pause, and there’s nothing to unlock yet — " +
+                        "it only saves your email so premium can be restored later.",
+                    color = OnDarkTextMuted, fontSize = 12.sp
+                )
+            }
+
             // Error / success messages
             errorMsg?.let {
                 Spacer(Modifier.height(8.dp))
@@ -132,34 +166,41 @@ fun LoginScreen(
                         successMsg = null
                         when {
                             forgotMode -> {
-                                // No password-reset service exists yet. This used to claim a
-                                // reset link had been sent, which was false — a locked-out user
-                                // would wait for mail that was never going to arrive. Say the
-                                // true thing and give them a route that a human actually reads.
-                                errorMsg = "Password reset isn't running yet. Email " +
-                                    "hello@smsholdoff.com and it will be handled by hand."
+                                val result = HoldOffApi.requestPasswordReset(email)
+                                // Supabase answers 200 whether or not the address is registered,
+                                // so this wording must not imply the account exists.
+                                if (result.ok) {
+                                    successMsg = "If that email has an account, a reset link " +
+                                        "is on its way."
+                                } else {
+                                    errorMsg = result.error ?: "Couldn’t send the reset email."
+                                }
                                 isLoading = false
                             }
                             isSignUp -> {
-                                // For sign-up: call login endpoint; backend handles upsert on free tier
-                                val result = HoldOffApi.login(ctx, email, password)
-                                if (result.ok) {
-                                    onPremiumChanged(result.isPremium)
-                                    isLoading = false
-                                    onLoginSuccess()
-                                } else {
-                                    errorMsg = result.error ?: "Sign up failed. Try again."
-                                    isLoading = false
+                                val result = HoldOffApi.signUp(ctx, email, password)
+                                when {
+                                    result.needsEmailConfirmation -> {
+                                        successMsg = "Account created. Check your email for a " +
+                                            "confirmation link, then sign in."
+                                        isSignUp = false
+                                    }
+                                    result.ok -> {
+                                        onPremiumChanged(result.isPremium)
+                                        onLoginSuccess()
+                                    }
+                                    else -> errorMsg = result.error ?: "Sign up failed. Try again."
                                 }
+                                isLoading = false
                             }
                             else -> {
-                                val result = HoldOffApi.login(ctx, email, password)
+                                val result = HoldOffApi.signIn(ctx, email, password)
                                 if (result.ok) {
                                     onPremiumChanged(result.isPremium)
                                     isLoading = false
                                     onLoginSuccess()
                                 } else {
-                                    errorMsg = result.error ?: "Sign in failed. Check your email and password."
+                                    errorMsg = result.error ?: "Check your email and password."
                                     isLoading = false
                                 }
                             }
@@ -168,7 +209,9 @@ fun LoginScreen(
                 },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple),
-                enabled = !isLoading && email.isNotBlank() && (forgotMode || password.isNotBlank())
+                enabled = !isLoading && email.isNotBlank() &&
+                    (forgotMode || password.isNotBlank()) &&
+                    (!isSignUp || confirmedAdult)
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), color = OnDarkText, strokeWidth = 2.dp)

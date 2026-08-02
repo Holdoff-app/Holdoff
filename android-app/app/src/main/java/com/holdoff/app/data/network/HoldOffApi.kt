@@ -2,6 +2,7 @@ package com.holdoff.app.data.network
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.holdoff.app.BuildConfig
 import com.holdoff.app.data.model.Verdict
 import com.holdoff.app.data.model.VerdictResult
 import kotlinx.coroutines.Dispatchers
@@ -15,13 +16,16 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 /**
- * Thin OkHttp wrapper for shouldiholdoff.live API.
- * – login()         → POST /api/auth/login, extracts JWT from Set-Cookie, stores in prefs
- * – companionChat() → POST /api/companion/chat with Bearer token
+ * Thin OkHttp wrapper for the two services HoldOff actually talks to.
+ *
+ * – Supabase Auth   → sign-up, sign-in, password reset, and the premium flag on the profile row
+ * – the PHP proxy   → verdicts and companion chat, keeping the Gemini key off the device
+ *
+ * There is no HoldOff-owned application server. Anything that used to point at
+ * shouldiholdoff.live was pointing at nothing.
  */
 object HoldOffApi {
 
-    private const val BASE_URL   = "https://shouldiholdoff.live"
     /** Separate deployment: the PHP proxy that keeps the Gemini key server-side. */
     private const val ANALYZE_URL = "https://api.smsholdoff.com/api/analyze"
     private const val PREFS_NAME = "holdoff_prefs"
@@ -77,51 +81,162 @@ object HoldOffApi {
 
     // ── auth ─────────────────────────────────────────────────────────────────
 
-    data class LoginResult(val ok: Boolean, val error: String? = null, val isPremium: Boolean = false)
+    /**
+     * Accounts run on Supabase Auth, over its REST API rather than the Kotlin SDK — this is
+     * three POSTs and one GET, and OkHttp is already in the build.
+     *
+     * This replaced a call to shouldiholdoff.live, which has been dead for some time, so every
+     * sign-in attempt in every previously shipped build failed at the network.
+     *
+     * An account is optional and currently carries nothing but premium entitlement, which
+     * cannot yet be purchased. The pause works signed out and should stay that way.
+     */
+    private val SUPABASE_URL = BuildConfig.SUPABASE_URL.trimEnd('/')
+    private val SUPABASE_ANON_KEY = BuildConfig.SUPABASE_ANON_KEY
 
-    suspend fun login(ctx: Context, email: String, password: String): LoginResult =
+    /**
+     * False when no Supabase config was injected at build time. Account screens must check this
+     * and say accounts are unavailable, rather than offering a sign-up that cannot succeed.
+     */
+    val isAuthConfigured: Boolean
+        get() = SUPABASE_URL.isNotBlank() && SUPABASE_ANON_KEY.isNotBlank()
+
+    data class LoginResult(
+        val ok: Boolean,
+        val error: String? = null,
+        val isPremium: Boolean = false,
+        /** Sign-up worked, but Supabase is waiting for the user to click the emailed link. */
+        val needsEmailConfirmation: Boolean = false
+    )
+
+    private const val NOT_CONFIGURED =
+        "Accounts aren't switched on in this build. The pause works without one."
+
+    private fun authRequest(path: String, payload: JSONObject): Request =
+        Request.Builder()
+            .url("$SUPABASE_URL/auth/v1/$path")
+            .addHeader("apikey", SUPABASE_ANON_KEY)
+            .post(payload.toString().toRequestBody(JSON))
+            .build()
+
+    /** Supabase reports failures under a different key depending on which endpoint answered. */
+    private fun authError(bodyStr: String, fallback: String): String {
+        val json = runCatching { JSONObject(bodyStr) }.getOrNull() ?: return fallback
+        for (key in listOf("error_description", "msg", "message", "error")) {
+            val v = json.optString(key)
+            if (v.isNotBlank()) return v
+        }
+        return fallback
+    }
+
+    private fun storeSession(ctx: Context, email: String, token: String?, premium: Boolean) {
+        if (token != null) saveToken(ctx, token)
+        savePremium(ctx, premium)
+        prefs(ctx).edit().putString(KEY_EMAIL, email).apply()
+    }
+
+    suspend fun signUp(ctx: Context, email: String, password: String): LoginResult =
         withContext(Dispatchers.IO) {
+            if (!isAuthConfigured) return@withContext LoginResult(false, NOT_CONFIGURED)
+            val addr = email.trim().lowercase()
             try {
-                val body = JSONObject().apply {
-                    put("email", email.trim().lowercase())
-                    put("password", password)
-                }.toString().toRequestBody(JSON)
-
-                val request = Request.Builder()
-                    .url("$BASE_URL/api/auth/login")
-                    .post(body)
-                    .build()
-
-                val response = client.newCall(request).execute()
-                val bodyStr  = response.body?.string() ?: "{}"
+                val payload = JSONObject().put("email", addr).put("password", password)
+                val response = client.newCall(authRequest("signup", payload)).execute()
+                val bodyStr = response.body?.string() ?: "{}"
 
                 if (!response.isSuccessful) {
-                    val msg = runCatching { JSONObject(bodyStr).getString("error") }.getOrDefault("Login failed")
-                    return@withContext LoginResult(ok = false, error = msg)
+                    return@withContext LoginResult(
+                        false, authError(bodyStr, "Couldn’t create that account.")
+                    )
                 }
 
-                // Extract JWT from Set-Cookie header (holdoff_token=<jwt>; ...)
-                val token = response.headers("Set-Cookie")
-                    .firstOrNull { it.startsWith("holdoff_token=") }
-                    ?.substringAfter("holdoff_token=")
-                    ?.substringBefore(";")
+                // A session comes back only when email confirmation is switched off for the
+                // project. Otherwise the account exists but cannot be used until confirmed —
+                // the user has to be told that, or they will assume they are signed in.
+                val token = runCatching { JSONObject(bodyStr).optString("access_token") }
+                    .getOrNull()?.takeIf { it.isNotBlank() }
 
-                if (token != null) saveToken(ctx, token)
-
-                // Read subscription tier from response body
-                val tier = runCatching {
-                    JSONObject(bodyStr).getJSONObject("user").getString("subscription_tier")
-                }.getOrDefault("free")
-                val premium = tier != "free" && tier.isNotBlank()
-                savePremium(ctx, premium)
-                prefs(ctx).edit().putString(KEY_EMAIL, email.trim().lowercase()).apply()
-
-                LoginResult(ok = true, isPremium = premium)
-
+                if (token == null) {
+                    LoginResult(ok = true, needsEmailConfirmation = true)
+                } else {
+                    val premium = fetchPremium(token)
+                    storeSession(ctx, addr, token, premium)
+                    LoginResult(ok = true, isPremium = premium)
+                }
             } catch (e: Exception) {
-                LoginResult(ok = false, error = e.message ?: "Network error")
+                LoginResult(false, e.message ?: "Network error")
             }
         }
+
+    suspend fun signIn(ctx: Context, email: String, password: String): LoginResult =
+        withContext(Dispatchers.IO) {
+            if (!isAuthConfigured) return@withContext LoginResult(false, NOT_CONFIGURED)
+            val addr = email.trim().lowercase()
+            try {
+                val payload = JSONObject().put("email", addr).put("password", password)
+                val response = client
+                    .newCall(authRequest("token?grant_type=password", payload)).execute()
+                val bodyStr = response.body?.string() ?: "{}"
+
+                if (!response.isSuccessful) {
+                    return@withContext LoginResult(
+                        false, authError(bodyStr, "Check your email and password.")
+                    )
+                }
+
+                val token = runCatching { JSONObject(bodyStr).optString("access_token") }
+                    .getOrNull()?.takeIf { it.isNotBlank() }
+                    ?: return@withContext LoginResult(false, "Signed in but got no session back.")
+
+                val premium = fetchPremium(token)
+                storeSession(ctx, addr, token, premium)
+                LoginResult(ok = true, isPremium = premium)
+            } catch (e: Exception) {
+                LoginResult(false, e.message ?: "Network error")
+            }
+        }
+
+    /**
+     * Sends the real reset email. Supabase answers 200 whether or not the address exists, which
+     * is deliberate — it stops the endpoint being used to test whether someone has an account.
+     */
+    suspend fun requestPasswordReset(email: String): LoginResult =
+        withContext(Dispatchers.IO) {
+            if (!isAuthConfigured) return@withContext LoginResult(false, NOT_CONFIGURED)
+            try {
+                val payload = JSONObject().put("email", email.trim().lowercase())
+                val response = client.newCall(authRequest("recover", payload)).execute()
+                if (response.isSuccessful) LoginResult(ok = true)
+                else LoginResult(
+                    false,
+                    authError(response.body?.string() ?: "{}", "Couldn’t send the reset email.")
+                )
+            } catch (e: Exception) {
+                LoginResult(false, e.message ?: "Network error")
+            }
+        }
+
+    /**
+     * Reads entitlement from the user's own profile row. Row-level security means this returns
+     * their row or nothing, so no filter is needed here.
+     *
+     * Any failure is treated as "not premium". Since premium cannot be bought, that is the safe
+     * direction to fail: nobody loses something they paid for.
+     */
+    private fun fetchPremium(token: String): Boolean = runCatching {
+        val request = Request.Builder()
+            .url("$SUPABASE_URL/rest/v1/profiles?select=is_premium&limit=1")
+            .addHeader("apikey", SUPABASE_ANON_KEY)
+            .addHeader("Authorization", "Bearer $token")
+            .get()
+            .build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) return@runCatching false
+            val rows = JSONArray(response.body?.string() ?: "[]")
+            if (rows.length() == 0) false
+            else rows.getJSONObject(0).optBoolean("is_premium", false)
+        }
+    }.getOrDefault(false)
 
     // ── companion chat ───────────────────────────────────────────────────────
 
@@ -131,7 +246,7 @@ object HoldOffApi {
      * Companion chat.
      *
      * Runs on [ANALYZE_URL], the same prompt→text proxy the verdict uses, because the
-     * companion endpoint on [BASE_URL] has no server behind it. That means no account is
+     * old companion endpoint had no server behind it. That means no account is
      * needed to talk to Sadie, and no conversation is stored anywhere off the device.
      */
     suspend fun companionChat(
@@ -193,7 +308,7 @@ object HoldOffApi {
      * Analyses a draft against recent thread context.
      *
      * Hits the PHP proxy on [ANALYZE_URL], which holds the Gemini key server-side and
-     * answers `{"prompt": "..."}` with `{"text": "..."}`. Distinct from [BASE_URL], which
+     * answers `{"prompt": "..."}` with `{"text": "..."}`. Distinct from Supabase, which
      * serves auth and companion chat from a different deployment.
      *
      * Returns an error rather than a placeholder when anything fails. A fabricated verdict
