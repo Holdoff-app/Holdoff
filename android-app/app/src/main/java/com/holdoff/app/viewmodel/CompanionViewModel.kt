@@ -44,17 +44,19 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val ctx = application.applicationContext
 
-    private val savedStyle: String = run {
-        val quizResult = HoldOffApi.getAttachmentStyle(ctx)
-        QUIZ_TO_COMPANION_STYLE[quizResult] ?: "fearful_avoidant"
-    }
+    /**
+     * The user's own attachment style, from the quiz. Null until they take it.
+     *
+     * Distinct from [CompanionUiState.activeStyle], which is how the *companion* shows up.
+     * These were the same value before, so the companion's persona was being sent to the model
+     * as a description of the user.
+     */
+    private val userStyle: String? = QUIZ_TO_COMPANION_STYLE[HoldOffApi.getAttachmentStyle(ctx)]
 
     private val _state = MutableStateFlow(
         CompanionUiState(
-            activeStyle = savedStyle,
-            activeStyleLabel = STYLE_LABELS[savedStyle]?.let {
-                if (savedStyle == "fearful_avoidant") "$it · core" else it
-            } ?: "fearful avoidant · core",
+            activeStyle = coreStyle("sadie"),
+            activeStyleLabel = styleLabel(coreStyle("sadie"), "sadie"),
             messages = listOf(
                 ChatMessage(
                     text = "Hey love. I\u2019m Sadie. \uD83D\uDC9C  I see patterns in your conversations that you might be missing. What\u2019s going on?",
@@ -96,11 +98,13 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
                 soulName = soulName,
                 message = text,
                 history = history,
-                attachmentStyle = _state.value.activeStyle
+                attachmentStyle = userStyle
             )
 
-            if (result.reply != null) {
-                _state.value = _state.value.copy(
+            // A failure must never be dressed up as something the companion said. Showing
+            // "lost my train of thought" made a dead backend look like a working chat.
+            _state.value = if (result.reply != null) {
+                _state.value.copy(
                     messages = _state.value.messages + ChatMessage(
                         text = result.reply,
                         isFromCompanion = true
@@ -108,23 +112,27 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
                     isTyping = false
                 )
             } else {
-                val fallback = when (soulName) {
-                    "Dan"  -> "Something got in the way. Try again?"
-                    else   -> "Lost my train of thought \u2014 try again?"
-                }
-                _state.value = _state.value.copy(
-                    messages = _state.value.messages + ChatMessage(
-                        text = fallback,
-                        isFromCompanion = true
-                    ),
+                _state.value.copy(
                     isTyping = false,
-                    errorMessage = result.error
+                    errorMessage = result.error ?: "Could not reach $soulName"
                 )
             }
         }
     }
 
     fun updateInput(text: String) { _state.value = _state.value.copy(inputText = text) }
+
+    fun clearError() { _state.value = _state.value.copy(errorMessage = null) }
+
+    /** Re-send the last thing the user said, after a failure. */
+    fun retryLast() {
+        val last = _state.value.messages.lastOrNull { !it.isFromCompanion } ?: return
+        _state.value = _state.value.copy(
+            messages = _state.value.messages.filterNot { it.id == last.id },
+            errorMessage = null
+        )
+        sendMessage(last.text)
+    }
 
     fun switchCompanion(id: String) {
         val style = coreStyle(id)

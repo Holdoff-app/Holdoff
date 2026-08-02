@@ -1,5 +1,7 @@
 package com.holdoff.app.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,12 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.Handshake
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
@@ -39,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.ui.theme.*
 
 @Composable
@@ -57,6 +56,13 @@ fun ProfileScreen(
     var accountEmail by remember { mutableStateOf(HoldOffApi.getAccountEmail(context)) }
     val userEmail = accountEmail ?: "Not signed in"
     val userName = accountEmail?.substringBefore('@') ?: "You"
+    // Neutral dot rather than a letter when we don't know who this is — an initial we invented
+    // would be someone else's.
+    val avatarInitial = accountEmail?.firstOrNull { it.isLetterOrDigit() }?.uppercaseChar()?.toString() ?: "·"
+
+    val verdictCount = remember { AppPrefs.verdictCount(context) }
+    val holdCount = remember { AppPrefs.holdCount(context) }
+    val daysActive = remember { AppPrefs.daysActive(context) }
 
     Scaffold(
         containerColor = MidnightNavy,
@@ -87,7 +93,7 @@ fun ProfileScreen(
                     .background(Brush.radialGradient(listOf(GlowPurple, VelvetPurple, DeepPurple))),
                 contentAlignment = Alignment.Center
             ) {
-                Text(userName.firstOrNull()?.toString() ?: "S",
+                Text(avatarInitial,
                     fontSize = 36.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
             }
             Spacer(Modifier.height(16.dp))
@@ -104,11 +110,11 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("\u2728", fontSize = 14.sp)
-                    Text(if (isPremium) "Lifetime Founder ✨" else "Premium Member", color = GlowPurple, fontWeight = FontWeight.SemiBold)
+                    Text("Premium", color = GlowPurple, fontWeight = FontWeight.SemiBold)
                 }
             } else {
                 Button(onClick = onSubscribeClick, colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple)) {
-                    Text("Subscribe Now \u2728")
+                    Text("See what's coming in Premium \u2728")
                 }
             }
 
@@ -123,16 +129,16 @@ fun ProfileScreen(
                     modifier = Modifier.fillMaxWidth().padding(20.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    StatItem("0", "Verdicts")
-                    StatItem("0", "Hold Offs")
-                    StatItem("0", "Days Active")
+                    StatItem(verdictCount.toString(), "Verdicts")
+                    StatItem(holdCount.toString(), "Hold Offs")
+                    StatItem(daysActive.toString(), "Days Active")
                 }
             }
 
             Spacer(Modifier.height(24.dp))
 
 
-            // Danny's Gift – the origin story
+            // Danny's words – the origin story
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = VelvetPurple.copy(alpha = 0.15f)
@@ -144,7 +150,7 @@ fun ProfileScreen(
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("\uD83C\uDF81", fontSize = 20.sp)
-                        Text("Gift HoldOff", fontWeight = FontWeight.Bold, color = OnDarkText, fontSize = 16.sp)
+                        Text("Why HoldOff exists", fontWeight = FontWeight.Bold, color = OnDarkText, fontSize = 16.sp)
                     }
                     Spacer(Modifier.height(8.dp))
                     Text(
@@ -162,21 +168,6 @@ fun ProfileScreen(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        "Give someone you love the gift of clarity. Send them HoldOff.",
-                        color = OnDarkTextMuted,
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    Button(
-                        onClick = onSubscribeClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Send a Gift \u2728")
-                    }
                 }
             }
 
@@ -187,11 +178,24 @@ fun ProfileScreen(
                 Triple(Icons.Default.Quiz, "Attachment Style Quiz", onQuizClick),
                 Triple(Icons.Default.Shield, "Trusted Contacts", onTrustedContactsClick),
                 Triple(Icons.Default.Star, "Insights", onInsightsClick),
-                Triple(Icons.AutoMirrored.Filled.Send, "Suggestion Box") { /* TODO: open form */ },
-                Triple(Icons.Default.CardGiftcard, "Gift HoldOff", onSubscribeClick),
-                Triple(Icons.Default.People, "Affiliate Program") { /* TODO */ },
-                Triple(Icons.Default.Handshake, "Partner With Us") { /* TODO */ },
-                Triple(Icons.Default.Description, "Terms & Privacy") { /* TODO */ },
+                Triple(Icons.AutoMirrored.Filled.Send, "Suggestion Box") {
+                    // Plenty of devices have no mail app at all; a dead menu row beats a crash.
+                    runCatching {
+                        context.startActivity(
+                            Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:hello@smsholdoff.com"))
+                                .putExtra(Intent.EXTRA_SUBJECT, "HoldOff suggestion")
+                        )
+                    }
+                    Unit
+                },
+                Triple(Icons.Default.Description, "Terms & Privacy") {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://smsholdoff.com/terms"))
+                        )
+                    }
+                    Unit
+                },
                 if (accountEmail == null)
                     Triple(Icons.Default.Login, "Sign In", onSignInClick)
                 else

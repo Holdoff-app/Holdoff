@@ -7,6 +7,7 @@ import com.holdoff.app.data.model.Message
 import com.holdoff.app.data.model.Verdict
 import com.holdoff.app.data.model.VerdictResult
 import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.data.repository.SMSRepository
 import com.holdoff.app.data.sms.DefaultSmsRole
 import com.holdoff.app.data.sms.SmsSender
@@ -108,12 +109,16 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
                 verdict == null -> _state.value = _state.value.copy(
                     gate = SendGate.Unchecked(result.error ?: "Could not reach the analyser")
                 )
-                verdict.verdict == Verdict.HOLD_OFF -> _state.value = _state.value.copy(
-                    gate = SendGate.Held(
-                        verdict = verdict,
-                        holdUntilMillis = System.currentTimeMillis() + HOLD_DURATION_MILLIS
+                verdict.verdict == Verdict.HOLD_OFF -> {
+                    AppPrefs.recordHold(getApplication())
+                    val holdMillis = AppPrefs.holdMinutes(getApplication()) * 60_000L
+                    _state.value = _state.value.copy(
+                        gate = SendGate.Held(
+                            verdict = verdict,
+                            holdUntilMillis = System.currentTimeMillis() + holdMillis
+                        )
                     )
-                )
+                }
                 else -> deliver(threadId)
             }
         }
@@ -144,12 +149,14 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
         val transcript = _state.value.messages.map {
             (if (it.isOutgoing) "You: " else "Them: ") + it.body
         }
-        return HoldOffApi.analyzeDraft(
+        val result = HoldOffApi.analyzeDraft(
             threadId = threadId,
             recentMessages = transcript,
             draft = draft,
             attachmentStyle = HoldOffApi.getAttachmentStyle(getApplication())
         )
+        if (result.verdict != null) AppPrefs.recordVerdict(getApplication())
+        return result
     }
 
     private suspend fun deliver(threadId: String) {
@@ -180,11 +187,4 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private companion object {
-        /**
-         * Unvalidated. Long enough to break the impulse, short enough that a user waits it out
-         * rather than uninstalls. Needs real usage data and should become a user setting.
-         */
-        const val HOLD_DURATION_MILLIS = 10 * 60 * 1000L
-    }
 }

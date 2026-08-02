@@ -10,28 +10,40 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.ui.theme.*
 
 /**
- * Relationship Insights — pattern tracking, attachment analysis,
- * and per-contact behavioral data. Tied to real conversations.
+ * Insights - the counts HoldOff actually keeps about this user, plus general
+ * information about texting patterns that is never presented as being about them.
  *
- * \u26A0\uFE0F Disclaimer: Not therapy. Not diagnosis. Not a substitute for professional care.
+ * Nothing here is inferred from the content of anyone's conversations, because
+ * nothing in the app computes that.
  */
+// isPremium is deliberately unused: everything on this screen is either the user's own
+// counters or general reading, and none of it is worth putting behind a paywall.
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun InsightsScreen(
     onBack: () -> Unit,
     isPremium: Boolean = false
 ) {
+    val ctx = LocalContext.current
+    val verdictCount = remember { AppPrefs.verdictCount(ctx) }
+    val holdCount = remember { AppPrefs.holdCount(ctx) }
+    val daysActive = remember { AppPrefs.daysActive(ctx) }
+
     Scaffold(
         containerColor = MidnightNavy,
         topBar = {
@@ -58,7 +70,7 @@ fun InsightsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "\u26A0\uFE0F HoldOff is not therapy, not a diagnosis, and not a substitute for professional care. These insights are pattern observations from your real conversations.",
+                    "\u26A0\uFE0F HoldOff is not therapy, not a diagnosis, and not a substitute for professional care.",
                     color = OnDarkTextMuted,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -69,76 +81,97 @@ fun InsightsScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Your Patterns section
-            Text("Your Patterns", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
-            Spacer(Modifier.height(4.dp))
-            Text("Based on your real conversations", color = OnDarkTextMuted, fontSize = 13.sp)
-            Spacer(Modifier.height(20.dp))
+            if (verdictCount == 0) {
+                // Nothing has been analysed yet, so there is nothing true to show.
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Brush.verticalGradient(listOf(SurfaceVariant, DeepPurple.copy(alpha = 0.5f))))
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("\uD83C\uDF19", fontSize = 48.sp)
+                        Spacer(Modifier.height(12.dp))
+                        Text("Nothing to show yet", color = OnDarkText, fontWeight = FontWeight.SemiBold)
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "Once you have run a few messages through the pause, your counts will show up here. HoldOff only shows numbers it actually kept - it will never guess at them.",
+                            color = OnDarkTextMuted,
+                            fontSize = 13.sp,
+                            lineHeight = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
+                Text("Your Numbers", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
+                Spacer(Modifier.height(4.dp))
+                Text("Counted on this phone, from your own use of the app", color = OnDarkTextMuted, fontSize = 13.sp)
+                Spacer(Modifier.height(20.dp))
 
-            // Response patterns card
-            InsightCard(
-                title = "Response Timing",
-                emoji = "\u23F1\uFE0F",
-                description = "How quickly you respond vs. how quickly they respond. Patterns in reply speed reveal emotional states."
-            )
-            Spacer(Modifier.height(12.dp))
+                StatRow(
+                    value = verdictCount.toString(),
+                    label = if (verdictCount == 1) "message checked" else "messages checked",
+                    detail = "Drafts you have run through HoldOff."
+                )
+                Spacer(Modifier.height(12.dp))
+                StatRow(
+                    value = holdCount.toString(),
+                    label = if (holdCount == 1) "time you held off" else "times you held off",
+                    detail = "Times you decided to wait instead of sending."
+                )
+                Spacer(Modifier.height(12.dp))
+                StatRow(
+                    value = daysActive.toString(),
+                    label = if (daysActive == 1) "day with HoldOff" else "days with HoldOff",
+                    detail = "Counted from the first message you checked."
+                )
 
-            InsightCard(
-                title = "Attachment Pattern",
-                emoji = "\uD83E\uDDE0",
-                description = "Your observed attachment behaviors across conversations — anxious spikes, avoidant pullbacks, secure moments."
-            )
-            Spacer(Modifier.height(12.dp))
-
-            InsightCard(
-                title = "Emotional Trends",
-                emoji = "\uD83D\uDCC8",
-                description = "Mood trajectory over time. Sadie tracks tone shifts, escalation patterns, and de-escalation moments."
-            )
-            Spacer(Modifier.height(12.dp))
-
-            InsightCard(
-                title = "Communication Health",
-                emoji = "\uD83D\uDCAC",
-                description = "Message balance, initiation patterns, conversation depth vs. surface-level exchanges."
-            )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    "These counts are the only thing on this screen measured from your own use. Everything below is general reading, not a read on you.",
+                    color = OnDarkTextMuted,
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
 
             Spacer(Modifier.height(32.dp))
 
-            // Per-contact insights placeholder
-            Text("Per-Contact Insights", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
-            Spacer(Modifier.height(8.dp))
+            // General reading. Not tied to this user's data, and labelled that way on purpose.
+            Text("Worth Knowing", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
+            Spacer(Modifier.height(4.dp))
             Text(
-                "Sadie learns patterns specific to each conversation. As you use HoldOff, insights will appear here for each contact.",
+                "General notes on how people text when they are activated. This is background reading, not a read on you.",
                 color = OnDarkTextMuted,
                 fontSize = 13.sp,
-                textAlign = TextAlign.Center,
-                lineHeight = 20.sp
+                lineHeight = 18.sp,
+                textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
 
-            // Empty state
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Brush.verticalGradient(listOf(SurfaceVariant, DeepPurple.copy(alpha = 0.5f))))
-                    .padding(32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("\uD83D\uDD2E", fontSize = 48.sp)
-                    Spacer(Modifier.height(12.dp))
-                    Text("Patterns building\u2026", color = OnDarkText, fontWeight = FontWeight.SemiBold)
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "Use HoldOff with your real messages and Sadie will start surfacing insights here.",
-                        color = OnDarkTextMuted,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            InsightCard(
+                title = "The anxious pull",
+                emoji = "\uD83C\uDF0A",
+                description = "Waiting for a reply can feel unbearable, so the messages stack up - a follow-up, then an explanation, then an apology for the follow-up. The urge to send usually peaks and then drops on its own."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            InsightCard(
+                title = "The avoidant pull",
+                emoji = "\uD83D\uDEAA",
+                description = "The other direction is going quiet: closing the app, leaving it on read, deciding it is easier to say nothing. The distance often gets read as coldness even when it is just overwhelm."
+            )
+            Spacer(Modifier.height(12.dp))
+
+            InsightCard(
+                title = "Why waiting works",
+                emoji = "\u23F3",
+                description = "A strong feeling and a good decision rarely arrive at the same moment. Putting time between the two is the whole idea behind the pause."
+            )
 
             Spacer(Modifier.height(24.dp))
 
@@ -149,15 +182,37 @@ fun InsightsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("\u2699\uFE0F Customize in Settings", color = OnDarkText, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Text("\u2699\uFE0F In Settings", color = OnDarkText, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Adjust your launch-condition categories, pattern tracking preferences, and feedback frequency in Settings.",
+                        "You can set how long the pause lasts — 1, 5, 10 or 30 minutes.",
                         color = OnDarkTextMuted,
                         fontSize = 12.sp,
                         lineHeight = 18.sp
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatRow(value: String, label: String, detail: String) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = SurfaceVariant),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(value, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = GlowPurple)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(label, fontWeight = FontWeight.SemiBold, color = OnDarkText, fontSize = 15.sp)
+                Spacer(Modifier.height(2.dp))
+                Text(detail, color = OnDarkTextMuted, fontSize = 12.sp, lineHeight = 17.sp)
             }
         }
     }

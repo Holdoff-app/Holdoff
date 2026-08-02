@@ -1,7 +1,9 @@
 package com.holdoff.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -77,10 +79,9 @@ fun AppNavigation(
             HomeScreen(
                 onThreadClick = { id -> navController.navigate(Routes.threadDetail(id)) },
                 onCompanionClick = { navController.navigate(Routes.COMPANION) },
-                onStoryClick = {
-                    if (isPremium) navController.navigate(Routes.PREMIUM_STORY)
-                    else navController.navigate(Routes.PAYWALL)
-                },
+                // Not gated. Premium cannot currently be bought, so anything behind the
+                // paywall is unreachable, and the story is the reason the app exists.
+                onStoryClick = { navController.navigate(Routes.PREMIUM_STORY) },
                 onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
@@ -102,8 +103,14 @@ fun AppNavigation(
             arguments = listOf(navArgument("threadId") { type = NavType.StringType })
         ) { backStack ->
             val id = backStack.arguments?.getString("threadId") ?: return@composable
+            // Share the thread's ViewModel rather than creating a second one. A fresh instance
+            // has no draft, so the verdict screen had nothing to analyse and span forever.
+            val threadEntry = remember(backStack) {
+                navController.getBackStackEntry(Routes.threadDetail(id))
+            }
             VerdictScreen(
                 threadId = id,
+                vm = viewModel(threadEntry),
                 onBack = { navController.popBackStack() },
                 onUpgradeClick = { navController.navigate(Routes.PAYWALL) },
                 onTrustedContactsClick = {

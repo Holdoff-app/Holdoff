@@ -161,6 +161,29 @@ fun CompanionScreen(
                 }
             }
 
+            state.errorMessage?.let { message ->
+                Surface(color = SurfaceVariant) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            message,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.weight(1f)
+                        )
+                        TextButton(onClick = { vm.retryLast() }) {
+                            Text("Retry", color = GlowPurple)
+                        }
+                        TextButton(onClick = { vm.clearError() }) {
+                            Text("Dismiss", color = OnDarkTextMuted)
+                        }
+                    }
+                }
+            }
+
             Surface(color = DeepPurple) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(12.dp),

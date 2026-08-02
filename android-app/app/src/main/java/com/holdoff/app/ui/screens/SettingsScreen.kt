@@ -1,5 +1,8 @@
 package com.holdoff.app.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,22 +11,35 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.ui.theme.*
 
+private const val TERMS_URL = "https://smsholdoff.com/terms"
+private const val PRIVACY_URL = "https://smsholdoff.com/privacy"
+
+/** Pause length choices, in minutes. */
+private val HOLD_CHOICES = listOf(1, 5, 10, 30)
+
 /**
- * Settings — Launch Conditions (user-checkbox, editable), pattern tracking,
- * notifications, account, legal.
+ * Settings — pause length, account, legal.
+ *
+ * Only controls that change what the app actually does live here. This screen previously
+ * carried a notifications switch, a pattern-tracking switch, a launch-conditions checklist
+ * and a self-reported mental-health checklist; none of them were read by any code, and the
+ * last one collected health data that went nowhere. They are gone rather than relabelled.
  */
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var patternTracking by remember { mutableStateOf(true) }
-    var rapidTypingDetection by remember { mutableStateOf(true) }
-    var launchConditions by remember {
-        mutableStateOf(setOf("anxious_spiral", "late_night_send"))
-    }
+    val ctx = LocalContext.current
+
+    var holdMinutes by remember { mutableIntStateOf(AppPrefs.holdMinutes(ctx)) }
+    val accountEmail = remember { HoldOffApi.getAccountEmail(ctx) }
+    val versionName = remember { appVersionName(ctx) }
 
     Scaffold(
         containerColor = MidnightNavy,
@@ -44,106 +60,90 @@ fun SettingsScreen(onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
-            SettingsSection("Notifications") {
-                SettingsToggle("Message analysis alerts", notificationsEnabled) { notificationsEnabled = it }
-            }
-            SettingsSection("AI & Pattern Tracking") {
-                SettingsToggle("Enable pattern tracking", patternTracking) { patternTracking = it }
-                SettingsToggle("Detect rapid typing / urgency", rapidTypingDetection) { rapidTypingDetection = it }
-            }
-            SettingsSection("Launch Conditions") {
+            SettingsSection("The Pause") {
                 Text(
-                    "Choose what triggers a HoldOff alert. Required \u2014 you can add or remove these anytime.",
-                    color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium
+                    "How long the countdown runs when Sadie says hold off",
+                    color = OnDarkText, style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(8.dp))
-                val conditions = mapOf(
-                    "anxious_spiral"     to "Anxious spiral detected",
-                    "late_night_send"    to "Late-night send (2am+)",
-                    "rapid_messages"     to "3+ messages in a row without reply",
-                    "emotional_flooding" to "Emotional flooding / all-caps",
-                    "long_silence"       to "Long silence broken suddenly",
-                    "rebound_texting"    to "Post-argument rebound texting"
-                )
-                conditions.forEach { (key, label) ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                    ) {
-                        Text(label, color = OnDarkText, modifier = Modifier.weight(1f))
-                        Checkbox(
-                            checked = key in launchConditions,
-                            onCheckedChange = { checked ->
-                                launchConditions = if (checked) launchConditions + key else launchConditions - key
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    HOLD_CHOICES.forEach { minutes ->
+                        FilterChip(
+                            selected = holdMinutes == minutes,
+                            onClick = {
+                                holdMinutes = minutes
+                                AppPrefs.setHoldMinutes(ctx, minutes)
                             },
-                            colors = CheckboxDefaults.colors(checkedColor = GlowPurple)
+                            label = { Text("$minutes min", fontSize = 12.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = VelvetPurple,
+                                selectedLabelColor = OnDarkText,
+                                labelColor = OnDarkTextMuted
+                            )
                         )
                     }
                 }
-            }
-            SettingsSection("My Conditions") {
-                Text(
-                    "Select any conditions that apply. This helps Sadie understand your patterns better. Not a diagnosis.",
-                    color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium
-                )
                 Spacer(Modifier.height(8.dp))
-                val myConditions = remember {
-                    mutableStateMapOf(
-                        "anxiety" to false, "depression" to false, "adhd" to false,
-                        "rsd" to false, "autism" to false, "trauma" to false, "addiction" to false,
-                        "bpd" to false, "ptsd" to false, "ocd" to false, "bipolar" to false
-                    )
-                }
-                val conditionLabels = mapOf(
-                    "anxiety" to "\uD83D\uDCA8 Anxiety",
-                    "depression" to "\uD83C\uDF27\uFE0F Depression",
-                    "adhd" to "\u26A1 ADHD",
-                    "rsd" to "\uD83D\uDC94 Rejection Sensitivity (RSD)",
-                    "autism" to "\uD83E\uDDE9 Autism",
-                    "trauma" to "\uD83E\uDE79 Trauma / C-PTSD",
-                    "addiction" to "\u26D3\uFE0F Addiction",
-                    "bpd" to "\uD83C\uDF0A BPD",
-                    "ptsd" to "\uD83C\uDF2A\uFE0F PTSD",
-                    "ocd" to "\uD83D\uDD04 OCD",
-                    "bipolar" to "\u2194\uFE0F Bipolar"
-                )
-                conditionLabels.forEach { (key, label) ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                    ) {
-                        Text(label, color = OnDarkText, modifier = Modifier.weight(1f))
-                        Checkbox(
-                            checked = myConditions[key] == true,
-                            onCheckedChange = { checked -> myConditions[key] = checked },
-                            colors = CheckboxDefaults.colors(checkedColor = GlowPurple)
-                        )
-                    }
-                }
-                Spacer(Modifier.height(4.dp))
                 Text(
-                    "\u26A0\uFE0F Self-reported, not a diagnosis. This is for AI personalization only.",
+                    "You can always send anyway. The countdown is friction, not a lock.",
                     color = OnDarkTextMuted, style = MaterialTheme.typography.bodySmall
                 )
             }
             SettingsSection("Account") {
-                Text("User ID: holdoff_stacy_001", color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium)
-                TextButton(onClick = { /* TODO */ }) { Text("Change Password", color = GlowPurple) }
-                TextButton(onClick = { /* TODO */ }) { Text("Delete Account", color = ErrorRed) }
+                Text(
+                    accountEmail?.let { "Signed in as $it" } ?: "Not signed in",
+                    color = if (accountEmail != null) OnDarkText else OnDarkTextMuted,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "HoldOff works without an account. Your messages stay on this phone; only the " +
+                        "draft you ask Sadie about is sent for analysis.",
+                    color = OnDarkTextMuted, style = MaterialTheme.typography.bodySmall
+                )
             }
             SettingsSection("Legal") {
-                TextButton(onClick = { /* TODO */ }) { Text("Terms of Service", color = SoftLavender) }
-                TextButton(onClick = { /* TODO */ }) { Text("Privacy Policy", color = SoftLavender) }
-                TextButton(onClick = { /* TODO */ }) { Text("Mental Health Disclaimer", color = SoftLavender) }
+                TextButton(onClick = { openUrl(ctx, TERMS_URL) }) {
+                    Text("Terms of Service", color = SoftLavender)
+                }
+                TextButton(onClick = { openUrl(ctx, PRIVACY_URL) }) {
+                    Text("Privacy Policy", color = SoftLavender)
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Mental Health Disclaimer",
+                    color = OnDarkText, fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "HoldOff is a pause before you send a message — it is not therapy, it cannot " +
+                        "diagnose you, and it is not a crisis service. If you are in crisis or thinking " +
+                        "about hurting yourself, please reach a real person now: call your local " +
+                        "emergency number or a crisis line.",
+                    color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium
+                )
             }
             Text(
-                "HoldOff v1.1.0 \u00b7 Not therapy \u00b7 Not diagnosis \u00b7 Not a substitute for professional care",
+                (versionName?.let { "HoldOff v$it" } ?: "HoldOff") +
+                    " · Not therapy · Not diagnosis · Not a substitute for professional care",
                 color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium
             )
         }
     }
+}
+
+/**
+ * Reads versionName from the installed package, so it tracks build.gradle.kts instead of drifting.
+ * PackageManager rather than BuildConfig: this module does not enable the buildConfig feature,
+ * so BuildConfig is not generated under AGP 8.
+ */
+private fun appVersionName(ctx: Context): String? =
+    runCatching { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName }.getOrNull()
+
+/** A device with no browser must not take the app down with it. */
+private fun openUrl(ctx: Context, url: String) {
+    runCatching { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
 }
 
 @Composable
@@ -154,25 +154,3 @@ private fun SettingsSection(title: String, content: @Composable ColumnScope.() -
         content()
     }
 }
-
-@Composable
-private fun SettingsToggle(label: String, value: Boolean, onChange: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        Text(label, color = OnDarkText, modifier = Modifier.weight(1f))
-        Switch(
-            checked = value,
-            onCheckedChange = onChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = OnDarkText,
-                checkedTrackColor = GlowPurple,
-                uncheckedThumbColor = OnDarkTextMuted,
-                uncheckedTrackColor = SurfaceVariant
-            )
-        )
-    }
-}
-

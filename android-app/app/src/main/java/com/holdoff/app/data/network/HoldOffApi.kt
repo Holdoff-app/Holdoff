@@ -127,6 +127,13 @@ object HoldOffApi {
 
     data class ChatResult(val reply: String?, val error: String? = null)
 
+    /**
+     * Companion chat.
+     *
+     * Runs on [ANALYZE_URL], the same prompt→text proxy the verdict uses, because the
+     * companion endpoint on [BASE_URL] has no server behind it. That means no account is
+     * needed to talk to Sadie, and no conversation is stored anywhere off the device.
+     */
     suspend fun companionChat(
         ctx: Context,
         soulName: String,   // "Sadie" | "Dan"
@@ -134,37 +141,43 @@ object HoldOffApi {
         history: List<Pair<String, String>> = emptyList(),   // (role, content) pairs
         attachmentStyle: String? = null
     ): ChatResult = withContext(Dispatchers.IO) {
-        val token = getToken(ctx)
-            ?: return@withContext ChatResult(reply = null, error = "Not authenticated")
+        if (message.isBlank()) return@withContext ChatResult(reply = null, error = "Nothing to send")
+
+        val transcript = history.takeLast(12).joinToString("\n") { (role, content) ->
+            val who = if (role.equals("user", ignoreCase = true)) "Them" else soulName
+            "$who: $content"
+        }.take(4000)
+
+        val prompt = buildString {
+            append("You are $soulName, a warm, plain-spoken companion inside HoldOff, an app that ")
+            append("helps someone pause before sending a text they might regret. ")
+            append("The person you are talking to may live with anxiety, ADHD, or be in recovery. ")
+            append("Be direct and kind. Never clinical, never patronising, never diagnose. ")
+            append("You are not a therapist and not a crisis service; if they are in danger, ")
+            append("gently point them to a local crisis line.\n\n")
+            if (attachmentStyle != null) append("They describe their attachment style as: $attachmentStyle\n\n")
+            if (transcript.isNotBlank()) append("Conversation so far:\n$transcript\n\n")
+            append("They just said:\n$message\n\n")
+            append("Reply as $soulName in two or three sentences. Plain text only, no markdown.")
+        }
 
         try {
-            val historyArr = JSONArray().apply {
-                history.forEach { (role, content) ->
-                    put(JSONObject().apply { put("role", role); put("content", content) })
-                }
-            }
-            val bodyObj = JSONObject().apply {
-                put("soulName", soulName)
-                put("message", message)
-                put("conversationHistory", historyArr)
-                if (attachmentStyle != null) put("attachmentStyle", attachmentStyle)
-            }
-
             val request = Request.Builder()
-                .url("$BASE_URL/api/companion/chat")
-                .post(bodyObj.toString().toRequestBody(JSON))
-                .addHeader("Authorization", "Bearer $token")
+                .url(ANALYZE_URL)
+                .post(JSONObject().put("prompt", prompt).toString().toRequestBody(JSON))
                 .build()
 
             val response = client.newCall(request).execute()
-            val bodyStr  = response.body?.string() ?: "{}"
+            val bodyStr = response.body?.string() ?: ""
 
             if (!response.isSuccessful) {
-                val msg = runCatching { JSONObject(bodyStr).getString("error") }.getOrDefault("Request failed")
-                return@withContext ChatResult(reply = null, error = msg)
+                return@withContext ChatResult(reply = null, error = "Sadie is unreachable (${response.code})")
             }
 
-            val reply = JSONObject(bodyStr).getString("reply")
+            val reply = runCatching { JSONObject(bodyStr).getString("text") }
+                .getOrNull()?.trim()?.takeIf { it.isNotBlank() }
+                ?: return@withContext ChatResult(reply = null, error = "Unexpected response")
+
             ChatResult(reply = reply)
 
         } catch (e: Exception) {

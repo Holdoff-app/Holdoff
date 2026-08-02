@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -90,6 +91,13 @@ fun HomeScreen(
                 title = { Text("HoldOff", fontWeight = FontWeight.Bold, color = OnDarkText) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MidnightNavy),
                 actions = {
+                    IconButton(onClick = onStoryClick) {
+                        Icon(
+                            Icons.Default.Info,
+                            contentDescription = "Why HoldOff exists",
+                            tint = SoftLavender
+                        )
+                    }
                     IconButton(onClick = onProfileClick) {
                         Icon(Icons.Default.Person, contentDescription = "Profile", tint = SoftLavender)
                     }
@@ -115,6 +123,31 @@ fun HomeScreen(
             }
             state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = GlowPurple)
+            }
+            // A read failure used to fall through to "No messages yet", which reads as an empty
+            // inbox rather than as something going wrong.
+            state.error != null -> Column(
+                Modifier.fillMaxSize().padding(padding).padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    "Couldn’t read your messages",
+                    color = OnDarkText,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    state.error ?: "",
+                    color = OnDarkTextMuted,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(24.dp))
+                Button(
+                    onClick = { vm.loadThreads() },
+                    colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple)
+                ) { Text("Try again") }
             }
             state.threads.isEmpty() -> EmptyThreadsUI()
             else -> LazyColumn(

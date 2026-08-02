@@ -1,6 +1,5 @@
 package com.holdoff.app.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,8 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,16 +17,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.holdoff.app.ui.theme.*
 
-/** Subscribe Now — Monthly / Yearly / Lifetime / Gift. */
+/**
+ * HoldOff Premium — a preview of what's planned, not a checkout.
+ *
+ * There is no billing in this build (no Play Billing, no Stripe), so nothing here can be bought
+ * and nothing here may read as an offer. [onSubscribed] is kept because callers pass it and it
+ * will be needed the day purchasing is real.
+ */
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun PaywallScreen(onSubscribed: () -> Unit, onBack: () -> Unit) {
-    var selectedPlan by remember { mutableStateOf("monthly") }
-
     Scaffold(
         containerColor = MidnightNavy,
         topBar = {
             TopAppBar(
-                title = { Text("Subscribe Now", fontWeight = FontWeight.Bold, color = OnDarkText) },
+                title = { Text("HoldOff Premium", fontWeight = FontWeight.Bold, color = OnDarkText) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.Close, "Close", tint = SoftLavender)
@@ -44,21 +46,24 @@ fun PaywallScreen(onSubscribed: () -> Unit, onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("\u2728", fontSize = 48.sp)
+            Text("✨", fontSize = 48.sp)
             Spacer(Modifier.height(8.dp))
             Text("HoldOff Premium", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = OnDarkText)
             Spacer(Modifier.height(4.dp))
-            Text("Everything Sadie sees. Everything you need.", color = OnDarkTextMuted, textAlign = TextAlign.Center)
+            Text(
+                "Not built yet. Here's what it's meant to be.",
+                color = OnDarkTextMuted, textAlign = TextAlign.Center
+            )
             Spacer(Modifier.height(24.dp))
 
             val features = listOf(
-                "\uD83D\uDED1" to "Unlimited verdict analyses",
-                "\uD83E\uDDE0" to "Full pattern history & insights",
-                "\uD83D\uDCAC" to "Sadie's suggested responses",
-                "\uD83D\uDD2E" to "Attachment style deep-dives",
-                "\uD83D\uDCD6" to "Full premium story experience",
-                "\uD83E\uDD1D" to "AI companion personalities",
-                "\uD83C\uDF81" to "Gift HoldOff to someone you love"
+                "🛑" to "Unlimited verdict analyses",
+                "🧠" to "Full pattern history & insights",
+                "💬" to "Sadie's suggested responses",
+                "🔮" to "Attachment style deep-dives",
+                "📖" to "Full premium story experience",
+                "🤝" to "AI companion personalities",
+                "🎁" to "Gift HoldOff to someone you love"
             )
             Card(
                 colors = CardDefaults.cardColors(containerColor = SurfaceVariant),
@@ -66,6 +71,14 @@ fun PaywallScreen(onSubscribed: () -> Unit, onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        "What premium is planned to include",
+                        color = OnDarkText, fontWeight = FontWeight.SemiBold, fontSize = 15.sp
+                    )
+                    Text(
+                        "None of this is switched on yet.",
+                        color = OnDarkTextMuted, fontSize = 12.sp
+                    )
                     features.forEach { (emoji, label) ->
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             Text(emoji, fontSize = 18.sp)
@@ -77,83 +90,71 @@ fun PaywallScreen(onSubscribed: () -> Unit, onBack: () -> Unit) {
 
             Spacer(Modifier.height(24.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                PlanCard(
-                    modifier = Modifier.weight(1f),
-                    label = "Monthly", price = "$7.99/mo", badge = null,
-                    selected = selectedPlan == "monthly",
-                    onClick = { selectedPlan = "monthly" }
-                )
-                PlanCard(
-                    modifier = Modifier.weight(1f),
-                    label = "Yearly", price = "$59.99/yr", badge = "Save 37%",
-                    selected = selectedPlan == "yearly",
-                    onClick = { selectedPlan = "yearly" }
-                )
+            Card(
+                colors = CardDefaults.cardColors(containerColor = SurfaceVariant),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        "Planned plans",
+                        color = OnDarkText, fontWeight = FontWeight.SemiBold, fontSize = 15.sp
+                    )
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        PlannedPlan(modifier = Modifier.weight(1f), label = "Monthly")
+                        PlannedPlan(modifier = Modifier.weight(1f), label = "Yearly")
+                        PlannedPlan(modifier = Modifier.weight(1f), label = "Lifetime")
+                    }
+                    Text(
+                        "Prices aren't set. When they are, you'll see the real number before anything is asked of you.",
+                        color = OnDarkTextMuted, fontSize = 12.sp, lineHeight = 17.sp
+                    )
+                }
             }
-            Spacer(Modifier.height(12.dp))
-            PlanCard(
-                modifier = Modifier.fillMaxWidth(),
-                label = "Lifetime Access", price = "$149 one-time", badge = "Best Value",
-                selected = selectedPlan == "lifetime",
-                onClick = { selectedPlan = "lifetime" }
-            )
 
             Spacer(Modifier.height(24.dp))
             Button(
-                onClick = onSubscribed,
+                onClick = {},
+                enabled = false,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple),
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = VelvetPurple.copy(alpha = 0.35f),
+                    disabledContentColor = OnDarkTextMuted
+                ),
                 shape = RoundedCornerShape(16.dp)
-            ) { Text("Start Free Trial \u00b7 7 Days Free", fontWeight = FontWeight.Bold, fontSize = 16.sp) }
-
-            Spacer(Modifier.height(12.dp))
-            OutlinedButton(
-                onClick = { /* TODO: gift flow */ },
-                modifier = Modifier.fillMaxWidth().height(48.dp)
-            ) { Text("\uD83C\uDF81  Gift HoldOff", color = OnDarkText) }
+            ) { Text("Premium isn't available yet", fontWeight = FontWeight.Bold, fontSize = 16.sp) }
 
             Spacer(Modifier.height(8.dp))
             Text(
-                "\"I made it because I needed it \u2014 honestly, because I was bugging him. But maybe it'll help someone else too.\"\n\u2014 Danny, the muse behind HoldOff",
-                color = OnDarkTextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic, textAlign = TextAlign.Center
+                "There's no way to buy HoldOff in this build, so nothing here can charge you. Everything you have now stays free while we finish it.",
+                color = OnDarkTextMuted, fontSize = 12.sp, lineHeight = 17.sp, textAlign = TextAlign.Center
             )
+
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) { Text("Keep using HoldOff", color = OnDarkText) }
+
             Spacer(Modifier.height(16.dp))
             Text(
-                "Cancel anytime. Free trial converts to paid after 7 days. Manage subscription in your Google Play account.",
-                color = OnDarkTextMuted, fontSize = 11.sp, textAlign = TextAlign.Center
+                "\"I made it because I needed it — honestly, because I was bugging him. But maybe it'll help someone else too.\"\n— Danny, the muse behind HoldOff",
+                color = OnDarkTextMuted, fontSize = 12.sp, fontStyle = FontStyle.Italic, textAlign = TextAlign.Center
             )
         }
     }
 }
 
 @Composable
-private fun PlanCard(
-    modifier: Modifier = Modifier,
-    label: String,
-    price: String,
-    badge: String?,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
+private fun PlannedPlan(modifier: Modifier = Modifier, label: String) {
     Card(
-        onClick = onClick,
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = if (selected) VelvetPurple.copy(alpha = 0.3f) else SurfaceVariant
-        ),
+        colors = CardDefaults.cardColors(containerColor = MidnightNavy),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            if (badge != null) {
-                Box(
-                    modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                        .background(GlowPurple).padding(horizontal = 8.dp, vertical = 2.dp)
-                ) { Text(badge, color = OnDarkText, fontSize = 10.sp, fontWeight = FontWeight.Bold) }
-                Spacer(Modifier.height(4.dp))
-            }
-            Text(label, color = OnDarkText, fontWeight = FontWeight.SemiBold)
-            Text(price, color = GlowPurple, fontWeight = FontWeight.Bold)
+        Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(label, color = OnDarkText, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+            Text("Price TBD", color = OnDarkTextMuted, fontSize = 12.sp)
         }
     }
 }

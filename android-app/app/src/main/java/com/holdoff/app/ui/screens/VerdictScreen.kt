@@ -41,14 +41,19 @@ fun VerdictScreen(
     onUpgradeClick: () -> Unit,
     onTrustedContactsClick: () -> Unit = {},
     isPremium: Boolean = false,
-    vm: ThreadViewModel = viewModel()
+    vm: ThreadViewModel
 ) {
     val state by vm.state.collectAsState()
     val clipboard = LocalClipboardManager.current
     var showRewrite by remember { mutableStateOf(false) }
     var showSendConfirm by remember { mutableStateOf(false) }
 
-    LaunchedEffect(threadId) { if (state.verdict == null) vm.analyzeThread(threadId) }
+    // Only analyse when there is something to analyse. This screen used to call analyzeThread
+    // unconditionally against an empty draft, which set an error, left the verdict null, and
+    // spun the "Sadie is analyzing" indicator forever.
+    LaunchedEffect(threadId) {
+        if (state.verdict == null && state.draftMessage.isNotBlank()) vm.analyzeThread(threadId)
+    }
 
     val infinite = rememberInfiniteTransition(label = "pulse")
     val scale by infinite.animateFloat(
@@ -76,7 +81,7 @@ fun VerdictScreen(
                 .fillMaxSize().padding(padding)
                 .background(Brush.verticalGradient(listOf(MidnightNavy, DeepPurple)))
         ) {
-            if (state.isAnalyzing || state.verdict == null) {
+            if (state.isAnalyzing) {
                 Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     Box(Modifier.scale(scale)) { SadieAvatar(size = SadieSize.LARGE, isThinking = true) }
                     Spacer(Modifier.height(24.dp))
@@ -85,6 +90,45 @@ fun VerdictScreen(
                     Text("Sadie is analyzing your conversation", color = OnDarkTextMuted)
                     Spacer(Modifier.height(32.dp))
                     CircularProgressIndicator(color = GlowPurple)
+                }
+            } else if (state.verdict == null) {
+                Column(
+                    Modifier.fillMaxSize().padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    SadieAvatar(size = SadieSize.LARGE)
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        if (state.draftMessage.isBlank()) "Nothing to read yet"
+                        else "Sadie couldn\u2019t read this one",
+                        color = OnDarkText,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        state.error
+                            ?: "Write the message you\u2019re thinking of sending, then ask for a verdict.",
+                        color = OnDarkTextMuted,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp
+                    )
+                    Spacer(Modifier.height(28.dp))
+                    if (state.draftMessage.isNotBlank()) {
+                        Button(
+                            onClick = { vm.clearError(); vm.analyzeThread(threadId) },
+                            colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple),
+                            modifier = Modifier.fillMaxWidth().height(52.dp),
+                            shape = RoundedCornerShape(14.dp)
+                        ) { Text("Try again", fontWeight = FontWeight.SemiBold) }
+                        Spacer(Modifier.height(10.dp))
+                    }
+                    OutlinedButton(
+                        onClick = onBack,
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = SoftLavender)
+                    ) { Text("Back to the conversation") }
                 }
             } else {
                 val verdict = state.verdict!!
@@ -213,7 +257,8 @@ fun VerdictScreen(
                     // SEND ANYWAY button
                     if (verdict.verdict == Verdict.REACH_OUT) {
                         Button(
-                            onClick = onBack,
+                            onClick = { vm.sendAnyway(threadId); onBack() },
+                            enabled = !state.isSending,
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
                             modifier = Modifier.fillMaxWidth().height(52.dp),
                             shape = RoundedCornerShape(14.dp)
@@ -246,7 +291,8 @@ fun VerdictScreen(
                                             Text("Wait", color = SoftLavender)
                                         }
                                         Button(
-                                            onClick = onBack,
+                                            onClick = { vm.sendAnyway(threadId); onBack() },
+                                            enabled = !state.isSending,
                                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                                         ) { Text("Send It") }
                                     }
@@ -263,7 +309,7 @@ fun VerdictScreen(
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = SoftLavender)
                     ) {
-                        Text("\uD83D\uDC65  Send to Trusted Contact Instead", fontSize = 14.sp)
+                        Text("\uD83D\uDC65  See your trusted contacts", fontSize = 14.sp)
                     }
 
                     // ── Disclaimer ──
