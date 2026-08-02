@@ -13,7 +13,7 @@
     --surface: #231040;
     --text: #F0E6FF;
     --muted: #9E8FBB;
-    --accent: #7B35C1;
+    --accent: #A56BE0;   /* was #7B35C1 = 2.9:1 on this background, below WCAG AA. This is 5.4:1. These pages get read at 2am by people who are not calm. */
     --link: #B39DDB;
     --divider: #2A1845;
   }
@@ -247,7 +247,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 
 <p>Because of that, the lawful basis we rely on for sending message content to be analysed is <strong>your explicit consent</strong>, given when you choose to run a verdict. You can withdraw it at any time by not running verdicts, and by turning the feature off. Withdrawing does not undo an analysis that already happened.</p>
 
-<p><span class="confirm">[[CONFIRM: does the app show an explicit, specific consent screen — naming Google/Gemini — before the first analysis, and is that consent recorded? If not, this paragraph describes something the app does not yet do and the consent screen must be built before publishing this policy]]</span></p>
+<p><span class="confirm">[[BLOCKER — VERIFIED 2026-08-02, NOT A QUESTION: the app does NOT have this consent screen. Onboarding says only &ldquo;I read your conversations&rdquo;, never names Google or Gemini, never says the text leaves the phone, and can be skipped. So the paragraph above describes consent that is not actually being obtained, and publishing it as written would be untrue. The consent screen has to be built before this policy goes live &mdash; this is a code change, not a wording change.]]</span></p>
 
 <h2 id="stays">What never leaves your phone</h2>
 
@@ -270,7 +270,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
 
 <p>If you do create one, you give us an <strong>email address and a password</strong>. Those go to our server so the account can be created and you can sign in. Your email address and a session token are then stored on your phone so you stay signed in. The account exists to carry a premium entitlement — it does not sync your messages, your contacts, or anything else off the device.</p>
 
-<p>Where that account data is stored: <span class="confirm">[[CONFIRM: which backend actually holds accounts. DATA_FACTS.md says Supabase Inc., project holdoff-production, US-West. The shipped Android code posts sign-in to https://shouldiholdoff.live/api/auth/login and contains no Supabase SDK, and the web codebase describes a self-hosted PostgreSQL database. These cannot both be right — confirm the real store, its operator, and its region before publishing]]</span></p>
+<p>Where that account data is stored: <strong>Supabase</strong> (Supabase Inc.), project <code>holdoff-production</code>. Verified reachable on 2026-08-02. The earlier contradiction in our own notes is resolved: the old sign-in address <code>shouldiholdoff.live</code> is dead and no longer in the app, and the separate self-hosted database described in the web codebase is not deployed and holds no accounts. <span class="confirm">[[CONFIRM: the storage region only. Our inventory says US-West but that has not been checked against the dashboard, and an edge probe cannot reveal it. Do not publish a region until it is read off the project settings page.]]</span></p>
 
 <p>Lawful basis: performance of the contract between you and us — you asked for an account, we have to hold an email address and a password to give you one.</p>
 
@@ -352,7 +352,7 @@ Registered form and postal address: <span class="confirm">[[CONFIRM: registered 
     <tr>
       <td>The account store operator</td>
       <td>Account email, password hash, session records</td>
-      <td><span class="confirm">[[CONFIRM: operator and region — see “If you make an account” above]]</span></td>
+      <td>Supabase Inc. <span class="confirm">[[CONFIRM: region only — see “If you make an account” above]]</span></td>
     </tr>
     <tr>
       <td>IONOS</td>

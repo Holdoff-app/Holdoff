@@ -8,7 +8,7 @@
 <style>
 :root{
   --bg:#0A0A1A; --surface:#231040; --text:#F0E6FF; --muted:#9E8FBB;
-  --accent:#7B35C1; --link:#B39DDB; --divider:#2A1845;
+  --accent:#A56BE0; --link:#B39DDB; --divider:#2A1845;
   --warning:#FFCA28; --danger:#EF5350;
 }
 *{box-sizing:border-box}
@@ -287,7 +287,7 @@ footer a{color:var(--link)}
   <li><strong>Revoke permissions.</strong> <em>Settings &rarr; Apps &rarr; HoldOff &rarr; Permissions</em>, and turn off SMS, Contacts or Notifications. The app will lose features that depend on them, which is the point.</li>
   <li><strong>Take the app off the network.</strong> <em>Settings &rarr; Apps &rarr; HoldOff &rarr; Mobile data &amp; Wi-Fi</em> (path varies by phone) and turn off background and mobile data. The AI check can't run without a connection.</li>
   <li><strong>Sign out</strong> in the app, and your session token is removed from the device while the account itself stays.</li>
-  <li><strong>Clear just your quiz result or your counters</strong> — <span class="confirm">[[CONFIRM: whether the app has an in-app control to reset the attachment-style result and the counters individually. If not, the only route today is clearing all app storage, and this page should say so plainly]]</span> Until that's confirmed, use <a href="#clear">clear storage</a>, which removes all of the local data at once.</li>
+  <li><strong>Clearing just your quiz result or just your counters is not possible today.</strong> The app has no control for it &mdash; signing out removes your session token, but leaves the quiz result, the counters and your trusted contacts in place. The only route is <a href="#clear">clear storage</a>, which removes all of the local data at once. If you want one thing gone, that is the cost.</li>
 </ul>
 
 <p>You can also email <a href="mailto:hello@smsholdoff.com?subject=Withdrawing%20consent">hello@smsholdoff.com</a> and say you're withdrawing consent for AI processing. Withdrawing consent isn't retroactive — it stops future processing; it doesn't undo what's already been sent.</p>
