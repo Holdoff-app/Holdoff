@@ -29,6 +29,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
+        # These are read by buildConfigField in android-app/app/build.gradle.kts. Without them
+        # the fields compile to empty strings, isAuthConfigured stays false, and the account
+        # screens are hidden — which is the correct fallback, but means no one can sign up.
+        # The anon key is designed to ship inside the client; the database is protected by RLS,
+        # not by this key being secret. It lives in Actions secrets to keep it out of git.
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload debug APK artifact
