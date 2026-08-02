@@ -10,14 +10,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AiConsent
 import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.ui.theme.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 // These must match where the pages are actually published. /terms and /privacy previously
 // soft-404'd — they returned 200 but served the site's index.html, so the links went nowhere.
@@ -41,6 +46,7 @@ fun SettingsScreen(onBack: () -> Unit) {
     val ctx = LocalContext.current
 
     var holdMinutes by remember { mutableIntStateOf(AppPrefs.holdMinutes(ctx)) }
+    var aiConsent by remember { mutableStateOf(AiConsent.isGranted(ctx)) }
     val accountEmail = remember { HoldOffApi.getAccountEmail(ctx) }
     val versionName = remember { appVersionName(ctx) }
 
@@ -100,10 +106,50 @@ fun SettingsScreen(onBack: () -> Unit) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "HoldOff works without an account. Your messages stay on this phone; only the " +
-                        "draft you ask Sadie about is sent for analysis.",
+                    "HoldOff works without an account. Your messages stay on this phone unless " +
+                        "you ask for a verdict \u2014 see AI analysis below for exactly what leaves.",
                     color = OnDarkTextMuted, style = MaterialTheme.typography.bodySmall
                 )
+            }
+            SettingsSection("AI analysis") {
+                // Withdrawing consent has to be as easy as giving it, so this is one switch and
+                // takes effect on the next request. No confirmation step, no dark pattern.
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Send my text to Google",
+                            color = OnDarkText, fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "Verdicts and Sadie both work by sending your draft \u2014 and the recent " +
+                                "messages in that conversation, including the other person's \u2014 to " +
+                                "HoldOff's server and on to Google's Gemini API. Turn this off and " +
+                                "nothing leaves your phone. The pause itself still works.",
+                            color = OnDarkTextMuted, style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Switch(
+                        checked = aiConsent,
+                        onCheckedChange = { granted ->
+                            if (granted) AiConsent.grant(ctx) else AiConsent.withdraw(ctx)
+                            aiConsent = granted
+                        }
+                    )
+                }
+                val decidedAt = AiConsent.decidedAt(ctx)
+                if (decidedAt > 0L) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        (if (aiConsent) "You agreed on " else "You turned this off on ") +
+                            SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(Date(decidedAt)),
+                        color = OnDarkTextMuted, style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
             SettingsSection("Legal") {
                 TextButton(onClick = { openUrl(ctx, TERMS_URL) }) {

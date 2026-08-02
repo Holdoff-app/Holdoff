@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AiConsent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,9 @@ data class CompanionUiState(
     val activeStyleLabel: String = "fearful avoidant · core",
     val isTyping: Boolean = false,
     val inputText: String = "",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    /** True while the consent disclosure is on screen. */
+    val askingAiConsent: Boolean = false
 )
 
 private val STYLE_LABELS = mapOf(
@@ -78,6 +81,15 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun sendMessage(text: String) {
         if (text.isBlank()) return
+
+        // Talking to Sadie sends what you type to Google exactly like a verdict does, so it
+        // asks for the same consent. Nothing is appended to the transcript until that is settled.
+        if (!AiConsent.isGranted(ctx)) {
+            pendingAfterConsent = text
+            _state.value = _state.value.copy(askingAiConsent = true)
+            return
+        }
+
         val userMsg = ChatMessage(text = text, isFromCompanion = false)
         _state.value = _state.value.copy(
             messages = _state.value.messages + userMsg,
@@ -123,6 +135,26 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
     fun updateInput(text: String) { _state.value = _state.value.copy(inputText = text) }
 
     fun clearError() { _state.value = _state.value.copy(errorMessage = null) }
+
+    private var pendingAfterConsent: String? = null
+
+    fun grantAiConsent() {
+        AiConsent.grant(ctx)
+        val pending = pendingAfterConsent
+        pendingAfterConsent = null
+        _state.value = _state.value.copy(askingAiConsent = false)
+        if (pending != null) sendMessage(pending)
+    }
+
+    fun refuseAiConsent() {
+        AiConsent.refuse(ctx)
+        pendingAfterConsent = null
+        _state.value = _state.value.copy(
+            askingAiConsent = false,
+            errorMessage = "Sadie needs to send what you type to Google, and you said no. " +
+                "That is a fine answer \u2014 you can change it in Settings."
+        )
+    }
 
     /** Re-send the last thing the user said, after a failure. */
     fun retryLast() {

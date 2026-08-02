@@ -24,7 +24,7 @@ private data class OnboardPage(val emoji: String, val title: String, val subtitl
 
 private val pages = listOf(
     OnboardPage("\uD83D\uDC9C", "Hi, I'm Sadie.", "I'm not here to tell you what to do. I'm here to help you see what's actually happening \u2014 before you send that message."),
-    OnboardPage("\uD83E\uDDE0", "Pattern Recognition.", "I read your conversations and learn your attachment patterns, response speeds, and emotional cues. No self-reporting needed."),
+    OnboardPage("\uD83E\uDDE0", "Reading the conversation.", "When you ask for a verdict, I look at your draft and the recent messages in that thread \u2014 including theirs. To do that I send them to Google's AI. I'll ask you properly before that ever happens, and you can say no."),
     OnboardPage("\uD83D\uDED1", "The Verdict.", "Hold Off or Reach Out \u2014 based on real behavioral signals, not a coin flip. I'll explain my reasoning every time."),
     OnboardPage("\u2728", "Your companion.", "Sadie is always here. AI versions of real people in your story are available in the premium experience.")
 )

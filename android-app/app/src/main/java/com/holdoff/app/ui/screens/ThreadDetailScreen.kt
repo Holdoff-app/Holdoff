@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.holdoff.app.data.model.Message
+import com.holdoff.app.ui.components.AiConsentDialog
 import com.holdoff.app.ui.components.VerdictBadge
 import com.holdoff.app.ui.theme.*
 import com.holdoff.app.viewmodel.SendGate
@@ -44,6 +45,10 @@ fun ThreadDetailScreen(
     LaunchedEffect(threadId) { vm.loadThread(threadId, "Contact") }
     LaunchedEffect(state.messages.size) {
         if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.size - 1)
+    }
+
+    if (state.askingAiConsent) {
+        AiConsentDialog(onGrant = vm::grantAiConsent, onRefuse = vm::refuseAiConsent)
     }
 
     Scaffold(

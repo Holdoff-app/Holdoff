@@ -7,6 +7,7 @@ import com.holdoff.app.data.model.Message
 import com.holdoff.app.data.model.Verdict
 import com.holdoff.app.data.model.VerdictResult
 import com.holdoff.app.data.network.HoldOffApi
+import com.holdoff.app.data.prefs.AiConsent
 import com.holdoff.app.data.prefs.AppPrefs
 import com.holdoff.app.data.repository.SMSRepository
 import com.holdoff.app.data.sms.DefaultSmsRole
@@ -37,7 +38,9 @@ data class ThreadUiState(
     val isSending: Boolean = false,
     val gate: SendGate = SendGate.None,
     val draftMessage: String = "",
-    val error: String? = null
+    val error: String? = null,
+    /** True while the consent disclosure is on screen. Set only by an action that needs it. */
+    val askingAiConsent: Boolean = false
 )
 
 class ThreadViewModel(application: Application) : AndroidViewModel(application) {
@@ -74,6 +77,7 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
                 _state.value = _state.value.copy(error = "Type your message first")
                 return@launch
             }
+            if (needsConsent { analyzeThread(threadId) }) return@launch
             _state.value = _state.value.copy(isAnalyzing = true, error = null, verdict = null)
             val result = analyze(threadId, draft)
             _state.value = _state.value.copy(
@@ -99,6 +103,7 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
                 _state.value = _state.value.copy(error = "Type your message first")
                 return@launch
             }
+            if (needsConsent { sendOrHold(threadId) }) return@launch
             _state.value = _state.value.copy(isAnalyzing = true, error = null, gate = SendGate.None)
 
             val result = analyze(threadId, draft)
@@ -145,11 +150,48 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
         _state.value = _state.value.copy(error = null)
     }
 
+    /**
+     * True if the caller should stop and let the disclosure run first.
+     *
+     * [pending] is re-run on grant so the user gets the verdict they originally asked for,
+     * rather than having to press send a second time.
+     */
+    private fun needsConsent(pending: () -> Unit): Boolean {
+        if (AiConsent.isGranted(getApplication())) return false
+        pendingAfterConsent = pending
+        _state.value = _state.value.copy(askingAiConsent = true, isAnalyzing = false)
+        return true
+    }
+
+    private var pendingAfterConsent: (() -> Unit)? = null
+
+    fun grantAiConsent() {
+        AiConsent.grant(getApplication())
+        _state.value = _state.value.copy(askingAiConsent = false)
+        pendingAfterConsent?.invoke()
+        pendingAfterConsent = null
+    }
+
+    /**
+     * Refusing leaves the draft alone and says what happened. It does not send, and it does not
+     * quietly do nothing — a button that appears dead is worse than a stated limit.
+     */
+    fun refuseAiConsent() {
+        AiConsent.refuse(getApplication())
+        pendingAfterConsent = null
+        _state.value = _state.value.copy(
+            askingAiConsent = false,
+            error = "No verdict then \u2014 your text stays on your phone. " +
+                "You can turn this on in Settings whenever you want."
+        )
+    }
+
     private suspend fun analyze(threadId: String, draft: String): HoldOffApi.AnalyzeResult {
         val transcript = _state.value.messages.map {
             (if (it.isOutgoing) "You: " else "Them: ") + it.body
         }
         val result = HoldOffApi.analyzeDraft(
+            ctx = getApplication(),
             threadId = threadId,
             recentMessages = transcript,
             draft = draft,

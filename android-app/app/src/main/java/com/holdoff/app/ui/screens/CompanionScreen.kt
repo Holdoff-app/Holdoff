@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.holdoff.app.ui.components.AiConsentDialog
 import com.holdoff.app.ui.components.SadieAvatar
 import com.holdoff.app.ui.components.SadieSize
 import com.holdoff.app.ui.theme.*
@@ -39,6 +40,10 @@ fun CompanionScreen(
 
     LaunchedEffect(state.messages.size) {
         if (state.messages.isNotEmpty()) listState.animateScrollToItem(state.messages.size - 1)
+    }
+
+    if (state.askingAiConsent) {
+        AiConsentDialog(onGrant = vm::grantAiConsent, onRefuse = vm::refuseAiConsent)
     }
 
     Scaffold(

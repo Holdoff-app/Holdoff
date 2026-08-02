@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.holdoff.app.BuildConfig
 import com.holdoff.app.data.model.Verdict
 import com.holdoff.app.data.model.VerdictResult
+import com.holdoff.app.data.prefs.AiConsent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -41,6 +42,19 @@ object HoldOffApi {
         .build()
 
     private val JSON = "application/json".toMediaType()
+
+    /** Shown when something tries to analyse text the user has not agreed to send. */
+    const val NO_CONSENT = "HoldOff hasn't been given permission to send your text to Google"
+
+    /**
+     * The last gate before message text leaves the device.
+     *
+     * The UI asks for consent first, so in normal use this never fires. It exists because the
+     * cost of the UI being wrong is that a user's private messages — and the other person's —
+     * reach Google without a lawful basis. Checked here so any future call path inherits it
+     * instead of having to remember.
+     */
+    private fun consentBlocked(ctx: Context): Boolean = !AiConsent.isGranted(ctx)
 
     // ── token storage ────────────────────────────────────────────────────────
 
@@ -257,6 +271,7 @@ object HoldOffApi {
         attachmentStyle: String? = null
     ): ChatResult = withContext(Dispatchers.IO) {
         if (message.isBlank()) return@withContext ChatResult(reply = null, error = "Nothing to send")
+        if (consentBlocked(ctx)) return@withContext ChatResult(reply = null, error = NO_CONSENT)
 
         val transcript = history.takeLast(12).joinToString("\n") { (role, content) ->
             val who = if (role.equals("user", ignoreCase = true)) "Them" else soulName
@@ -315,12 +330,14 @@ object HoldOffApi {
      * is worse than no verdict — users act on these.
      */
     suspend fun analyzeDraft(
+        ctx: Context,
         threadId: String,
         recentMessages: List<String>,
         draft: String,
         attachmentStyle: String? = null
     ): AnalyzeResult = withContext(Dispatchers.IO) {
         if (draft.isBlank()) return@withContext AnalyzeResult(error = "Nothing to analyse yet")
+        if (consentBlocked(ctx)) return@withContext AnalyzeResult(error = NO_CONSENT)
 
         val context = recentMessages.takeLast(12).joinToString("\n").take(4000)
         val prompt = buildString {
