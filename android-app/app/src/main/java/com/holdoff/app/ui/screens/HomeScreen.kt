@@ -1,6 +1,9 @@
 package com.holdoff.app.ui.screens
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.holdoff.app.data.model.SMSThread
+import com.holdoff.app.data.sms.DefaultSmsRole
 import com.holdoff.app.ui.components.SadieAvatar
 import com.holdoff.app.ui.components.SadieSize
 import com.holdoff.app.ui.theme.*
@@ -47,25 +51,33 @@ fun HomeScreen(
     val context = LocalContext.current
     val state by vm.state.collectAsState()
 
+    var isDefaultSms by remember { mutableStateOf(DefaultSmsRole.isDefault(context)) }
+
     val permLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { results -> if (results.values.all { it }) vm.onPermissionGranted() }
 
-    LaunchedEffect(Unit) {
+    val roleLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { isDefaultSms = DefaultSmsRole.isDefault(context) }
+
+    // Role first, permissions second. Play rejects apps that ask for SMS permissions
+    // before holding the SMS role, and the pause is only real once we own the send path.
+    LaunchedEffect(isDefaultSms) {
+        if (!isDefaultSms) return@LaunchedEffect
+
         val perms = mutableListOf(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             perms.add(Manifest.permission.POST_NOTIFICATIONS)
         }
-        val granted = perms.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
-        if (granted) vm.onPermissionGranted()
-        else {
-            val reqPerms = mutableListOf(
-                Manifest.permission.READ_SMS,
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.RECEIVE_SMS
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                reqPerms.add(Manifest.permission.POST_NOTIFICATIONS)
+        val granted = perms.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+        if (granted) {
+            vm.onPermissionGranted()
+        } else {
+            val reqPerms = perms.toMutableList().apply {
+                add(Manifest.permission.RECEIVE_SMS)
             }
             permLauncher.launch(reqPerms.toTypedArray())
         }
@@ -93,6 +105,11 @@ fun HomeScreen(
         }
     ) { padding ->
         when {
+            !isDefaultSms -> DefaultSmsRequestUI {
+                context.findActivity()?.let { activity ->
+                    DefaultSmsRole.requestIntent(activity)?.let(roleLauncher::launch)
+                }
+            }
             !state.hasPermission -> PermissionRequestUI {
                 permLauncher.launch(arrayOf(Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS))
             }
@@ -154,6 +171,43 @@ private fun ThreadListItem(thread: SMSThread, onClick: () -> Unit) {
         }
     }
     HorizontalDivider(color = DividerColor, thickness = 0.5.dp, modifier = Modifier.padding(start = 80.dp))
+}
+
+@Composable
+private fun DefaultSmsRequestUI(onRequest: () -> Unit) {
+    Box(Modifier.fillMaxSize().background(MidnightNavy), contentAlignment = Alignment.Center) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Text("HoldOff has to be your messaging app",
+                color = OnDarkText, style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "The pause only works if your messages go through us. Android will ask you to " +
+                    "confirm. Your other messaging app stays installed, and you can switch back " +
+                    "any time in Settings.",
+                color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(24.dp))
+            Button(
+                onClick = onRequest,
+                colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple),
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Set HoldOff as default") }
+        }
+    }
+}
+
+private fun Context.findActivity(): Activity? {
+    var current: Context? = this
+    while (current is ContextWrapper) {
+        if (current is Activity) return current
+        current = current.baseContext
+    }
+    return null
 }
 
 @Composable

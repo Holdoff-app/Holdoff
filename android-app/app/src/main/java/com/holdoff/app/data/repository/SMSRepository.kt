@@ -77,6 +77,11 @@ class SMSRepository(private val context: Context) {
         out
     }
 
+    /** The number to reply to for a thread. Empty if the thread has no resolvable address. */
+    suspend fun getAddressForThread(threadId: String): String = withContext(Dispatchers.IO) {
+        getPhoneForThread(threadId)
+    }
+
     private fun getPhoneForThread(threadId: String): String {
         val smsUri = Uri.parse("content://sms")
         context.contentResolver.query(

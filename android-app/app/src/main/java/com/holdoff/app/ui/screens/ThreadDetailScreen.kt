@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,7 +23,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.holdoff.app.data.model.Message
 import com.holdoff.app.ui.components.VerdictBadge
 import com.holdoff.app.ui.theme.*
+import com.holdoff.app.viewmodel.SendGate
 import com.holdoff.app.viewmodel.ThreadViewModel
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -104,10 +107,150 @@ fun ThreadDetailScreen(
                     ) {
                         Icon(Icons.Default.Psychology, "Ask Sadie", tint = OnDarkText)
                     }
+                    IconButton(
+                        onClick = { vm.sendOrHold(threadId) },
+                        enabled = !state.isAnalyzing && !state.isSending,
+                        colors = IconButtonDefaults.iconButtonColors(containerColor = GlowPurple)
+                    ) {
+                        if (state.isAnalyzing || state.isSending) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = OnDarkText
+                            )
+                        } else {
+                            Icon(Icons.AutoMirrored.Filled.Send, "Send", tint = OnDarkText)
+                        }
+                    }
+                }
+            }
+        }
+
+        when (val gate = state.gate) {
+            is SendGate.Held -> HoldSheet(
+                gate = gate,
+                onSendAnyway = { vm.sendAnyway(threadId) },
+                onDismiss = vm::dismissGate
+            )
+            is SendGate.Unchecked -> UncheckedSheet(
+                reason = gate.reason,
+                onSendAnyway = { vm.sendAnyway(threadId) },
+                onDismiss = vm::dismissGate
+            )
+            SendGate.None -> Unit
+        }
+
+        state.error?.let { message ->
+            AlertDialog(
+                onDismissRequest = vm::clearError,
+                confirmButton = { TextButton(onClick = vm::clearError) { Text("OK") } },
+                text = { Text(message) },
+                containerColor = DeepPurple,
+                textContentColor = OnDarkText
+            )
+        }
+    }
+}
+
+/**
+ * The pause. Shown instead of sending when the analyser says hold off.
+ *
+ * "Send anyway" is present from the first second on purpose — the countdown is friction the
+ * user can refuse, not a lock on their own phone's messaging.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HoldSheet(
+    gate: SendGate.Held,
+    onSendAnyway: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    var remaining by remember(gate) {
+        mutableLongStateOf(gate.holdUntilMillis - System.currentTimeMillis())
+    }
+    LaunchedEffect(gate) {
+        while (remaining > 0) {
+            delay(1000)
+            remaining = gate.holdUntilMillis - System.currentTimeMillis()
+        }
+    }
+
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = DeepPurple) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Hold off", color = OnDarkText, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text(gate.verdict.reasoning, color = OnDarkText, fontSize = 15.sp)
+
+            gate.verdict.patternInsights.forEach {
+                Text("• $it", color = OnDarkTextMuted, fontSize = 13.sp)
+            }
+
+            gate.verdict.suggestedResponse?.let {
+                Spacer(Modifier.height(4.dp))
+                Text("A calmer version:", color = OnDarkTextMuted, fontSize = 12.sp)
+                Text(it, color = OnDarkText, fontSize = 14.sp)
+            }
+
+            Spacer(Modifier.height(4.dp))
+            Text(
+                if (remaining > 0) "Your message is waiting — ${formatRemaining(remaining)}"
+                else "The wait is over. Still want to send it?",
+                color = SoftLavender, fontSize = 13.sp
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple)
+                ) { Text("Keep waiting") }
+                OutlinedButton(onClick = onSendAnyway, modifier = Modifier.weight(1f)) {
+                    Text("Send anyway", color = OnDarkText)
                 }
             }
         }
     }
+}
+
+/** Analysis failed. Say so rather than blocking silently or sending silently. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UncheckedSheet(
+    reason: String,
+    onSendAnyway: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = DeepPurple) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Couldn't check this one", color = OnDarkText, fontSize = 22.sp,
+                fontWeight = FontWeight.Bold)
+            Text(reason, color = OnDarkTextMuted, fontSize = 13.sp)
+            Text(
+                "Nothing has been sent. You can wait and try again, or send it as it is.",
+                color = OnDarkText, fontSize = 15.sp
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = VelvetPurple)
+                ) { Text("Not yet") }
+                OutlinedButton(onClick = onSendAnyway, modifier = Modifier.weight(1f)) {
+                    Text("Send anyway", color = OnDarkText)
+                }
+            }
+        }
+    }
+}
+
+private fun formatRemaining(millis: Long): String {
+    val total = (millis / 1000).coerceAtLeast(0)
+    return "%d:%02d left".format(total / 60, total % 60)
 }
 
 @Composable

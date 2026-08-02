@@ -4,7 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'app/**'
+      # :app maps to android-app/app (see settings.gradle.kts). The old 'app/**' filter
+      # watched a tree that Gradle never compiles, so no source change ever built.
+      - 'android-app/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
       - 'gradle.properties'
@@ -33,5 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: holdoff-debug-apk
+          # Sources live in android-app/, but build.gradle.kts redirects buildDirectory
+          # to <root>/app/build, so artifacts land here.
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error

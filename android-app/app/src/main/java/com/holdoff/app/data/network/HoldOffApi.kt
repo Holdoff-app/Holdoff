@@ -2,6 +2,8 @@ package com.holdoff.app.data.network
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.holdoff.app.data.model.Verdict
+import com.holdoff.app.data.model.VerdictResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -20,6 +22,8 @@ import java.util.concurrent.TimeUnit
 object HoldOffApi {
 
     private const val BASE_URL   = "https://shouldiholdoff.live"
+    /** Separate deployment: the PHP proxy that keeps the Gemini key server-side. */
+    private const val ANALYZE_URL = "https://api.smsholdoff.com/api/analyze"
     private const val PREFS_NAME = "holdoff_prefs"
     private const val KEY_TOKEN  = "auth_token"
     private const val KEY_PREMIUM = "is_premium"
@@ -152,5 +156,93 @@ object HoldOffApi {
         } catch (e: Exception) {
             ChatResult(reply = null, error = e.message ?: "Network error")
         }
+    }
+
+    // ── draft analysis ───────────────────────────────────────────────────────
+
+    data class AnalyzeResult(val verdict: VerdictResult? = null, val error: String? = null)
+
+    /**
+     * Analyses a draft against recent thread context.
+     *
+     * Hits the PHP proxy on [ANALYZE_URL], which holds the Gemini key server-side and
+     * answers `{"prompt": "..."}` with `{"text": "..."}`. Distinct from [BASE_URL], which
+     * serves auth and companion chat from a different deployment.
+     *
+     * Returns an error rather than a placeholder when anything fails. A fabricated verdict
+     * is worse than no verdict — users act on these.
+     */
+    suspend fun analyzeDraft(
+        threadId: String,
+        recentMessages: List<String>,
+        draft: String,
+        attachmentStyle: String? = null
+    ): AnalyzeResult = withContext(Dispatchers.IO) {
+        if (draft.isBlank()) return@withContext AnalyzeResult(error = "Nothing to analyse yet")
+
+        val context = recentMessages.takeLast(12).joinToString("\n").take(4000)
+        val prompt = buildString {
+            append("You advise someone deciding whether to send a text they may regret. ")
+            append("They live with anxiety, ADHD, or are in recovery, so be direct and kind, never clinical or patronising.\n\n")
+            if (context.isNotBlank()) append("Recent conversation:\n$context\n\n")
+            if (attachmentStyle != null) append("Their attachment style: $attachmentStyle\n\n")
+            append("Draft they want to send:\n$draft\n\n")
+            append("Reply with STRICT JSON and nothing else, no markdown fence:\n")
+            append("""{"verdict":"HOLD_OFF|MAYBE|REACH_OUT","confidence":0.0-1.0,""")
+            append(""""reasoning":"two sentences, second person","insights":["short observation","..."],""")
+            append(""""suggested":"a calmer rewrite, or null"}""")
+        }
+
+        try {
+            val request = Request.Builder()
+                .url(ANALYZE_URL)
+                .post(JSONObject().put("prompt", prompt).toString().toRequestBody(JSON))
+                .build()
+
+            val response = client.newCall(request).execute()
+            val bodyStr = response.body?.string() ?: ""
+            if (!response.isSuccessful) {
+                return@withContext AnalyzeResult(error = "Analysis unavailable (${response.code})")
+            }
+
+            val text = runCatching { JSONObject(bodyStr).getString("text") }.getOrNull()
+                ?: return@withContext AnalyzeResult(error = "Unexpected response from analyser")
+
+            val json = runCatching { JSONObject(extractJsonObject(text)) }.getOrNull()
+                ?: return@withContext AnalyzeResult(error = "Could not read the analysis")
+
+            val verdict = when (json.optString("verdict").uppercase()) {
+                "HOLD_OFF" -> Verdict.HOLD_OFF
+                "REACH_OUT" -> Verdict.REACH_OUT
+                "MAYBE" -> Verdict.MAYBE
+                else -> return@withContext AnalyzeResult(error = "Could not read the analysis")
+            }
+
+            val insights = json.optJSONArray("insights")?.let { arr ->
+                (0 until arr.length()).mapNotNull { arr.optString(it).takeIf(String::isNotBlank) }
+            }.orEmpty()
+
+            AnalyzeResult(
+                verdict = VerdictResult(
+                    threadId = threadId,
+                    verdict = verdict,
+                    confidence = json.optDouble("confidence", 0.0).toFloat().coerceIn(0f, 1f),
+                    reasoning = json.optString("reasoning").ifBlank { "No reasoning returned." },
+                    patternInsights = insights,
+                    suggestedResponse = json.optString("suggested").takeIf {
+                        it.isNotBlank() && !it.equals("null", ignoreCase = true)
+                    }
+                )
+            )
+        } catch (e: Exception) {
+            AnalyzeResult(error = e.message ?: "Network error")
+        }
+    }
+
+    /** Models often wrap JSON in prose or a fence; take the outermost braced span. */
+    private fun extractJsonObject(raw: String): String {
+        val start = raw.indexOf('{')
+        val end = raw.lastIndexOf('}')
+        return if (start >= 0 && end > start) raw.substring(start, end + 1) else raw
     }
 }
