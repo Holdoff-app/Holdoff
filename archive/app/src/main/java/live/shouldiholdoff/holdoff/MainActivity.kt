@@ -56,7 +56,8 @@ class MainActivity : ComponentActivity() {
         val smsGranted = permissions[Manifest.permission.READ_SMS] == true
         if (smsGranted) {
             viewModel.loadThreads()
-            // Start background SMS sync once permission is granted
+            // Analyze on-device right away, but only sync to the server if the
+            // user has separately opted in. enqueue() no-ops otherwise.
             SyncWorker.enqueue(this)
         }
     }

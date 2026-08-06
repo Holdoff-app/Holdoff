@@ -161,12 +161,11 @@ export const appRouter = router({
           };
         }
 
-        // Save to DB if authenticated
+        // Save to DB if authenticated.
+        // The draft body is deliberately NOT persisted — we keep the insight, not the words.
         if (ctx.user) {
           await saveVerdict({
             userId: ctx.user.id,
-            message: input.message,
-            context: input.context,
             verdict: parsed.verdict,
             explanation: parsed.explanation,
             attachmentStyle: input.attachmentStyle,
@@ -233,10 +232,10 @@ export const appRouter = router({
           };
         }
 
+        // The received message body is deliberately NOT persisted — only the interpretation.
         if (ctx.user) {
           await saveInterpretation({
             userId: ctx.user.id,
-            receivedMessage: input.message,
             meaning: parsed.whatItMeans,
             attachmentSignals: parsed.detectedStyle,
             suggestedResponse: parsed.suggestedResponse || "",

@@ -149,7 +149,9 @@ export default function ChroniclePage() {
                             {new Date(verdict.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                           </span>
                         </div>
-                        <p className="text-sm text-foreground/80 line-clamp-2">{verdict.message}</p>
+                        {verdict.explanation && (
+                          <p className="text-sm text-foreground/80 line-clamp-2">{verdict.explanation}</p>
+                        )}
                         {verdict.patternName && (
                           <p className="text-xs text-muted-foreground mt-1">Pattern: {verdict.patternName}</p>
                         )}

@@ -341,12 +341,11 @@ export const appRouter = router({
         const reframe = parsed.reframe || parsed.grounded_voice || null;
         const rewrite = parsed.rewrite || null;
 
-        // Save to DB if authenticated
+        // Save to DB if authenticated.
+        // The draft body is deliberately NOT persisted — we keep the insight, not the words.
         if (ctx.user) {
           await saveVerdict({
             userId: ctx.user.id,
-            message: input.message,
-            context: input.context,
             verdict: parsed.verdict,
             explanation,
             attachmentStyle: input.attachmentStyle,
@@ -462,10 +461,10 @@ export const appRouter = router({
           groundedResponse: parsed.grounded_response || parsed.suggestedResponse || null,
         };
 
+        // The received message body is deliberately NOT persisted — only the interpretation.
         if (ctx.user) {
           await saveInterpretation({
             userId: ctx.user.id,
-            receivedMessage: input.message,
             meaning: normalized.whatItMeans,
             attachmentSignals: normalized.detectedStyle,
             suggestedResponse: normalized.groundedResponse || "",

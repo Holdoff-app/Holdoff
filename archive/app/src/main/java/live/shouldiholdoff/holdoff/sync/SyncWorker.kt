@@ -29,12 +29,44 @@ class SyncWorker(
         private const val TAG = "HoldOff/SyncWorker"
         private const val WORK_NAME = "holdoff_sms_sync"
         private const val PREF_LAST_SYNC = "last_sms_sync_at"
+        private const val PREFS = "holdoff_sync"
+        private const val PREF_SYNC_ENABLED = "sms_sync_opt_in"
+
+        /**
+         * Whether the user has explicitly opted in to uploading SMS threads.
+         *
+         * Defaults to false. Granting READ_SMS lets HoldOff analyze messages on
+         * this device; it is NOT consent to upload them, so sync stays off until
+         * the user turns it on.
+         */
+        fun isSyncEnabled(context: Context): Boolean =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getBoolean(PREF_SYNC_ENABLED, false)
+
+        /** Record the user's choice and start or stop syncing to match. */
+        fun setSyncEnabled(context: Context, enabled: Boolean) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(PREF_SYNC_ENABLED, enabled)
+                .apply()
+            if (enabled) enqueue(context) else cancel(context)
+        }
+
+        /** Stop periodic syncing. */
+        fun cancel(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+            Log.d(TAG, "Periodic SMS sync cancelled")
+        }
 
         /**
          * Enqueue a periodic sync. Safe to call multiple times — WorkManager
-         * deduplicates by unique work name.
+         * deduplicates by unique work name. No-op unless the user has opted in.
          */
         fun enqueue(context: Context) {
+            if (!isSyncEnabled(context)) {
+                Log.d(TAG, "SMS sync not opted in — not enqueueing")
+                return
+            }
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -57,6 +89,14 @@ class SyncWorker(
         Log.d(TAG, "SyncWorker started")
 
         // Require auth — skip if not logged in
+        // Guard for work enqueued by a build that predates the opt-in, and for
+        // the case where the user revokes consent while a run is already queued.
+        if (!isSyncEnabled(applicationContext)) {
+            Log.d(TAG, "SMS sync not opted in — cancelling")
+            cancel(applicationContext)
+            return Result.success()
+        }
+
         val authRepo = AuthRepository(applicationContext)
         val token = authRepo.getAuthToken() ?: run {
             Log.d(TAG, "No auth token — skipping sync")

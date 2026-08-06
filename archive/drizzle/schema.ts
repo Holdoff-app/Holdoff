@@ -22,10 +22,36 @@ export const users = mysqlTable("users", {
   currentStreak: int("currentStreak").default(0),
   longestStreak: int("longestStreak").default(0),
   lastActiveAt: timestamp("lastActiveAt"),
+  // Onboarding / profile
+  displayName: varchar("displayName", { length: 128 }),
+  dateOfBirth: varchar("dateOfBirth", { length: 10 }), // YYYY-MM-DD
+  ageBand: varchar("ageBand", { length: 8 }), // 'adult' | 'teen'
+  onboardedAt: timestamp("onboardedAt"),
+  consentTos: boolean("consentTos").default(false).notNull(),
+  consentPrivacy: boolean("consentPrivacy").default(false).notNull(),
+  consentCrisisNotify: boolean("consentCrisisNotify").default(false).notNull(),
+  guardianName: varchar("guardianName", { length: 128 }),
+  guardianEmail: varchar("guardianEmail", { length: 320 }),
+  guardianConsentAt: timestamp("guardianConsentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
+
+// Emergency / trusted contacts — mandatory (>=1 per user). For minors, guardian = contact.
+export const emergencyContacts = mysqlTable("emergency_contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 128 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }),
+  relationship: varchar("relationship", { length: 64 }),
+  isGuardian: boolean("isGuardian").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmergencyContact = typeof emergencyContacts.$inferSelect;
+export type InsertEmergencyContact = typeof emergencyContacts.$inferInsert;
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -33,7 +59,9 @@ export type InsertUser = typeof users.$inferInsert;
 export const verdicts = mysqlTable("verdicts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId"),
-  message: text("message").notNull(),
+  // Draft body is analyzed in-flight and never persisted. Retained as a nullable
+  // column only so historical rows can be purged; do not write to it.
+  message: text("message"),
   context: text("context"),
   verdict: mysqlEnum("verdict", ["SEND", "WAIT", "DO NOT SEND"]).notNull(),
   explanation: text("explanation").notNull(),
@@ -50,7 +78,8 @@ export type InsertVerdict = typeof verdicts.$inferInsert;
 export const interpretations = mysqlTable("interpretations", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId"),
-  receivedMessage: text("receivedMessage").notNull(),
+  // Incoming message body is analyzed in-flight and never persisted. See verdicts.message.
+  receivedMessage: text("receivedMessage"),
   meaning: text("meaning").notNull(),
   attachmentSignals: text("attachmentSignals").notNull(),
   suggestedResponse: text("suggestedResponse").notNull(),
@@ -151,3 +180,49 @@ export const spiralEvents = mysqlTable("spiral_events", {
 
 export type SpiralEvent = typeof spiralEvents.$inferSelect;
 export type InsertSpiralEvent = typeof spiralEvents.$inferInsert;
+
+// Feature usage log — one row per feature invocation, for backend monitoring
+export const featureUsage = mysqlTable("feature_usage", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  sessionKey: varchar("sessionKey", { length: 128 }),
+  feature: varchar("feature", { length: 64 }).notNull(),
+  action: varchar("action", { length: 64 }).notNull(),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type FeatureUsage = typeof featureUsage.$inferSelect;
+export type InsertFeatureUsage = typeof featureUsage.$inferInsert;
+
+// Admin audit log — records every admin / Sadie-admin action for accountability
+export const adminAuditLog = mysqlTable("admin_audit_log", {
+  id: int("id").autoincrement().primaryKey(),
+  adminUserId: int("adminUserId").notNull(),
+  actor: varchar("actor", { length: 32 }).default("admin").notNull(),
+  action: varchar("action", { length: 64 }).notNull(),
+  targetType: varchar("targetType", { length: 32 }),
+  targetId: varchar("targetId", { length: 64 }),
+  detail: text("detail"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminAuditLog = typeof adminAuditLog.$inferSelect;
+export type InsertAdminAuditLog = typeof adminAuditLog.$inferInsert;
+
+// Safety flags — crisis-signal triage queue (self-harm / harm-to-others / risk)
+export const safetyFlags = mysqlTable("safety_flags", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  sessionKey: varchar("sessionKey", { length: 128 }),
+  source: varchar("source", { length: 32 }).notNull(),
+  severity: varchar("severity", { length: 16 }).default("medium").notNull(),
+  category: varchar("category", { length: 32 }).notNull(),
+  status: varchar("status", { length: 16 }).default("open").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SafetyFlag = typeof safetyFlags.$inferSelect;
+export type InsertSafetyFlag = typeof safetyFlags.$inferInsert;
