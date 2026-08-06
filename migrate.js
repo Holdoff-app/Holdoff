@@ -21,11 +21,14 @@ if (!process.env.DATABASE_URL) {
   process.exit(0);
 }
 
+// Mirrors the TLS policy in db/index.js — migrations carry the same user data
+// as the app and must not connect to an unauthenticated server.
+const isLocal = /(?:localhost|127\.0\.0\.1)/.test(process.env.DATABASE_URL);
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL.includes('localhost')
+  ssl: isLocal
     ? false
-    : { rejectUnauthorized: false },
+    : { rejectUnauthorized: process.env.DATABASE_SSL_NO_VERIFY !== '1' },
 });
 
 async function migrate() {
