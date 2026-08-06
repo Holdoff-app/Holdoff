@@ -1,8 +1,3 @@
-# Rebuild trigger - fix Docker entrypoint 2026-07-10# fly.toml app configuration file generated for holdoff on 2026-07-04T06:33:36Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = "holdoff"
 primary_region = "ord"
 
@@ -19,24 +14,17 @@ primary_region = "ord"
   auto_stop_machines = false
   auto_start_machines = true
   min_machines_running = 1
-  checks = [{ grace_period = '30s', interval = '30s', method = 'GET', path = '/api/health', timeout = '10s' }]
 
+  # /healthz returns 503 when Postgres or the AI provider is unreachable.
+  # /api/health always returns 200, which is why earlier broken deploys still
+  # reported healthy.
   [[http_service.checks]]
-    grace_period = "30s"
+    grace_period = "40s"
     interval = "30s"
     method = "GET"
-    path = "/api/health"
+    path = "/healthz"
     timeout = "10s"
 
 [[vm]]
-  memory = '512mb'
-  cpu_kind = 'shared'
-  cpus = 1
-
-[[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
-  memory_mb = 1024
-  processes = ['app']
-  size = 'shared-cpu-1x'
+  size = "shared-cpu-1x"
+  memory = "1gb"

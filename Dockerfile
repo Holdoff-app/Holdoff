@@ -1,32 +1,33 @@
-# HoldOff production container — Manus tRPC + React app
-FROM node:22-slim AS builder
+# HoldOff production container — Express + EJS + PostgreSQL (server.js)
+FROM node:22-slim
+
 ENV NODE_ENV=production
 WORKDIR /app
 
-RUN npm install -g pnpm@10.4.1
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY server.js auth.js migrate.js ./
+COPY config/ ./config/
+COPY db/ ./db/
+COPY lib/ ./lib/
+COPY routes/ ./routes/
+COPY services/ ./services/
+COPY jobs/ ./jobs/
+COPY views/ ./views/
+COPY public/ ./public/
+COPY data/ ./data/
+COPY migrations/ ./migrations/
 
-COPY . .
-RUN pnpm run build
-
-# Runtime stage
-FROM node:22-slim AS runtime
-ENV NODE_ENV=production
-WORKDIR /app
-
-RUN npm install -g pnpm@10.4.1
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod
-
-COPY --from=builder /app/dist ./dist
+# services/degraded-queue.js buffers to data/degraded when Postgres is unreachable.
+RUN mkdir -p data/degraded && chown -R node:node data
 
 USER node
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3000) + '/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+# /healthz reports real dependency state; /api/health always returns 200 and
+# would mask a fully broken deploy.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:'+(process.env.PORT||3000)+'/healthz',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "server.js"]
