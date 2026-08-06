@@ -3,6 +3,10 @@
  * Handles landing page, filter page, and API routes.
  */
 const express = require('express');
+// Express 4 does not forward rejected promises from async handlers to error
+// middleware, so any rejection there terminates the process. Must be required
+// before the routers are built.
+require('express-async-errors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { buildLandingContext } = require(path.join(__dirname, 'lib', 'landing-context'));
@@ -1055,12 +1059,6 @@ app.get('/compose', async (req, res) => {
   res.render('compose', { user });
 });
 
-// ─── Global error handler ─────────────────────────────────────────────────────
-app.use((err, req, res, _next) => {
-  console.error('[unhandled]', err);
-  if (!res.headersSent) res.status(500).json({ error: 'Internal server error' });
-});
-
 // Ensure tables exist
 ensureCommunityTables().catch(e => console.warn('[startup] community tables:', e.message));
 
@@ -1073,9 +1071,22 @@ runMigrations().catch(e => console.warn('[startup] migrations:', e.message));
 const { ensureBetaTestersTable } = require(path.join(__dirname, 'db', 'beta-testers'));
 ensureBetaTestersTable().catch(e => console.warn('[startup] beta_testers table:', e.message));
 
+// ─── Global error handler ─────────────────────────────────────────────────────
 app.use((err, req, res, _next) => {
   console.error('[unhandled error]', err);
-  if (!res.headersSent) res.status(500).json({ error: 'Internal server error' });
+  if (res.headersSent) return;
+  const status = Number.isInteger(err.status) && err.status >= 400 && err.status <= 599
+    ? err.status
+    : 500;
+  res.status(status).json({
+    error: status === 503 ? 'Service temporarily unavailable' : 'Internal server error',
+    code: err.code === 'DATABASE_UNAVAILABLE' ? 'DATABASE_UNAVAILABLE' : undefined,
+  });
+});
+
+// A rejection that still escapes must not take the process down mid-request.
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
 });
 
 app.listen(port, () => console.log(`HoldOff running on port ${port}`));
