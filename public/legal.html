@@ -359,20 +359,26 @@
         <div id="privacy" class="section">
             <h2><span class="emoji">🔐</span>Privacy Policy (Summary)</h2>
             
-            <h3>Data We Collect (Minimally)</h3>
+            <h3>Data We Collect</h3>
             <ul>
-                <li><strong>Locally stored:</strong> Message drafts, contact lists (stored on your device)</li>
-                <li><strong>Optionally synced:</strong> Encrypted pattern data (if you enable backup)</li>
-                <li><strong>Analytics:</strong> General App usage (anonymized, not tied to your identity)</li>
+                <li><strong>Sent for analysis, not stored:</strong> The message you ask HoldOff to analyze is
+                    transmitted to our servers and to our AI providers to generate your verdict or
+                    interpretation. We do not save the text of your message.</li>
+                <li><strong>Stored:</strong> The resulting insight — verdict, pattern name, and reframe —
+                    along with your account details and attachment style.</li>
+                <li><strong>Contacts (only if you turn on SMS sync):</strong> Contact display names and
+                    phone numbers, so your threads can be mapped to real relationships. SMS sync is off
+                    until you turn it on.</li>
+                <li><strong>Analytics:</strong> General app usage (anonymized, not tied to your identity)</li>
             </ul>
 
             <h3>Data We DO NOT Collect</h3>
             <ul>
-                <li>Your full message content (unless you explicitly enable backup)</li>
-                <li>Personal information about your contacts</li>
                 <li>Location data</li>
                 <li>Browsing history</li>
                 <li>Mental health diagnoses</li>
+                <li>Your message history from other apps — HoldOff only sees the message you are
+                    actively composing, and only if you enable the Accessibility feature</li>
             </ul>
 
             <h3>Data Sharing</h3>
@@ -385,7 +391,10 @@
             <ul>
                 <li><strong>Stripe</strong> for payments (if you upgrade to Premium)</li>
                 <li><strong>Render</strong> for backend infrastructure</li>
-                <li><strong>Anthropic Claude API</strong> for pattern detection (anonymized only)</li>
+                <li><strong>OpenAI</strong> and <strong>Anthropic</strong> to generate verdicts and
+                    interpretations. The message you submit is sent to these providers as written, so
+                    that they can analyze it. They do not use it to train their models. We never sell
+                    your data or share it with advertisers or data brokers.</li>
             </ul>
 
             <h3>Your Rights</h3>

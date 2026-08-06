@@ -40,10 +40,17 @@ Watch Stacy and Danny's story—and then step into their shoes to understand you
 HoldOff is not therapy, not a diagnosis, and not a substitute for professional mental health care. It's a tool for self-awareness and relationship clarity. If you're in crisis, please reach out to a mental health professional.
 
 ## Privacy & Data
-- Real SMS/contacts sync (optional)
-- End-to-end encryption for sensitive data
+- Real SMS/contacts sync — optional, and off until you turn it on
+- Messages are sent over an encrypted connection (TLS) for analysis, and the text is not stored
 - Your data is yours. We never sell it.
 - Full privacy policy in-app
+
+<!-- Do NOT claim "end-to-end encryption" here or in the Play Data safety form.
+     There is no E2E implementation: messages are readable by our servers and by
+     our AI providers, which is what makes the verdict possible. The only crypto
+     dependency is androidx.security:security-crypto for local encrypted prefs.
+     Declaring E2E without substantiating it is a suspension risk. -->
+
 
 ## Category
 Health & Fitness → Mental Health
