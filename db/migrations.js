@@ -93,10 +93,11 @@ async function runMigrations() {
         contact_phone VARCHAR(20),
         last_message_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(user_id, contact_id)
       );
-      
-      CREATE INDEX IF NOT EXISTS idx_message_threads_user_id 
+
+      CREATE INDEX IF NOT EXISTS idx_message_threads_user_id
         ON message_threads(user_id);
       CREATE INDEX IF NOT EXISTS idx_message_threads_contact_id 
         ON message_threads(contact_id);

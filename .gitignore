@@ -26,3 +26,6 @@ shell-snapshots/
 statsig/
 todos/
 *.jsonl
+
+# Runtime artifact: queued work that failed while a provider was down
+data/degraded/

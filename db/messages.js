@@ -16,7 +16,7 @@ async function upsertContact(userId, { name, phoneNumber, isFavorited }) {
   const query = `
     INSERT INTO user_contacts (user_id, name, phone_number, is_favorited)
     VALUES ($1, $2, $3, $4)
-    ON CONFLICT (phone_number)
+    ON CONFLICT (user_id, phone_number)
     DO UPDATE SET name = COALESCE($2, user_contacts.name),
                   is_favorited = COALESCE($4, user_contacts.is_favorited)
     RETURNING id, name, phone_number, is_favorited, last_messaged_at;
@@ -421,7 +421,7 @@ async function initializeTables() {
         id SERIAL PRIMARY KEY,
         user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         name VARCHAR(255),
-        phone_number VARCHAR(20) UNIQUE NOT NULL,
+        phone_number VARCHAR(30),
         is_favorited BOOLEAN DEFAULT false,
         last_messaged_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
