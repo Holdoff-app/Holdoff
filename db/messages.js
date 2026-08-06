@@ -503,26 +503,10 @@ async function initializeTables() {
       CREATE INDEX IF NOT EXISTS idx_user_conditions_user_id ON user_conditions(user_id);
     `);
 
-    // Contact insights table (relationship intelligence per contact)
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS contact_insights (
-        id SERIAL PRIMARY KEY,
-        contact_id INT NOT NULL REFERENCES user_contacts(id) ON DELETE CASCADE UNIQUE,
-        red_flags JSONB DEFAULT '[]',
-        yellow_flags JSONB DEFAULT '[]',
-        green_flags JSONB DEFAULT '[]',
-        risk_level VARCHAR(20) DEFAULT 'Medium', -- 'Low', 'Medium', 'High'
-        trust_level VARCHAR(20) DEFAULT 'Stable', -- 'Growing', 'Stable', 'Declining'
-        attachment_style_fit VARCHAR(50),
-        communication_style_match INT DEFAULT 0, -- 0-100
-        compatibility_score INT DEFAULT 0, -- 0-100
-        last_analyzed_message TEXT,
-        analysis_count INT DEFAULT 0,
-        updated_at TIMESTAMP DEFAULT NOW(),
-        created_at TIMESTAMP DEFAULT NOW()
-      );
-      CREATE INDEX IF NOT EXISTS idx_contact_insights_contact_id ON contact_insights(contact_id);
-    `);
+    // contact_insights is owned by migrations/. It used to be declared here too,
+    // with contact_id pointing at user_contacts instead of contacts — so on a
+    // database where this ran first, the /api/contact-insights routes (which
+    // resolve ids against contacts) would fail the foreign key.
 
     console.log('[DB] All messaging tables initialized successfully');
   } catch (err) {
