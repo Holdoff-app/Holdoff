@@ -3,11 +3,7 @@
   "updated_at": "2026-06-25",
   "description": "Local fallback knowledge base used when external providers are unavailable.",
   "source_files": [
-    "README.md",
-    "SADIE_KNOWLEDGE.md",
-    "WIKI.md",
-    "FEATURE_MAP.md",
-    "docs/render-exit-cutover.md"
+    "SADIE_KNOWLEDGE.md"
   ],
   "entries": [
     {
