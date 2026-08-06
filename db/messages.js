@@ -419,7 +419,7 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_contacts (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         name VARCHAR(255),
         phone_number VARCHAR(20) UNIQUE NOT NULL,
         is_favorited BOOLEAN DEFAULT false,
@@ -435,7 +435,7 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS message_threads (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         contact_id INT REFERENCES user_contacts(id) ON DELETE SET NULL,
         contact_phone VARCHAR(20),
         last_message_at TIMESTAMP DEFAULT NOW(),
@@ -495,7 +495,7 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_conditions (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         condition_name VARCHAR(50) NOT NULL, -- 'RSD', 'Anxiety', 'Depression', 'Addiction', 'Attachment_Styles'
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, condition_name)
