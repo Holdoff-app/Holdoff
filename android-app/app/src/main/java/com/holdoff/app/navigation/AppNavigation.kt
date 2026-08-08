@@ -1,47 +1,42 @@
 package com.holdoff.app.navigation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.holdoff.app.data.network.HoldOffApi
 import com.holdoff.app.ui.screens.CompanionScreen
 import com.holdoff.app.ui.screens.HomeScreen
-import com.holdoff.app.ui.screens.LoginScreen
 import com.holdoff.app.ui.screens.OnboardingScreen
 import com.holdoff.app.ui.screens.PaywallScreen
 import com.holdoff.app.ui.screens.PremiumStoryScreen
-import com.holdoff.app.ui.screens.InsightsScreen
 import com.holdoff.app.ui.screens.ProfileScreen
 import com.holdoff.app.ui.screens.SettingsScreen
-import com.holdoff.app.ui.screens.ThreadDetailScreen
 import com.holdoff.app.ui.screens.QuizScreen
-import com.holdoff.app.ui.screens.TrustedContactsScreen
 import com.holdoff.app.ui.screens.VerdictScreen
+import com.holdoff.app.viewmodel.DraftViewModel
+
+const val PRIVACY_URL = "https://smsholdoff.com/privacy"
 
 /**
  * All screen routes live here. One place to find and edit navigation.
  */
 object Routes {
     const val ONBOARDING     = "onboarding"
-    const val LOGIN          = "login"
     const val HOME           = "home"
-    const val THREAD_DETAIL  = "thread/{threadId}"
-    const val VERDICT        = "verdict/{threadId}"
+    const val VERDICT        = "verdict"
     const val COMPANION      = "companion"
     const val PREMIUM_STORY  = "story"
     const val PAYWALL        = "paywall"
     const val PROFILE        = "profile"
     const val SETTINGS       = "settings"
-    const val INSIGHTS       = "insights"
     const val QUIZ           = "quiz"
-    const val TRUSTED        = "trusted-contacts"
-
-    fun threadDetail(id: String) = "thread/$id"
-    fun verdict(id: String) = "verdict/$id"
 }
 
 @Composable
@@ -51,63 +46,41 @@ fun AppNavigation(
     isPremium: Boolean,
     onPremiumChanged: (Boolean) -> Unit = {}
 ) {
+    // Hoisted here so the composer and the verdict screen read the same draft.
+    val draftVm: DraftViewModel = viewModel()
+
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Routes.ONBOARDING) {
+            val context = LocalContext.current
             OnboardingScreen(onFinish = {
-                navController.navigate(Routes.LOGIN) {
+                HoldOffApi.markOnboarded(context)
+                navController.navigate(Routes.HOME) {
                     popUpTo(Routes.ONBOARDING) { inclusive = true }
                 }
             })
         }
 
-        composable(Routes.LOGIN) {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
-                },
-                onPremiumChanged = onPremiumChanged
-            )
-        }
-
         composable(Routes.HOME) {
             HomeScreen(
-                onThreadClick = { id -> navController.navigate(Routes.threadDetail(id)) },
-                onCompanionClick = { navController.navigate(Routes.COMPANION) },
-                onStoryClick = {
-                    if (isPremium) navController.navigate(Routes.PREMIUM_STORY)
-                    else navController.navigate(Routes.PAYWALL)
+                vm = draftVm,
+                onVerdictReady = {
+                    navController.navigate(Routes.VERDICT) { launchSingleTop = true }
                 },
+                onCompanionClick = { navController.navigate(Routes.COMPANION) },
                 onProfileClick = { navController.navigate(Routes.PROFILE) }
             )
         }
 
-        composable(
-            route = Routes.THREAD_DETAIL,
-            arguments = listOf(navArgument("threadId") { type = NavType.StringType })
-        ) { backStack ->
-            val id = backStack.arguments?.getString("threadId") ?: return@composable
-            ThreadDetailScreen(
-                threadId = id,
-                onVerdictClick = { navController.navigate(Routes.verdict(id)) },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(
-            route = Routes.VERDICT,
-            arguments = listOf(navArgument("threadId") { type = NavType.StringType })
-        ) { backStack ->
-            val id = backStack.arguments?.getString("threadId") ?: return@composable
+        composable(Routes.VERDICT) {
+            val state by draftVm.state.collectAsState()
             VerdictScreen(
-                threadId = id,
+                verdict = state.verdict,
+                isAnalyzing = state.isAnalyzing,
+                error = state.error,
                 onBack = { navController.popBackStack() },
+                onRetry = { draftVm.analyze() },
                 onUpgradeClick = { navController.navigate(Routes.PAYWALL) },
-                onTrustedContactsClick = {
-                    navController.navigate(Routes.TRUSTED) { launchSingleTop = true }
-                },
                 isPremium = isPremium
             )
         }
@@ -125,27 +98,31 @@ fun AppNavigation(
         }
 
         composable(Routes.PAYWALL) {
+            val context = LocalContext.current
             PaywallScreen(
                 onSubscribed = { navController.popBackStack() },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onPremiumChanged = { premium ->
+                    HoldOffApi.savePremium(context, premium)
+                    onPremiumChanged(premium)
+                }
             )
         }
 
         composable(Routes.PROFILE) {
+            val context = LocalContext.current
             ProfileScreen(
                 onBack = { navController.popBackStack() },
                 onSettingsClick = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
                 onSubscribeClick = { navController.navigate(Routes.PAYWALL) { launchSingleTop = true } },
-                onInsightsClick = { navController.navigate(Routes.INSIGHTS) { launchSingleTop = true } },
                 onQuizClick = { navController.navigate(Routes.QUIZ) { launchSingleTop = true } },
-                onTrustedContactsClick = { navController.navigate(Routes.TRUSTED) { launchSingleTop = true } },
-                isPremium = isPremium
-            )
-        }
-
-        composable(Routes.INSIGHTS) {
-            InsightsScreen(
-                onBack = { navController.popBackStack() },
+                onStoryClick = {
+                    if (isPremium) navController.navigate(Routes.PREMIUM_STORY)
+                    else navController.navigate(Routes.PAYWALL)
+                },
+                onPrivacyClick = {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL)))
+                },
                 isPremium = isPremium
             )
         }
@@ -161,14 +138,15 @@ fun AppNavigation(
             )
         }
 
-        composable(Routes.TRUSTED) {
-            TrustedContactsScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-
         composable(Routes.SETTINGS) {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onDataCleared = {
+                    draftVm.clear()
+                    onPremiumChanged(false)
+                    navController.navigate(Routes.HOME) { popUpTo(0) }
+                }
+            )
         }
     }
 }

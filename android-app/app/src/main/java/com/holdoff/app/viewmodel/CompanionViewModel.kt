@@ -57,7 +57,7 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
             } ?: "fearful avoidant · core",
             messages = listOf(
                 ChatMessage(
-                    text = "Hey love. I\u2019m Sadie. \uD83D\uDC9C  I see patterns in your conversations that you might be missing. What\u2019s going on?",
+                    text = "Hey love. I\u2019m Sadie. \uD83D\uDC9C  Tell me what\u2019s going on \u2014 I\u2019ll help you think it through before you send anything.",
                     isFromCompanion = true
                 )
             )
@@ -92,7 +92,6 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
                 .map { msg -> Pair(if (msg.isFromCompanion) "assistant" else "user", msg.text) }
 
             val result = HoldOffApi.companionChat(
-                ctx = ctx,
                 soulName = soulName,
                 message = text,
                 history = history,
@@ -130,7 +129,7 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
         val style = coreStyle(id)
         val greeting = when (id) {
             "dan"  -> "What\u2019s going on. I\u2019m listening."
-            else   -> "Hey love. I\u2019m Sadie. \uD83D\uDC9C  I see patterns in your conversations that you might be missing. What\u2019s going on?"
+            else   -> "Hey love. I\u2019m Sadie. \uD83D\uDC9C  Tell me what\u2019s going on \u2014 I\u2019ll help you think it through before you send anything."
         }
         _state.value = CompanionUiState(
             activeCompanion = id,
