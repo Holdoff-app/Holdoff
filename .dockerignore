@@ -13,3 +13,4 @@ android/app/build
 android/build
 *.tar.gz
 *.zip
+archive

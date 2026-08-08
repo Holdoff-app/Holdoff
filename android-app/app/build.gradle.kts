@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,6 +9,23 @@ plugins {
 // at the expected path: app/build/outputs/...
 layout.buildDirectory.set(rootProject.layout.projectDirectory.dir("app/build"))
 
+// Shared secret for api.smsholdoff.com. Never committed: put
+// holdoffApiKey=... in local.properties, or set HOLDOFF_API_KEY in CI.
+// Both candidate roots are checked because this module builds from the repo
+// root (settings.gradle.kts) and from android-app/ (Android Studio).
+val holdoffApiKey: String = run {
+    val candidates = listOf(
+        rootProject.file("local.properties"),
+        project.file("../local.properties"),
+        project.file("../../local.properties")
+    )
+    val fromLocal = candidates.filter { it.exists() }.firstNotNullOfOrNull { file ->
+        Properties().apply { file.inputStream().use { load(it) } }
+            .getProperty("holdoffApiKey")
+    }
+    fromLocal ?: System.getenv("HOLDOFF_API_KEY") ?: ""
+}
+
 android {
     namespace = "com.holdoff.app"
     compileSdk = 34
@@ -15,9 +34,26 @@ android {
         applicationId = "com.holdoff.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "2.0.0"
         vectorDrawables { useSupportLibrary = true }
+
+        buildConfigField("String", "HOLDOFF_API_KEY", "\"$holdoffApiKey\"")
+    }
+
+    // Play rejects a debug-signed upload, so release signing is configured only
+    // when CI supplies the upload keystore. Local release builds stay unsigned.
+    val keystoreFile = System.getenv("HOLDOFF_KEYSTORE_PATH")?.let(::file)?.takeIf { it.exists() }
+
+    signingConfigs {
+        if (keystoreFile != null) {
+            create("upload") {
+                storeFile = keystoreFile
+                storePassword = System.getenv("HOLDOFF_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("HOLDOFF_KEY_ALIAS")
+                keyPassword = System.getenv("HOLDOFF_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -27,7 +63,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystoreFile != null) signingConfig = signingConfigs.getByName("upload")
         }
     }
 
@@ -44,7 +80,10 @@ android {
         )
     }
 
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.3" }
 
     packaging {
@@ -73,19 +112,11 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Networking — OkHttp (used by HoldOffApi for auth + companion chat)
+    // Networking — OkHttp (HoldOffApi: draft analysis + companion chat)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Google Sign-In + Play Billing
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    // Purchases
     implementation("com.android.billingclient:billing-ktx:6.1.0")
-
-    // Images, preferences, local DB
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

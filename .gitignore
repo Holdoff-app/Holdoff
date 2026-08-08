@@ -26,3 +26,12 @@ shell-snapshots/
 statsig/
 todos/
 *.jsonl
+
+# Runtime artifact: queued work that failed while a provider was down
+data/degraded/
+
+# Android signing / API secrets — never commit
+android-app/local.properties
+local.properties
+android-app/app/build/
+android-app/.gradle/

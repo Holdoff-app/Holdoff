@@ -6,7 +6,7 @@ const http = require('http');
 const { spawn } = require('child_process');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = Number(process.env.TEST_PORT) || 4310;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 let serverProcess = null;
 
@@ -62,9 +62,14 @@ function assertIn(value, allowed, message) {
   }
 }
 
-async function waitForServer(timeoutMs = 30000) {
+async function waitForServer(timeoutMs = 30000, exitedEarly = () => null) {
   const startedAt = Date.now();
   while (Date.now() - startedAt < timeoutMs) {
+    // Without this the suite happily tests whatever else is listening on PORT.
+    const code = exitedEarly();
+    if (code !== null && code !== undefined) {
+      throw new Error(`App server exited with code ${code} before becoming ready`);
+    }
     try {
       const res = await get('/health');
       if (res.status === 200) return;
@@ -92,14 +97,16 @@ async function startServer() {
     stderr += chunk.toString();
   });
 
+  let exitedEarly = null;
   serverProcess.on('exit', (code) => {
     if (code !== 0 && code !== null) {
+      exitedEarly = code;
       console.error(`Server exited early with code ${code}`);
       if (stderr) console.error(stderr);
     }
   });
 
-  await waitForServer();
+  await waitForServer(30000, () => exitedEarly);
 }
 
 async function stopServer() {

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'app/**'
+      - 'android-app/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
       - 'gradle.properties'
@@ -27,6 +27,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
+        env:
+          HOLDOFF_API_KEY: ${{ secrets.HOLDOFF_API_KEY }}
         run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload debug APK artifact

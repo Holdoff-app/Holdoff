@@ -1,14 +1,15 @@
 package com.holdoff.app.data.model
 
-/** The AI's verdict on a thread — displayed on VerdictScreen. */
+/** The AI's read on a single draft — displayed on VerdictScreen. */
 data class VerdictResult(
     val threadId: String,
     val verdict: Verdict,
     val confidence: Float,                  // 0.0 → 1.0
     val reasoning: String,
     val patternInsights: List<String>,
-    val suggestedResponse: String? = null,  // premium only
-    val attachmentInsight: String? = null,  // premium only
+    val suggestedResponse: String? = null,
+    val attachmentInsight: String? = null,
+    val isCrisis: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 )
 

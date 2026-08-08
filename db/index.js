@@ -32,15 +32,32 @@ if (!process.env.DATABASE_URL) {
     on: () => undefined,
   };
 } else {
+  const isLocal = /(?:localhost|127\.0\.0\.1)/.test(process.env.DATABASE_URL);
+
+  // Azure Database for PostgreSQL presents a certificate chaining to a root
+  // Node already trusts, so the connection is verified. Set
+  // DATABASE_SSL_NO_VERIFY=1 only for a provider with a private CA — without
+  // verification the session is encrypted but not authenticated.
+  let ssl = false;
+  if (!isLocal) {
+    ssl = process.env.DATABASE_SSL_NO_VERIFY === '1'
+      ? { rejectUnauthorized: false }
+      : { rejectUnauthorized: true };
+    if (process.env.DATABASE_SSL_NO_VERIFY === '1') {
+      console.warn('[pg pool] TLS certificate verification disabled by DATABASE_SSL_NO_VERIFY');
+    }
+  }
+
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes('localhost')
-      ? false
-      : { rejectUnauthorized: false },
+    ssl,
+    max: Number(process.env.PGPOOL_MAX) || 10,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 10_000,
   });
 
-  // Neon auto-suspends idle connections; the client emits 'error' on reconnect
-  // failure. Log and keep running — pool reconnects automatically on next query.
+  // Managed Postgres drops idle connections; the client emits 'error' on
+  // reconnect failure. Log and keep running — the pool reconnects on next query.
   pool.on('error', (err) => {
     console.error('[pg pool] idle client error (non-fatal):', err?.message);
   });

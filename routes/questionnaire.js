@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const db = require('../db/messages');
@@ -31,7 +32,7 @@ const readLimiter = rateLimit({
  * Serve the questionnaire HTML
  */
 router.get('/', (req, res) => {
-  res.sendFile('/tasklet/agent/home/conditions-questionnaire.html');
+  res.sendFile(path.join(__dirname, '..', 'conditions-questionnaire.html'));
 });
 
 /**

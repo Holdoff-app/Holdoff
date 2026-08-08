@@ -16,7 +16,7 @@ async function upsertContact(userId, { name, phoneNumber, isFavorited }) {
   const query = `
     INSERT INTO user_contacts (user_id, name, phone_number, is_favorited)
     VALUES ($1, $2, $3, $4)
-    ON CONFLICT (phone_number)
+    ON CONFLICT (user_id, phone_number)
     DO UPDATE SET name = COALESCE($2, user_contacts.name),
                   is_favorited = COALESCE($4, user_contacts.is_favorited)
     RETURNING id, name, phone_number, is_favorited, last_messaged_at;
@@ -419,9 +419,9 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_contacts (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         name VARCHAR(255),
-        phone_number VARCHAR(20) UNIQUE NOT NULL,
+        phone_number VARCHAR(30),
         is_favorited BOOLEAN DEFAULT false,
         last_messaged_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
@@ -435,7 +435,7 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS message_threads (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         contact_id INT REFERENCES user_contacts(id) ON DELETE SET NULL,
         contact_phone VARCHAR(20),
         last_message_at TIMESTAMP DEFAULT NOW(),
@@ -495,7 +495,7 @@ async function initializeTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_conditions (
         id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         condition_name VARCHAR(50) NOT NULL, -- 'RSD', 'Anxiety', 'Depression', 'Addiction', 'Attachment_Styles'
         created_at TIMESTAMP DEFAULT NOW(),
         UNIQUE(user_id, condition_name)
@@ -503,26 +503,10 @@ async function initializeTables() {
       CREATE INDEX IF NOT EXISTS idx_user_conditions_user_id ON user_conditions(user_id);
     `);
 
-    // Contact insights table (relationship intelligence per contact)
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS contact_insights (
-        id SERIAL PRIMARY KEY,
-        contact_id INT NOT NULL REFERENCES user_contacts(id) ON DELETE CASCADE UNIQUE,
-        red_flags JSONB DEFAULT '[]',
-        yellow_flags JSONB DEFAULT '[]',
-        green_flags JSONB DEFAULT '[]',
-        risk_level VARCHAR(20) DEFAULT 'Medium', -- 'Low', 'Medium', 'High'
-        trust_level VARCHAR(20) DEFAULT 'Stable', -- 'Growing', 'Stable', 'Declining'
-        attachment_style_fit VARCHAR(50),
-        communication_style_match INT DEFAULT 0, -- 0-100
-        compatibility_score INT DEFAULT 0, -- 0-100
-        last_analyzed_message TEXT,
-        analysis_count INT DEFAULT 0,
-        updated_at TIMESTAMP DEFAULT NOW(),
-        created_at TIMESTAMP DEFAULT NOW()
-      );
-      CREATE INDEX IF NOT EXISTS idx_contact_insights_contact_id ON contact_insights(contact_id);
-    `);
+    // contact_insights is owned by migrations/. It used to be declared here too,
+    // with contact_id pointing at user_contacts instead of contacts — so on a
+    // database where this ran first, the /api/contact-insights routes (which
+    // resolve ids against contacts) would fail the foreign key.
 
     console.log('[DB] All messaging tables initialized successfully');
   } catch (err) {

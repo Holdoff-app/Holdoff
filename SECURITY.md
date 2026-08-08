@@ -1,21 +1,33 @@
 # Security Policy
 
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+If you believe you have found a security or privacy vulnerability in HoldOff,
+please report it privately. Do **not** open a public GitHub issue.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+- **Email:** security@smsholdoff.com
+- **Include:** what you found, the steps to reproduce it, and the impact you think it has.
+- **Response:** we aim to acknowledge within 3 business days and to give you a
+  status update at least every 7 days until the issue is resolved.
+- Please give us a reasonable opportunity to fix the issue before disclosing it
+  publicly. We will not pursue legal action against researchers who report in
+  good faith and avoid privacy violations, data destruction, and service disruption.
+
+HoldOff handles message content and contact data, so we treat any report
+touching user data as our highest priority.
+
+## Supported Versions
+
+HoldOff is pre-1.0 and ships from `main`. Only the latest released version
+receives security updates.
+
+| Version        | Supported |
+| -------------- | --------- |
+| Latest release | ✅        |
+| Older releases | ❌        |
+
+## Secrets
+
+Never commit credentials, connection strings, or API keys — including in
+**repository names**, branch names, or commit messages. Configuration belongs
+in environment variables. If a secret is exposed, rotate it first, then remove it.

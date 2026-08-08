@@ -1,1 +1,2 @@
-web: node emergency-static-server.js
+web: node server.js
+release: node migrate.js

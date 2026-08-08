@@ -21,7 +21,7 @@ import com.holdoff.app.ui.theme.ReachOutGreen
 fun VerdictBadge(verdict: Verdict, modifier: Modifier = Modifier) {
     val (label, color, emoji) = when (verdict) {
         Verdict.HOLD_OFF  -> Triple("HOLD OFF",  HoldOffRed,    "\uD83D\uDED1")
-        Verdict.REACH_OUT -> Triple("REACH OUT", ReachOutGreen, "\uD83D\uDC9A")
+        Verdict.REACH_OUT -> Triple("SEND IT",   ReachOutGreen, "\uD83D\uDC9A")
         Verdict.MAYBE     -> Triple("MAYBE",     MaybeAmber,    "\uD83E\uDD14")
     }
     Row(
