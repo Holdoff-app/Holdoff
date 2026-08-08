@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,7 +20,7 @@ val holdoffApiKey: String = run {
         project.file("../../local.properties")
     )
     val fromLocal = candidates.filter { it.exists() }.firstNotNullOfOrNull { file ->
-        java.util.Properties().apply { file.inputStream().use(::load) }
+        Properties().apply { file.inputStream().use { load(it) } }
             .getProperty("holdoffApiKey")
     }
     fromLocal ?: System.getenv("HOLDOFF_API_KEY") ?: ""
