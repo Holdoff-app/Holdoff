@@ -41,6 +41,21 @@ android {
         buildConfigField("String", "HOLDOFF_API_KEY", "\"$holdoffApiKey\"")
     }
 
+    // Play rejects a debug-signed upload, so release signing is configured only
+    // when CI supplies the upload keystore. Local release builds stay unsigned.
+    val keystoreFile = System.getenv("HOLDOFF_KEYSTORE_PATH")?.let(::file)?.takeIf { it.exists() }
+
+    signingConfigs {
+        if (keystoreFile != null) {
+            create("upload") {
+                storeFile = keystoreFile
+                storePassword = System.getenv("HOLDOFF_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("HOLDOFF_KEY_ALIAS")
+                keyPassword = System.getenv("HOLDOFF_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -48,8 +63,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // No signingConfig here on purpose: Play rejects a debug-signed
-            // upload. The release bundle is signed with the upload key in CI.
+            if (keystoreFile != null) signingConfig = signingConfigs.getByName("upload")
         }
     }
 
