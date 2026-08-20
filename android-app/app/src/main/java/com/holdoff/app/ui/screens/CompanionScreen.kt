@@ -15,14 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.holdoff.app.R
 import com.holdoff.app.ui.components.SadieAvatar
 import com.holdoff.app.ui.components.SadieSize
 import com.holdoff.app.ui.theme.*
@@ -165,13 +162,6 @@ fun CompanionScreen(
             }
 
             Surface(color = DeepPurple) {
-              Column {
-                Text(
-                    stringResource(R.string.mental_health_disclaimer),
-                    color = OnDarkTextMuted, fontSize = 10.sp, lineHeight = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
-                )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(12.dp),
                     verticalAlignment = Alignment.Bottom,
@@ -201,7 +191,6 @@ fun CompanionScreen(
                         colors = IconButtonDefaults.iconButtonColors(containerColor = VelvetPurple)
                     ) { Icon(Icons.AutoMirrored.Filled.Send, "Send", tint = OnDarkText) }
                 }
-              }
             }
         }
     }

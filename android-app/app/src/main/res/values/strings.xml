@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HoldOff</string>
+    <string name="app_name">HoldOff: so love can still see tomorrow</string>
     <string name="tagline">Pause. Breathe. Then decide.</string>
     <string name="verdict_hold_off">Hold Off</string>
-    <string name="verdict_reach_out">Send It</string>
+    <string name="verdict_reach_out">Reach Out</string>
     <string name="verdict_maybe">Maybe</string>
     <string name="mental_health_disclaimer">HoldOff is not therapy, not diagnosis, and not a substitute for professional mental health care.</string>
-    <!-- Shown in the text-selection toolbar of other apps; keep it short or it gets truncated. -->
-    <string name="process_text_action_name">HoldOff</string>
-    <string name="crisis_resources">If you are in crisis, call or text 988 (US Suicide &amp; Crisis Lifeline), or text HOME to 741741.</string>
 </resources>
