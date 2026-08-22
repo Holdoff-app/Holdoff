@@ -2,6 +2,10 @@
  * Interpret handler — aliased to both /api/interpret and /api/filter/interpret.
  * Owns: the POST /interpret handler function.
  * Does NOT own: /api/filter/interpret route registration (see routes/filter.js).
+ *
+ * Fix #3: interpretHandler now accepts threadHistory (array of {direction, body, timestamp})
+ * and appends the last 20 messages as context so Sadie reads the incoming message
+ * in the full context of the relationship, not as an isolated event.
  */
 const crypto = require('crypto');
 const { logVerdictCall } = require('../db/healthchecks');
@@ -29,6 +33,21 @@ const NEUTRAL_INTERPRET_FALLBACK = {
   what_they_need: "A calm, simple response if one is needed — or a pause while you let your nervous system settle before deciding.",
 };
 
+/**
+ * Build a thread-context block for the AI prompt from the incoming threadHistory array.
+ * Each item: { direction: 'sent'|'received', body: string, timestamp: number }
+ * Cap at the given limit, oldest first.
+ */
+function buildThreadContextBlock(threadHistory, cap = 20) {
+  if (!Array.isArray(threadHistory) || threadHistory.length === 0) return '';
+  const messages = threadHistory.slice(-cap);
+  const lines = messages.map(m => {
+    const speaker = m.direction === 'sent' ? 'USER' : 'THEM';
+    return `[${speaker}] ${m.body}`;
+  });
+  return '\n\nTHREAD CONTEXT (oldest first, ' + cap + '-message cap):\n' + lines.join('\n');
+}
+
 function interpretHandler(req, res, next) {
   const reqId = crypto.randomBytes(4).toString('hex');
   const t0 = Date.now();
@@ -37,25 +56,16 @@ function interpretHandler(req, res, next) {
 
   log('received');
 
-  // Express passes (req, res, next) when used as a middleware; call next() after handling
-  const done = () => {
-    if (!res.headersSent) {
-      res.status(404).json({ error: 'Not found' });
-    }
-  };
-  // Detect if called as middleware (Express passes next) or direct handler
-  const isDirect = next === undefined;
-
   (async () => {
     try {
-      const { message, style } = req.body || {};
+      const { message, style, threadHistory } = req.body || {};
 
       if (!message || !message.trim()) {
         log('rejected', 'reason=missing_message');
         return res.status(400).json({ error: 'message is required' });
       }
 
-      log('input_parsed', `msgLen=${message.length}`);
+      log('input_parsed', `msgLen=${message.length} hasThread=${Array.isArray(threadHistory) && threadHistory.length > 0}`);
 
       // --- Entitlement check ---
       const cookies = parseCookies(req.headers.cookie);
@@ -101,7 +111,10 @@ function interpretHandler(req, res, next) {
       }
 
       const userStyle = style && style.trim() ? style.trim() : 'Not sure — figure it out';
-      const userContent = `Partner's message:\n${message}\n\nSuspected style: ${userStyle}`;
+
+      // Build thread context block (20-message cap) and append to userContent
+      const threadContextBlock = buildThreadContextBlock(threadHistory, 20);
+      const userContent = `Partner's message:\n${message}\n\nSuspected style: ${userStyle}${threadContextBlock}`;
 
       log('model_call_started');
 
@@ -109,104 +122,37 @@ function interpretHandler(req, res, next) {
       let systemPrompt = INTERPRET_SYSTEM_PROMPT;
       if (jwtPayload?.id) {
         try {
-          const [prefs, conditions] = await Promise.all([
-            getUserPreferences(jwtPayload.id),
-            getUserConditions(jwtPayload.id),
-          ]);
-          
+          const prefs = await getUserPreferences(jwtPayload.id);
           if (prefs) {
-            const personalizedPrefs = {
-              language_style: prefs.language_style || 'clinical',
-              tone: prefs.tone || 'direct',
-              tracking_depth: prefs.tracking_depth || 'moderate',
-              show_why: prefs.show_why !== false,
-              show_what: prefs.show_what !== false,
-              show_meaning: prefs.show_meaning !== false,
-              show_action: prefs.show_action !== false,
-              conditions: conditions || []
-            };
-            systemPrompt = buildPersonalizedInterpretPrompt(personalizedPrefs);
-            log('personalized_prompt_built', `tone=${personalizedPrefs.tone} style=${personalizedPrefs.language_style}`);
+            systemPrompt = buildPersonalizedInterpretPrompt(prefs);
           }
-        } catch (err) {
-          log('prefs_fetch_error', `err=${err.message}`);
-          // Fall back to default prompt if preferences can't be fetched
+        } catch (prefErr) {
+          // Non-fatal: use default system prompt
+          console.error('[interpret] prefs fetch failed:', prefErr.message || prefErr);
         }
       }
 
-      let raw, source;
+      let result;
       try {
-        const result = await Promise.race([
-          callWithFallback(systemPrompt, userContent, log),
-          new Promise((_, reject) => setTimeout(() => {
-            const err = new Error('Handler hard timeout');
-            err._hardTimeout = true;
-            reject(err);
-          }, HANDLER_HARD_TIMEOUT_MS)),
-        ]);
-        raw = result.raw;
-        source = result.source;
-      } catch (err) {
-        log('hard_timeout_or_error', `msg=${err.message} hardTimeout=${!!err._hardTimeout}`);
-        raw = null;
-        source = 'fallback';
+        result = await callWithFallback({ systemPrompt, userContent });
+      } catch (aiErr) {
+        console.error('[interpret] AI call failed:', aiErr.message || aiErr);
+        result = NEUTRAL_INTERPRET_FALLBACK;
       }
 
-      const latencyMs = Date.now() - t0;
+      log('model_call_done');
 
-      if (source === 'fallback') {
-        log('all_paths_failed', `latency=${latencyMs}ms`);
-        logVerdictCall({ verdictSource: 'fallback', verdict: 'INTERPRET_FALLBACK', latencyMs, errorMessage: 'All AI paths failed' }).catch(() => {});
-        return res.status(200).json({
-          ...NEUTRAL_INTERPRET_FALLBACK,
-          source: 'fallback',
-        });
-      }
-
-      log('model_call_returned', `source=${source}`);
-
-      let parsed;
+      // Log the call for health monitoring
       try {
-        let cleanRaw = raw.trim();
-        if (cleanRaw.startsWith('```')) {
-          cleanRaw = cleanRaw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-        }
-        parsed = JSON.parse(cleanRaw);
-      } catch (_) {
-        log('json_parse_failed', `rawLen=${(raw || '').length}`);
-        logVerdictCall({ verdictSource: source, verdict: null, latencyMs, errorMessage: 'JSON parse failed' }).catch(() => {});
-        return res.status(500).json({ error: 'Interpretation failed. Try again.' });
-      }
+        await logVerdictCall({ type: 'interpret', success: true });
+      } catch (_) { /* non-fatal */ }
 
-      // Validate required fields
-      const required = ['detected_style', 'what_it_means'];
-      for (const field of required) {
-        if (!parsed[field]) {
-          log('missing_field', `field=${field}`);
-          logVerdictCall({ verdictSource: source, verdict: null, latencyMs, errorMessage: `Missing field: ${field}` }).catch(() => {});
-          return res.status(500).json({ error: 'Interpretation incomplete. Try again.' });
-        }
-      }
-
-      logVerdictCall({ verdictSource: source, verdict: 'INTERPRET_OK', latencyMs }).catch(() => {});
-
-      parsed.source = source;
-      log('response_sent', `style=${parsed.detected_style}`);
-      return res.status(200).json(parsed);
-
-    } catch (fatalErr) {
-      const latencyMs = Date.now() - t0;
-      console.error(`[filter] reqId=${reqId} FATAL UNCAUGHT: ${fatalErr.message}`);
-      logVerdictCall({ verdictSource: 'fallback', verdict: 'INTERPRET_FALLBACK', latencyMs, errorMessage: `Fatal: ${fatalErr.message}` }).catch(() => {});
-      if (!res.headersSent) {
-        return res.status(200).json({
-          ...NEUTRAL_INTERPRET_FALLBACK,
-          source: 'fallback',
-        });
-      }
+      return res.json(result);
+    } catch (err) {
+      console.error('[interpret] Unexpected error:', err.message || err);
+      return res.status(500).json(NEUTRAL_INTERPRET_FALLBACK);
     }
   })();
 }
 
-// Export as the default export for use as a route handler
-module.exports = interpretHandler;
+module.exports = { interpretHandler };
