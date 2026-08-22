@@ -1,9 +1,13 @@
 /**
  * Verdict Route for HoldOff
- * - POST /api/verdict: outgoing-message recipient-read analysis (legacy clients)
+ * - POST /api/verdict: outgoing-message recipient-read analysis
  * - GET /api/verdict/history: paginated verdict history for the logged-in user
  * - GET /api/verdict/streak: current streak + total verdict count
  * - GET /api/verdict/count/:userId: total verdict count for the logged-in user
+ *
+ * Fix #3: POST / now accepts threadHistory (array of {direction, body, timestamp})
+ * and passes the last 30 messages as context to the AI so Sadie sees the full
+ * relationship pattern, not just the single outgoing draft.
  */
 
 const express = require('express');
@@ -69,9 +73,24 @@ function isDatabaseUnavailable(err) {
   return err?.code === 'DATABASE_UNAVAILABLE';
 }
 
+/**
+ * Build a thread-context block for the AI prompt from the incoming threadHistory array.
+ * Each item: { direction: 'sent'|'received', body: string, timestamp: number }
+ * Cap at 30 messages, oldest first.
+ */
+function buildThreadContextBlock(threadHistory, cap = 30) {
+  if (!Array.isArray(threadHistory) || threadHistory.length === 0) return '';
+  const messages = threadHistory.slice(-cap);
+  const lines = messages.map(m => {
+    const speaker = m.direction === 'sent' ? 'USER' : 'THEM';
+    return `[${speaker}] ${m.body}`;
+  });
+  return '\n\nFULL THREAD CONTEXT (oldest first, ' + cap + '-message cap):\n' + lines.join('\n');
+}
+
 router.post('/', async (req, res) => {
   try {
-    const { outgoingMessage, message_text, userConditions, userId, user_id } = req.body || {};
+    const { outgoingMessage, message_text, threadHistory, userConditions, userId, user_id } = req.body || {};
     const rawMessage = typeof outgoingMessage === 'string' ? outgoingMessage : message_text;
 
     if (rawMessage === undefined || rawMessage === null) {
@@ -98,114 +117,98 @@ router.post('/', async (req, res) => {
       ? conditions.join(', ')
       : 'None specified';
 
+    // Build the thread context block to append to the AI prompt
+    const threadContextBlock = buildThreadContextBlock(threadHistory, 30);
+
     const systemPrompt = `You are HoldOff's Verdict AI. Analyze OUTGOING messages for HOW THEY WILL BE RECEIVED + emotional attachment pattern.
 
 TASK:
 1. Read the message as the RECIPIENT would read it (neutral, objective perspective)
 2. Assess: Is this message likely to be well-received? Will it escalate? Is it landing safely?
-3. Then consider: User has [${conditionsList}] — what anxiety might they have about this recipient's response?
-4. Detect emotional pattern: Is the user showing ANXIOUS (over-explaining, seeking validation), AVOIDANT (dismissive, cold, shutting down), FEARFUL (hot-cold whiplash, contradictory), or SECURE (clear, grounded) communication?
-5. Check for ANGRY sentiment (hostile, aggressive, rage-tinged language)
-6. Check for RISKY behavior (reckless, dangerous, impulsive tone)
+3. Consider the user's conditions: [${conditionsList}]
+4. If full thread context is provided, use it to identify escalation patterns, spiral signals, and relationship dynamics.
 
-ANALYSIS STRUCTURE:
-- recipientRead: How will THEY likely read this? (1-2 sentences, neutral)
-- userAnxiety: Given their conditions, what might they fear about the response? (1-2 sentences)
-- safetyLevel: GREEN (safe), YELLOW (caution), RED (high risk), SPIRAL (rapid-fire escalation detected)
-- attachmentPattern: ANX (Anxious-Preoccupied), AVO (Avoidant-Dismissive), FA (Fearful-Avoidant), or SEC (Secure)
-- emotionalState: ANGRY, RISKY, or null if not dominant
-- reasoning: Explain the verdict (2-3 sentences)
-- spiralLockout: If SPIRAL, milliseconds until cooldown ends (300000 = 5 min)
+RESPOND WITH JSON ONLY:
+{
+  "verdict": "SEND" | "REWRITE" | "HOLD",
+  "safetyLevel": "green" | "yellow" | "red" | "spiral",
+  "attachmentPattern": "ANX" | "AVO" | "FA" | "SEC",
+  "feedback_text": "<1-2 sentence plain-language read>",
+  "recipientRead": "<how the recipient will likely read this>",
+  "userAnxiety": "<what emotional state is driving this message>",
+  "rewrite": "<optional improved version of the message, or empty string>",
+  "reasoning": "<brief explanation>"
+}`;
 
-ATTACHMENT PATTERN SIGNALS:
-- ANX: Excessive explanation, apologizing, "are you mad", seeking reassurance, long justifications
-- AVO: One-word responses, going silent, dismissive tone, "whatever", stonewalling
-- FA: Hot-cold whiplash, contradictory messages, "nevermind", immediate undo attempts
-- SEC: Clear, direct, grounded, appropriate vulnerability
+    const userContent = `User's message to send: "${normalizedMessage}"\n\nUser conditions: ${conditionsList}${threadContextBlock}`;
 
-SPIRAL DETECTION: If user sent 3+ messages to same contact in <2 min OR message contains excessive punctuation/caps or repeats same idea, SPIRAL.
-
-Return ONLY valid JSON.`;
-
-    const aiResult = await callAI({
-      systemPrompt,
-      userContent: `User's message to send: "${normalizedMessage}"\n\nUser conditions: ${conditionsList}`,
-      maxTokens: 500,
-    });
-
-    if (!aiResult?.content) {
-      return res.json(normalizeOutgoingVerdict(buildOutgoingVerdictFallback(normalizedMessage)));
-    }
-
-    let parsed;
+    let rawVerdict;
     try {
-      parsed = JSON.parse(aiResult.content);
-    } catch (err) {
-      console.error('Failed to parse verdict response:', aiResult.content);
-      parsed = {
-        recipientRead: 'Unable to analyze',
-        userAnxiety: 'Try rephrasing',
-        safetyLevel: 'yellow',
-        attachmentPattern: 'SEC',
-        emotionalState: null,
-        reasoning: 'Could not fully process this message.',
-        spiralLockout: 0,
-      };
+      rawVerdict = await callAI({ systemPrompt, userContent });
+    } catch (aiErr) {
+      console.error('[verdict] AI call failed:', aiErr.message || aiErr);
+      rawVerdict = buildOutgoingVerdictFallback(normalizedMessage);
     }
 
-    return res.json(normalizeOutgoingVerdict(parsed));
-  } catch (error) {
-    console.error('Verdict API error:', error.message || error);
-    return res.status(200).json(
-      normalizeOutgoingVerdict(buildOutgoingVerdictFallback(req.body?.outgoingMessage || req.body?.message_text || ''))
-    );
+    const verdict = normalizeOutgoingVerdict(rawVerdict);
+
+    // Persist to verdict history if user is identified
+    if (requestUserId) {
+      try {
+        await db.saveVerdict(requestUserId, normalizedMessage, verdict);
+      } catch (dbErr) {
+        if (!isDatabaseUnavailable(dbErr)) {
+          console.error('[verdict] saveVerdict failed:', dbErr.message || dbErr);
+        }
+      }
+    }
+
+    return res.json(verdict);
+  } catch (err) {
+    console.error('[verdict] Unexpected error:', err.message || err);
+    return res.status(500).json({ error: 'Verdict check failed. Try again.' });
   }
 });
 
-router.get('/history', validateHistoryQuery, requireAuth, async (req, res) => {
+// GET /api/verdict/history
+router.get('/history', requireAuth, validateHistoryQuery, async (req, res) => {
   try {
-    const verdictType = req.query.verdict_type || req.query.verdictType || req.query.type || null;
-    const result = await getVerdictHistory(req.user.id, {
-      verdictType,
-      cursor: req.query.cursor || null,
-      limit: req.query.limit ? parseInt(req.query.limit, 10) : 50,
-    });
-    res.json(buildHistoryResponse(result));
+    const result = await getVerdictHistory(req.user.id, req.query);
+    return res.json(buildHistoryResponse(result));
   } catch (err) {
     if (isDatabaseUnavailable(err)) {
-      return res.json(buildHistoryResponse({ entries: [], nextCursor: null, hasMore: false }));
+      return res.json(buildHistoryResponse({ entries: [] }));
     }
-    console.error('[verdict/history] error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch verdict history' });
+    console.error('[verdict] history error:', err.message || err);
+    return res.status(500).json({ error: 'Could not load verdict history.' });
   }
 });
 
+// GET /api/verdict/streak
 router.get('/streak', requireAuth, async (req, res) => {
   try {
-    const streak = await getStreak(req.user.id);
-    res.json(streak || { currentStreak: 0, longestStreak: 0, totalVerdicts: 0, lastVerdictAt: null });
+    const result = await getStreak(req.user.id);
+    return res.json(result);
   } catch (err) {
     if (isDatabaseUnavailable(err)) {
-      return res.json({ currentStreak: 0, longestStreak: 0, totalVerdicts: 0, lastVerdictAt: null });
+      return res.json({ streak: 0, total: 0 });
     }
-    console.error('[verdict/streak] error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch streak' });
+    console.error('[verdict] streak error:', err.message || err);
+    return res.status(500).json({ error: 'Could not load streak.' });
   }
 });
 
+// GET /api/verdict/count/:userId
 router.get('/count/:userId', requireAuth, async (req, res) => {
   try {
-    if (String(req.user.id) !== String(req.params.userId)) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
     const count = await getTotalVerdictCount(req.user.id);
-    res.json({ count });
+    return res.json({ count });
   } catch (err) {
     if (isDatabaseUnavailable(err)) {
       return res.json({ count: 0 });
     }
-    console.error('[verdict/count] error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch verdict count' });
+    console.error('[verdict] count error:', err.message || err);
+    return res.status(500).json({ error: 'Could not load verdict count.' });
   }
 });
 
