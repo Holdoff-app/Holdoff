@@ -243,8 +243,8 @@ app.get('/.well-known/assetlinks.json', (_req, res) => {
         namespace: 'android_app',
         package_name: 'com.stacymartin.holdoff',
         sha256_cert_fingerprints: [
-          '7B:C2:57:02:73:AB:25:A5:52:B6:73:1B:F6:AF:2D:2E:FF:BF:02:D7:AF:2E:33:CC:92:D3:FA:74:EB:61:2D:95',
-          '5C:01:7D:6E:E0:E5:5C:B1:9E:DF:7C:26:39:32:8C:62:04:71:12:A6:10:CE:40:D6:36:D2:E1:5D:D6:02:2F:D1',
+          'EA:E1:01:A1:B2:08:14:1C:9E:63:E9:CA:8C:E4:00:8C:74:36:ED:07:76:F9:C2:A2:25:19:EB:90:29:2D:AB:3E',
+          '',
         ],
       },
     },
