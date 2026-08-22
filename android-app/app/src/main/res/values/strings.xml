@@ -6,4 +6,6 @@
     <string name="verdict_reach_out">Reach Out</string>
     <string name="verdict_maybe">Maybe</string>
     <string name="mental_health_disclaimer">HoldOff is not therapy, not diagnosis, and not a substitute for professional mental health care.</string>
+    <string name="accessibility_service_description">HoldOff watches for send button taps in your messaging apps so Sadie can check your message before it sends.</string>
+    <string name="holdoff_message_cleared">Message cleared. Good call.</string>
 </resources>
