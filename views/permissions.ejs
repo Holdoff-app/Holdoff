@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Permissions — HoldOff</title>
+  <style>
+    :root { --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --muted: #475569; --line: #dbe4ee; --accent: #6366f1; --purple: #4f1d8c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.65; }
+    .shell { max-width: 860px; margin: 0 auto; padding: 0 20px 36px; }
+    header { padding: 22px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+    .brand { font-size: 1.1rem; font-weight: 800; text-decoration: none; color: var(--text); }
+    nav a { text-decoration: none; color: var(--muted); margin-left: 14px; font-size: 0.95rem; }
+    h1 { margin: 0; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: -0.03em; }
+    .meta { margin-top: 8px; color: var(--muted); font-size: 0.92rem; }
+    .intro { margin: 16px 0 24px; color: #334155; font-size: 1rem; }
+    .perm-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-top: 14px; }
+    .perm-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .perm-icon { width: 42px; height: 42px; border-radius: 10px; background: #ede9fe; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .perm-name { font-weight: 700; font-size: 1.05rem; color: var(--purple); }
+    .perm-system { font-size: 0.8rem; color: var(--muted); font-family: monospace; margin-top: 2px; }
+    .perm-body p { margin: 0 0 8px; color: #334155; }
+    .perm-body .why { font-weight: 600; color: var(--text); }
+    .sensitive-note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 14px 16px; margin-top: 24px; font-size: 0.93rem; color: #92400e; }
+    footer { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px; text-align: center; color: var(--muted); font-size: 0.9rem; }
+    footer a { color: var(--accent); }
+    @media (max-width: 700px) { header { flex-direction: column; align-items: flex-start; gap: 10px; } nav a { margin: 0 12px 0 0; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header><a href="/" class="brand">HoldOff</a><nav><a href="/">Home</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav></header>
+    <main>
+      <h1>App Permissions</h1>
+      <p class="meta">Last updated: August 22, 2026</p>
+      <p class="intro">HoldOff requests only the permissions it genuinely needs to protect you from impulsive messaging. Below is a plain-language explanation of each permission, why we need it, and what we <strong>never</strong> do with it.</p>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">♿</div><div><div class="perm-name">Accessibility Service</div><div class="perm-system">android.permission.BIND_ACCESSIBILITY_SERVICE</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> HoldOff's core feature — the AI message guardian — needs to detect when you are composing a message so it can offer a pause, a Spiral Lock, or a Verdict before you send. The Accessibility Service lets HoldOff observe on-screen text in messaging apps for this purpose.</p><p><strong>What we never do:</strong> We do not read, store, or transmit the full content of your messages. We do not log keystrokes. Message text processed for the AI guardian is analyzed in memory and not persisted beyond your session.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">💬</div><div><div class="perm-name">Read &amp; Receive SMS</div><div class="perm-system">READ_SMS · RECEIVE_SMS</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> To show you message threads inside the HoldOff inbox and to provide context for the AI Interpret and Verdict features, HoldOff needs read access to SMS messages you choose to analyze.</p><p><strong>What we never do:</strong> We do not automatically upload your messages to any server. Messages are only sent to our AI backend when you explicitly tap Analyze or Interpret. We do not sell, share, or archive your SMS content.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">📤</div><div><div class="perm-name">Send SMS</div><div class="perm-system">SEND_SMS</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> When HoldOff acts as your default SMS app, it needs this permission to deliver messages you choose to send after reviewing them in the app.</p><p><strong>What we never do:</strong> HoldOff never sends messages automatically. Every message is sent only by you, after review.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">👥</div><div><div class="perm-name">Read Contacts</div><div class="perm-system">READ_CONTACTS</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> To display sender names in your inbox, match threads to people you know, and power the Contact Insights feature (which analyzes your messaging patterns with specific contacts), HoldOff needs to read your device contacts.</p><p><strong>What we never do:</strong> We do not upload your contact list to our servers. Contact names are matched locally on your device.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">🔔</div><div><div class="perm-name">Post Notifications</div><div class="perm-system">POST_NOTIFICATIONS</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> HoldOff sends you wellness check-ins, Spiral Lock alerts, and AI-initiated pause notifications. This permission allows those alerts to appear on your device.</p><p><strong>What we never do:</strong> You control notification frequency in Settings. We never send promotional push messages without your consent.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">⚙️</div><div><div class="perm-name">Foreground Service</div><div class="perm-system">FOREGROUND_SERVICE</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> To monitor for message-sending activity across apps (when you have granted Accessibility Service permission), HoldOff runs a foreground service. Android requires this to keep the guardian active while you are in other apps.</p><p><strong>What we never do:</strong> The foreground service does not access location, camera, or microphone. You can pause or stop it any time from the HoldOff app or your device's app settings.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">🌐</div><div><div class="perm-name">Internet Access</div><div class="perm-system">INTERNET · ACCESS_NETWORK_STATE</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> HoldOff connects to our secure backend at api.smsholdoff.com to power the AI Verdict, Interpret, and Sadie companion features. Internet access is required for these real-time AI responses.</p><p><strong>What we never do:</strong> All connections to our backend are encrypted over HTTPS. We do not transmit data to third parties for advertising.</p></div></div>
+      <div class="perm-card"><div class="perm-header"><div class="perm-icon">🔄</div><div><div class="perm-name">Receive Boot Completed</div><div class="perm-system">RECEIVE_BOOT_COMPLETED</div></div></div><div class="perm-body"><p><span class="why">Why we need it:</span> If you have enabled the HoldOff guardian to run in the background, this permission allows HoldOff to restart its monitoring service after your device reboots — so your protection is never silently interrupted.</p><p><strong>What we never do:</strong> Boot auto-start is only active if you have explicitly enabled background monitoring. You can disable it in Settings at any time.</p></div></div>
+      <div class="sensitive-note">⚠️ <strong>Sensitive permissions note:</strong> HoldOff uses the Accessibility Service permission as described above. Per Google Play policy, this use is disclosed here and in the Play Store listing. This permission is used solely for message-guardian functionality and is not used to collect personal data beyond what is described in our <a href="/privacy">Privacy Policy</a>.</div>
+    </main>
+    <footer><a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="mailto:support@smsholdoff.com">support@smsholdoff.com</a></footer>
+  </div>
+</body>
+</html>

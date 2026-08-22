@@ -20,6 +20,16 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("HOLDOFF_KEYSTORE_PATH")
+            storeFile = if (keystorePath != null) file(keystorePath) else null
+            storePassword = System.getenv("HOLDOFF_KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("HOLDOFF_KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("HOLDOFF_KEY_PASSWORD") ?: ""
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -27,7 +37,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

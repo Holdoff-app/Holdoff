@@ -244,7 +244,6 @@ app.get('/.well-known/assetlinks.json', (_req, res) => {
         package_name: 'com.stacymartin.holdoff',
         sha256_cert_fingerprints: [
           'EA:E1:01:A1:B2:08:14:1C:9E:63:E9:CA:8C:E4:00:8C:74:36:ED:07:76:F9:C2:A2:25:19:EB:90:29:2D:AB:3E',
-          '',
         ],
       },
     },
@@ -615,6 +614,8 @@ app.get('/suggest', async (req, res) => {
 // Legal pages
 app.get('/privacy', (_req, res) => res.render('privacy'));
 app.get('/terms', (_req, res) => res.render('terms'));
+// Permissions disclosure (required by Google Play)
+app.get('/permissions', (_req, res) => res.render('permissions'));
 
 // ─── Premium interactive story ───────────────────────────────────────────────
 // /story-preview = Stacy's real story (free, served as the preview).
