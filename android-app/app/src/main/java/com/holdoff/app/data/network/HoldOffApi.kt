@@ -14,8 +14,12 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Thin OkHttp wrapper for api.smsholdoff.com API.
- * – login()         → POST /api/auth/login, extracts JWT from Set-Cookie, stores in prefs
- * – companionChat() → POST /api/companion/chat with Bearer token
+ *
+ * Methods:
+ *  – login()              POST /api/auth/login
+ *  – companionChat()      POST /api/companion/chat
+ *  – analyzeMessages()    POST /api/verdict  (Fix #3: sends full threadHistory)
+ *  – interpretMessage()   POST /api/interpreter  (Fix #3: sends full threadHistory)
  */
 object HoldOffApi {
 
@@ -32,7 +36,7 @@ object HoldOffApi {
 
     private val JSON = "application/json".toMediaType()
 
-    // ── token storage ────────────────────────────────────────────────────────
+    // ── token storage ──────────────────────────────────────────────────────
 
     private fun prefs(ctx: Context): SharedPreferences =
         ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -58,7 +62,7 @@ object HoldOffApi {
     fun getAttachmentStyle(ctx: Context): String? =
         prefs(ctx).getString(KEY_ATTACHMENT_STYLE, null)
 
-    // ── auth ─────────────────────────────────────────────────────────────────
+    // ── auth ───────────────────────────────────────────────────────────────
 
     data class LoginResult(val ok: Boolean, val error: String? = null, val isPremium: Boolean = false)
 
@@ -99,7 +103,6 @@ object HoldOffApi {
                 savePremium(ctx, premium)
 
                 LoginResult(ok = true, isPremium = premium)
-
             } catch (e: Exception) {
                 LoginResult(ok = false, error = e.message ?: "Network error")
             }
@@ -107,50 +110,109 @@ object HoldOffApi {
 
     // ── companion chat ───────────────────────────────────────────────────────
 
-    data class ChatResult(val reply: String?, val error: String? = null)
+    suspend fun companionChat(ctx: Context, message: String): String =
+        withContext(Dispatchers.IO) {
+            val token = getToken(ctx) ?: return@withContext "Please log in to chat with Sadie."
+            try {
+                val body = JSONObject().apply {
+                    put("message", message)
+                }.toString().toRequestBody(JSON)
 
-    suspend fun companionChat(
-        ctx: Context,
-        soulName: String,   // "Sadie" | "Dan"
-        message: String,
-        history: List<Pair<String, String>> = emptyList(),   // (role, content) pairs
-        attachmentStyle: String? = null
-    ): ChatResult = withContext(Dispatchers.IO) {
-        val token = getToken(ctx)
-            ?: return@withContext ChatResult(reply = null, error = "Not authenticated")
+                val request = Request.Builder()
+                    .url("$BASE_URL/api/companion/chat")
+                    .addHeader("Authorization", "Bearer $token")
+                    .post(body)
+                    .build()
 
-        try {
-            val historyArr = JSONArray().apply {
-                history.forEach { (role, content) ->
-                    put(JSONObject().apply { put("role", role); put("content", content) })
-                }
+                val response = client.newCall(request).execute()
+                val bodyStr  = response.body?.string() ?: "{}"
+                JSONObject(bodyStr).optString("reply", "Sadie is thinking...")
+            } catch (e: Exception) {
+                "Sadie couldn't reach the server. Try again."
             }
-            val bodyObj = JSONObject().apply {
-                put("soulName", soulName)
-                put("message", message)
-                put("conversationHistory", historyArr)
-                if (attachmentStyle != null) put("attachmentStyle", attachmentStyle)
-            }
-
-            val request = Request.Builder()
-                .url("$BASE_URL/api/companion/chat")
-                .post(bodyObj.toString().toRequestBody(JSON))
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-
-            val response = client.newCall(request).execute()
-            val bodyStr  = response.body?.string() ?: "{}"
-
-            if (!response.isSuccessful) {
-                val msg = runCatching { JSONObject(bodyStr).getString("error") }.getOrDefault("Request failed")
-                return@withContext ChatResult(reply = null, error = msg)
-            }
-
-            val reply = JSONObject(bodyStr).getString("reply")
-            ChatResult(reply = reply)
-
-        } catch (e: Exception) {
-            ChatResult(reply = null, error = e.message ?: "Network error")
         }
+
+    // ── verdict (outgoing message analysis with full thread context) ─────────────
+
+    /**
+     * Sends an outgoing message draft to /api/verdict along with the full
+     * thread history (up to 30 messages) for full-context AI analysis.
+     *
+     * @param messageText    The draft the user is about to send.
+     * @param threadHistory  List of maps with keys: direction, body, timestamp.
+     * @return               The raw JSON verdict object from the server.
+     */
+    suspend fun analyzeMessages(
+        ctx: Context,
+        messageText: String,
+        threadHistory: List<Map<String, Any>>
+    ): JSONObject = withContext(Dispatchers.IO) {
+        val token = getToken(ctx)
+
+        val historyArr = JSONArray()
+        for (msg in threadHistory) {
+            JSONObject().apply {
+                put("direction",  msg["direction"] ?: "received")
+                put("body",       msg["body"] ?: "")
+                put("timestamp",  msg["timestamp"] ?: 0L)
+            }.also { historyArr.put(it) }
+        }
+
+        val body = JSONObject().apply {
+            put("outgoingMessage", messageText)
+            put("threadHistory",   historyArr)
+        }.toString().toRequestBody(JSON)
+
+        val requestBuilder = Request.Builder()
+            .url("$BASE_URL/api/verdict")
+            .post(body)
+        if (token != null) requestBuilder.addHeader("Authorization", "Bearer $token")
+
+        val response = client.newCall(requestBuilder.build()).execute()
+        val bodyStr  = response.body?.string() ?: "{}"
+        JSONObject(bodyStr)
+    }
+
+    // ── interpret (incoming message analysis with full thread context) ───────────
+
+    /**
+     * Sends an incoming message to /api/interpreter along with the full
+     * thread history (up to 20 messages) so Sadie can pattern-match against
+     * the relationship context, not just the single message.
+     *
+     * @param messageText    The incoming message body.
+     * @param from           The sender's phone number (used for logging only).
+     * @param threadHistory  List of maps with keys: direction, body, timestamp.
+     */
+    suspend fun interpretMessage(
+        ctx: Context,
+        messageText: String,
+        from: String,
+        threadHistory: List<Map<String, Any>>
+    ): JSONObject = withContext(Dispatchers.IO) {
+        val token = getToken(ctx)
+
+        val historyArr = JSONArray()
+        for (msg in threadHistory) {
+            JSONObject().apply {
+                put("direction",  msg["direction"] ?: "received")
+                put("body",       msg["body"] ?: "")
+                put("timestamp",  msg["timestamp"] ?: 0L)
+            }.also { historyArr.put(it) }
+        }
+
+        val body = JSONObject().apply {
+            put("message",       messageText)
+            put("threadHistory", historyArr)
+        }.toString().toRequestBody(JSON)
+
+        val requestBuilder = Request.Builder()
+            .url("$BASE_URL/api/interpreter")
+            .post(body)
+        if (token != null) requestBuilder.addHeader("Authorization", "Bearer $token")
+
+        val response = client.newCall(requestBuilder.build()).execute()
+        val bodyStr  = response.body?.string() ?: "{}"
+        JSONObject(bodyStr)
     }
 }
