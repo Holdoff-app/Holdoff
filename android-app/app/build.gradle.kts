@@ -87,9 +87,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Google Sign-In + Play Billing
+    // Google Sign-In + Play Billing + Custom Tabs
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.android.billingclient:billing-ktx:6.1.0")
+    implementation("androidx.browser:browser:1.7.0")
 
     // Images, preferences, local DB
     implementation("io.coil-kt:coil-compose:2.5.0")

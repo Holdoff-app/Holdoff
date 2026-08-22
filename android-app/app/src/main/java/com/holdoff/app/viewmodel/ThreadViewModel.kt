@@ -74,8 +74,8 @@ class ThreadViewModel(application: Application) : AndroidViewModel(application) 
                 val verdict = VerdictResult(
                     threadId        = threadId,
                     verdict         = when (apiResult.optString("verdict", "HOLD")) {
-                        "SEND"    -> Verdict.SEND
-                        "REWRITE" -> Verdict.REWRITE
+                        "SEND"    -> Verdict.REACH_OUT
+                        "REWRITE" -> Verdict.MAYBE
                         else      -> Verdict.HOLD_OFF
                     },
                     confidence      = apiResult.optDouble("confidence", 0.75).toFloat(),

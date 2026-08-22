@@ -57,7 +57,7 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
             } ?: "fearful avoidant · core",
             messages = listOf(
                 ChatMessage(
-                    text = "Hey love. I\u2019m Sadie. \uD83D\uDC9C  I see patterns in your conversations that you might be missing. What\u2019s going on?",
+                    text = "Hey love. I’m Sadie. 💜  I see patterns in your conversations that you might be missing. What’s going on?",
                     isFromCompanion = true
                 )
             )
@@ -71,7 +71,7 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
     private fun styleLabel(style: String, companion: String): String {
         val label = STYLE_LABELS[style] ?: style
         val isCore = style == coreStyle(companion)
-        return if (isCore) "$label \u00B7 core" else label
+        return if (isCore) "$label · core" else label
     }
 
     fun sendMessage(text: String) {
@@ -85,42 +85,29 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         viewModelScope.launch {
-            val soulName = if (_state.value.activeCompanion == "dan") "Dan" else "Sadie"
-
-            val history = _state.value.messages
-                .filter { it.id != userMsg.id }
-                .map { msg -> Pair(if (msg.isFromCompanion) "assistant" else "user", msg.text) }
-
-            val result = HoldOffApi.companionChat(
-                ctx = ctx,
-                soulName = soulName,
-                message = text,
-                history = history,
-                attachmentStyle = _state.value.activeStyle
-            )
-
-            if (result.reply != null) {
-                _state.value = _state.value.copy(
-                    messages = _state.value.messages + ChatMessage(
-                        text = result.reply,
-                        isFromCompanion = true
-                    ),
-                    isTyping = false
-                )
-            } else {
-                val fallback = when (soulName) {
-                    "Dan"  -> "Something got in the way. Try again?"
-                    else   -> "Lost my train of thought \u2014 try again?"
-                }
-                _state.value = _state.value.copy(
-                    messages = _state.value.messages + ChatMessage(
-                        text = fallback,
-                        isFromCompanion = true
-                    ),
-                    isTyping = false,
-                    errorMessage = result.error
-                )
+            val companionName = if (_state.value.activeCompanion == "dan") "Dan" else "Sadie"
+            val prompt = buildString {
+                append("Companion: ").append(companionName).append('\n')
+                append("Attachment style: ").append(_state.value.activeStyle).append('\n')
+                append("Message: ").append(text)
             }
+
+            val reply = HoldOffApi.companionChat(ctx, prompt)
+            val fallbackText = if (reply.isBlank()) {
+                when (companionName) {
+                    "Dan" -> "Something got in the way. Try again?"
+                    else -> "Lost my train of thought — try again?"
+                }
+            } else reply
+
+            _state.value = _state.value.copy(
+                messages = _state.value.messages + ChatMessage(
+                    text = fallbackText,
+                    isFromCompanion = true
+                ),
+                isTyping = false,
+                errorMessage = null
+            )
         }
     }
 
@@ -129,8 +116,8 @@ class CompanionViewModel(application: Application) : AndroidViewModel(applicatio
     fun switchCompanion(id: String) {
         val style = coreStyle(id)
         val greeting = when (id) {
-            "dan"  -> "What\u2019s going on. I\u2019m listening."
-            else   -> "Hey love. I\u2019m Sadie. \uD83D\uDC9C  I see patterns in your conversations that you might be missing. What\u2019s going on?"
+            "dan"  -> "What’s going on. I’m listening."
+            else   -> "Hey love. I’m Sadie. 💜  I see patterns in your conversations that you might be missing. What’s going on?"
         }
         _state.value = CompanionUiState(
             activeCompanion = id,
