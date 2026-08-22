@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Midnight Velvet palette — never coral, never peach -->
+    <color name="midnight_navy">#FF0A0A1A</color>
+    <color name="deep_purple">#FF1A0A2E</color>
+    <color name="royal_purple">#FF2D1257</color>
+    <color name="velvet_purple">#FF4A1A7A</color>
+    <color name="glow_purple">#FF7B35C1</color>
+    <color name="soft_lavender">#FFB39DDB</color>
+    <color name="romantic_blue">#FF0D1B4B</color>
+    <color name="glow_blue">#FF3D5AFE</color>
+    <color name="on_dark_text">#FFF0E6FF</color>
+</resources>

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Compose — HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0E0C0B">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#0E0C0B;color:#F2EDE5;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+
+    /* Top bar */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.25rem;border-bottom:1px solid #2E2924;position:sticky;top:0;background:#0E0C0B;z-index:20;}
+    .topbar__back{color:#8B5CF6;text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:.25rem;}
+    .topbar__title{font-family:'Fraunces',serif;font-size:1.05rem;color:#F2EDE5;}
+    .topbar__action{color:#8B5CF6;background:none;border:none;font-size:.85rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    /* Mode tabs */
+    .mode-tabs{display:flex;border-bottom:1px solid #2E2924;position:sticky;top:52px;background:#0E0C0B;z-index:15;}
+    .mode-tab{flex:1;padding:.7rem;text-align:center;font-size:.82rem;font-weight:500;color:#9E948E;cursor:pointer;border-bottom:2px solid transparent;transition:.2s;background:none;border-top:none;border-left:none;border-right:none;}
+    .mode-tab.active{color:#8B5CF6;border-bottom-color:#8B5CF6;}
+
+    /* Contact selector */
+    .contact-bar{padding:.75rem 1.25rem;border-bottom:1px solid #2E2924;display:flex;align-items:center;gap:.65rem;}
+    .contact-bar label{font-size:.75rem;color:#9E948E;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;}
+    .contact-bar select,.contact-bar input{flex:1;background:#1A1714;border:1px solid #2E2924;border-radius:8px;padding:.5rem .75rem;color:#F2EDE5;font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none;}
+    .contact-bar select:focus,.contact-bar input:focus{border-color:#8B5CF6;}
+    .contact-bar select option{background:#1A1714;color:#F2EDE5;}
+
+    /* Message area */
+    .messages{flex:1;padding:1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;padding-bottom:140px;}
+    .msg-bubble{max-width:80%;padding:.75rem 1rem;border-radius:16px;font-size:.9rem;line-height:1.45;word-wrap:break-word;}
+    .msg-outgoing{background:#C97B5D;color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+    .msg-incoming{background:#1A1714;color:#F2EDE5;align-self:flex-start;border-bottom-left-radius:4px;border:1px solid #2E2924;}
+    .msg-system{align-self:center;background:rgba(201,123,93,.1);border:1px solid rgba(201,123,93,.2);color:#8B5CF6;border-radius:12px;padding:.65rem 1rem;font-size:.82rem;text-align:center;max-width:90%;}
+    .msg-time{font-size:.65rem;color:#9E948E;margin-top:.2rem;}
+
+    /* Verdict card */
+    .verdict-card{background:#1A1714;border:1px solid #2E2924;border-radius:16px;padding:1.25rem;margin:.5rem 0;max-width:95%;align-self:center;}
+    .verdict-card h3{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+    .verdict-badge{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .6rem;border-radius:4px;}
+    .verdict-badge--HOLD{background:rgba(244,67,54,.12);color:#F44336;}
+    .verdict-badge--SEND{background:rgba(76,175,80,.12);color:#4CAF50;}
+    .verdict-badge--REWRITE{background:rgba(255,152,0,.12);color:#FF9800;}
+    .verdict-section{margin-top:.65rem;font-size:.85rem;line-height:1.5;}
+    .verdict-section strong{color:#8B5CF6;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:.2rem;}
+    .verdict-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;}
+    .verdict-btn{padding:.55rem 1rem;border-radius:10px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.15s;}
+    .verdict-btn--send{background:#4CAF50;color:#fff;}
+    .verdict-btn--hold{background:rgba(244,67,54,.15);color:#F44336;border:1px solid rgba(244,67,54,.3);}
+    .verdict-btn--rewrite{background:rgba(255,152,0,.15);color:#FF9800;border:1px solid rgba(255,152,0,.3);}
+    .verdict-btn:hover{opacity:.85;transform:scale(1.02);}
+
+    /* Interpret card (decode mode) */
+    .interpret-card{background:#1A1714;border:1px solid #2E2924;border-radius:16px;padding:1.25rem;margin:.5rem 0;max-width:95%;align-self:center;}
+    .interpret-card h3{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.65rem;color:#8B5CF6;}
+    .interpret-section{margin-top:.55rem;font-size:.85rem;line-height:1.5;}
+    .interpret-section strong{color:#9E948E;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:.15rem;}
+    .style-badge{display:inline-block;background:rgba(201,123,93,.12);color:#8B5CF6;padding:.2rem .6rem;border-radius:4px;font-size:.75rem;font-weight:600;margin-bottom:.5rem;}
+
+    /* Compose bar */
+    .compose-bar{position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;padding:.65rem 1rem max(.65rem,env(safe-area-inset-bottom));z-index:20;}
+    .compose-inner{display:flex;align-items:flex-end;gap:.5rem;max-width:480px;margin:0 auto;}
+    .compose-textarea{flex:1;background:#1A1714;border:1px solid #2E2924;border-radius:20px;padding:.6rem 1rem;color:#F2EDE5;font-size:.9rem;font-family:'DM Sans',sans-serif;resize:none;outline:none;max-height:120px;min-height:40px;line-height:1.4;overflow-y:auto;}
+    .compose-textarea:focus{border-color:#8B5CF6;}
+    .compose-textarea::placeholder{color:#9E948E;}
+    .send-btn{width:40px;height:40px;border-radius:50%;background:#C97B5D;border:none;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;}
+    .send-btn:hover{background:#b56a4d;transform:scale(1.05);}
+    .send-btn:disabled{background:#2E2924;color:#9E948E;cursor:not-allowed;transform:none;}
+    .send-btn .spinner-sm{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+
+    /* Spiral Lock Overlay */
+    .spiral-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.95);color:#fff;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+    .spiral-overlay.active{display:flex;}
+    .spiral-overlay h2{font-family:'Fraunces',serif;color:#8B5CF6;font-size:1.5rem;margin-bottom:.5rem;}
+    .spiral-overlay p{color:#9E948E;font-size:.9rem;max-width:320px;margin-bottom:1rem;}
+    .spiral-timer{font-family:'Fraunces',serif;font-size:3.5rem;font-weight:700;color:#F44336;margin:.5rem 0;}
+    .spiral-quiz{display:none;margin-top:1.5rem;text-align:left;max-width:320px;width:100%;}
+    .spiral-quiz p{color:#F2EDE5;font-size:.85rem;margin-bottom:.3rem;}
+    .spiral-quiz input{width:100%;background:#1A1714;border:1px solid #2E2924;border-radius:8px;padding:.5rem .75rem;color:#F2EDE5;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:.75rem;}
+    .spiral-quiz input:focus{border-color:#8B5CF6;}
+    .spiral-btn{padding:.6rem 1.25rem;border-radius:10px;background:rgba(201,123,93,.15);border:1px solid rgba(201,123,93,.3);color:#8B5CF6;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.5rem;}
+    .spiral-btn:hover{background:rgba(201,123,93,.25);}
+
+    /* Empty state */
+    .empty-state{text-align:center;padding:3rem 1.5rem;color:#9E948E;}
+    .empty-state .emoji{font-size:3rem;margin-bottom:.75rem;}
+    .empty-state h3{font-family:'Fraunces',serif;color:#F2EDE5;font-size:1.1rem;margin-bottom:.5rem;}
+    .empty-state p{font-size:.85rem;line-height:1.5;}
+
+    /* Loading */
+    .loading-dots{display:flex;gap:4px;align-self:center;padding:1rem;}
+    .loading-dots span{width:8px;height:8px;background:#C97B5D;border-radius:50%;animation:bounce .6s ease-in-out infinite;}
+    .loading-dots span:nth-child(2){animation-delay:.1s;}
+    .loading-dots span:nth-child(3){animation-delay:.2s;}
+    @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Accessibility */
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+    @media(prefers-contrast:more){.msg-incoming{border-width:2px;}.verdict-card,.interpret-card{border-width:2px;}}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+  </style>
+</head>
+<body>
+  <!-- Top bar -->
+  <header class="topbar">
+    <a href="/dashboard" class="topbar__back" aria-label="Back to dashboard">← Back</a>
+    <span class="topbar__title" id="topTitle">HoldOff Messenger</span>
+    <button class="topbar__action" id="clearBtn" aria-label="Clear conversation">Clear</button>
+  </header>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs" role="tablist" aria-label="Message mode">
+    <button class="mode-tab active" role="tab" aria-selected="true" data-mode="send" id="tabSend">✍️ Compose & Send</button>
+    <button class="mode-tab" role="tab" aria-selected="false" data-mode="decode" id="tabDecode">🔍 Decode Incoming</button>
+  </div>
+
+  <!-- Contact selector -->
+  <div class="contact-bar" id="contactBar">
+    <label for="contactSelect">To:</label>
+    <select id="contactSelect" aria-label="Select contact">
+      <option value="">Choose a contact...</option>
+      <option value="__new__">+ Add new contact</option>
+    </select>
+    <input type="text" id="newContactInput" placeholder="Their name (e.g. Mike)" style="display:none;" aria-label="New contact name">
+  </div>
+
+  <!-- Messages area -->
+  <div class="messages" id="messagesArea" role="log" aria-live="polite" aria-label="Conversation">
+    <div class="empty-state" id="emptyState">
+      <div class="emoji">🛡️</div>
+      <h3 id="emptyTitle">Compose with protection</h3>
+      <p id="emptyDesc">Type the message you want to send. HoldOff will analyze it before it goes anywhere — protecting you from impulse texts you'll regret.</p>
+    </div>
+  </div>
+
+  <!-- Compose bar -->
+  <div class="compose-bar">
+    <div class="compose-inner">
+      <textarea class="compose-textarea" id="msgInput" rows="1" placeholder="Type your message..." aria-label="Message input"></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Analyze message" disabled>
+        <span id="sendIcon">↑</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Spiral Lock Overlay -->
+  <div class="spiral-overlay" id="spiralOverlay" role="alertdialog" aria-label="Spiral Lock active">
+    <h2>🔒 Spiral Lock Active</h2>
+    <p>You've been sending a lot of messages quickly. Let's pause and protect your peace.</p>
+    <div class="spiral-timer" id="spiralTimer" aria-live="assertive">05:00</div>
+    <button class="spiral-btn" id="unlockQuizBtn">Take Reflection Quiz to Unlock Early</button>
+    <div class="spiral-quiz" id="spiralQuiz">
+      <p>1. Is it possible they're simply busy right now?</p>
+      <input type="text" id="sq1" aria-label="Quiz answer 1">
+      <p>2. How will sending this make you feel in 5 minutes?</p>
+      <input type="text" id="sq2" aria-label="Quiz answer 2">
+      <p>3. What's a healthier way to self-soothe right now?</p>
+      <input type="text" id="sq3" aria-label="Quiz answer 3">
+      <button class="spiral-btn" id="submitQuizBtn">Submit & Unlock</button>
+    </div>
+  </div>
+
+<script>
+(function() {
+  'use strict';
+
+  // State
+  let mode = 'send'; // 'send' or 'decode'
+  let contacts = [];
+  let currentContact = null;
+  let currentThreadId = null;
+  let sendAttempts = [];
+  let spiralLocked = false;
+  const SPIRAL_THRESHOLD = 5;
+  const SPIRAL_WINDOW = 10 * 60 * 1000; // 10 min
+  const SPIRAL_DURATION = 5 * 60 * 1000; // 5 min lock
+  const hasNativeAndroid = !!(window.Android && typeof window.Android.sendSms === 'function');
+  const nativeSyncAvailable = !!(window.Android && (typeof window.Android.getQueuedSms === 'function' || typeof window.Android.getDeviceContacts === 'function'));
+  const startupThreadId = new URLSearchParams(window.location.search).get('threadId');
+
+  // Elements
+  const msgInput = document.getElementById('msgInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const sendIcon = document.getElementById('sendIcon');
+  const messagesArea = document.getElementById('messagesArea');
+  const emptyState = document.getElementById('emptyState');
+  const emptyTitle = document.getElementById('emptyTitle');
+  const emptyDesc = document.getElementById('emptyDesc');
+  const contactSelect = document.getElementById('contactSelect');
+  const newContactInput = document.getElementById('newContactInput');
+  const tabSend = document.getElementById('tabSend');
+  const tabDecode = document.getElementById('tabDecode');
+  const clearBtn = document.getElementById('clearBtn');
+  const spiralOverlay = document.getElementById('spiralOverlay');
+  const spiralTimer = document.getElementById('spiralTimer');
+  const unlockQuizBtn = document.getElementById('unlockQuizBtn');
+  const spiralQuiz = document.getElementById('spiralQuiz');
+  const submitQuizBtn = document.getElementById('submitQuizBtn');
+
+  // Auto-resize textarea
+  msgInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    sendBtn.disabled = !this.value.trim();
+  });
+
+  // Enter to send (shift+enter for newline)
+  msgInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) handleSend();
+    }
+  });
+
+  sendBtn.addEventListener('click', handleSend);
+
+  // Mode tabs
+  tabSend.addEventListener('click', function() { switchMode('send'); });
+  tabDecode.addEventListener('click', function() { switchMode('decode'); });
+
+  function switchMode(m) {
+    mode = m;
+    tabSend.classList.toggle('active', m === 'send');
+    tabDecode.classList.toggle('active', m === 'decode');
+    tabSend.setAttribute('aria-selected', m === 'send');
+    tabDecode.setAttribute('aria-selected', m === 'decode');
+    msgInput.placeholder = m === 'send'
+      ? 'Type your message...'
+      : 'Paste the message they sent you...';
+    if (m === 'decode') {
+      emptyTitle.textContent = 'Decode their message';
+      emptyDesc.textContent = "Paste the message you received. HoldOff will tell you what they actually meant — through the lens of attachment science, not your anxiety.";
+      document.getElementById('contactBar').querySelector('label').textContent = 'From:';
+    } else {
+      emptyTitle.textContent = 'Compose with protection';
+      emptyDesc.textContent = "Type the message you want to send. HoldOff will analyze it before it goes anywhere — protecting you from impulse texts you'll regret.";
+      document.getElementById('contactBar').querySelector('label').textContent = 'To:';
+    }
+    clearMessages();
+  }
+
+  // Contact selector
+  contactSelect.addEventListener('change', function() {
+    if (this.value === '__new__') {
+      newContactInput.style.display = 'block';
+      this.style.display = 'none';
+      newContactInput.focus();
+    } else {
+      currentContact = contacts.find(c => c.id == this.value) || null;
+      currentThreadId = null;
+    }
+  });
+
+  newContactInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+      createContact(this.value.trim());
+    }
+  });
+
+  async function createContact(name) {
+    const phoneNumber = prompt('Enter their phone number for SMS:');
+    if (!phoneNumber || !phoneNumber.trim()) {
+      addSystemMsg('☎️ A phone number is needed for real SMS threads.');
+      return;
+    }
+
+    try {
+      const resp = await fetch('/api/messaging/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phoneNumber: phoneNumber.trim() }),
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        const c = data.contact || data;
+        contacts.push(c);
+        addContactOption(c);
+        contactSelect.value = c.id;
+        contactSelect.style.display = 'block';
+        newContactInput.style.display = 'none';
+        newContactInput.value = '';
+        currentContact = c;
+        currentThreadId = null;
+      }
+    } catch (e) {
+      console.error('Create contact failed:', e);
+      addSystemMsg('⚠️ Could not save that contact yet.');
+    }
+  }
+
+  function contactName(contact) {
+    return contact?.name || contact?.displayName || contact?.display_name || contact?.phone_number || contact?.phoneNumber || 'Contact';
+  }
+
+  function addContactOption(c) {
+    if (!c || !c.id) return;
+    if (contactSelect.querySelector('option[value="' + c.id + '"]')) return;
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = contactName(c) + (contactPhone(c) ? ' · ' + contactPhone(c) : '');
+    contactSelect.insertBefore(opt, contactSelect.querySelector('[value="__new__"]'));
+  }
+
+  async function syncNativeAndroid(showStatus) {
+    if (!nativeSyncAvailable) return null;
+    const payload = { contacts: [], messages: [] };
+
+    try {
+      if (window.Android && typeof window.Android.getDeviceContacts === 'function') {
+        payload.contacts = JSON.parse(window.Android.getDeviceContacts() || '[]');
+      }
+    } catch (e) { payload.contacts = []; }
+
+    try {
+      if (window.Android && typeof window.Android.getQueuedSms === 'function') {
+        payload.messages = JSON.parse(window.Android.getQueuedSms() || '[]');
+      }
+    } catch (e) { payload.messages = []; }
+
+    if (!payload.contacts.length && !payload.messages.length) return null;
+
+    const resp = await fetch('/api/messaging/native-sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error('Native sync failed');
+    const result = await resp.json();
+    if (payload.messages.length && window.Android && typeof window.Android.clearQueuedSms === 'function') {
+      window.Android.clearQueuedSms();
+    }
+    if (showStatus) {
+      const sync = result.sync || {};
+      addSystemMsg('📬 Synced ' + (sync.contactsImported || 0) + ' contacts and ' + (sync.messagesImported || 0) + ' SMS messages from this phone.');
+    }
+    return result;
+  }
+
+  async function persistNativeMessage(phoneNumber, body, direction) {
+    if (!phoneNumber || !body) return;
+    try {
+      await fetch('/api/messaging/native-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contacts: currentContact ? [{ name: contactName(currentContact), phoneNumber }] : [],
+          messages: [{ phoneNumber, body, direction, timestamp: Date.now() }],
+        }),
+      });
+    } catch (e) {
+      console.warn('Could not persist native SMS:', e);
+    }
+  }
+
+  // Load contacts
+  async function loadContacts() {
+    try {
+      await syncNativeAndroid(false).catch(function() {});
+      const resp = await fetch('/api/messaging/contacts');
+      if (resp.ok) {
+        const data = await resp.json();
+        contacts = data.contacts || [];
+        contactSelect.querySelectorAll('option:not([value=""]):not([value="__new__"])').forEach(function(opt) { opt.remove(); });
+        contacts.forEach(addContactOption);
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  async function loadThread(threadId) {
+    if (!threadId) return;
+    try {
+      const resp = await fetch('/api/messaging/threads/' + encodeURIComponent(threadId));
+      if (!resp.ok) throw new Error('Thread not found');
+      const data = await resp.json();
+      const thread = data.thread;
+      const messages = data.messages || [];
+
+      currentThreadId = thread.id;
+      currentContact = {
+        id: thread.contact_id,
+        name: thread.name,
+        phone_number: thread.phone_number || thread.contact_phone,
+      };
+      document.getElementById('topTitle').textContent = contactName(currentContact);
+      addContactOption(currentContact);
+      if (currentContact.id) contactSelect.value = currentContact.id;
+
+      clearMessages();
+      messages.forEach(function(msg) {
+        addBubble(msg.body, msg.sender_type === 'user' ? 'outgoing' : 'incoming', msg.timestamp);
+      });
+      if (!messages.length) {
+        addSystemMsg('This thread is ready. New SMS messages will sync here.');
+      }
+    } catch (e) {
+      console.error('Load thread failed:', e);
+      addSystemMsg('⚠️ Could not load that SMS thread.');
+    }
+  }
+
+  // Clear
+  clearBtn.addEventListener('click', clearMessages);
+  function clearMessages() {
+    messagesArea.innerHTML = '';
+    const es = emptyState.cloneNode(true);
+    es.id = 'emptyState';
+    messagesArea.appendChild(es);
+    if (mode === 'decode') {
+      es.querySelector('h3').textContent = 'Decode their message';
+      es.querySelector('p').textContent = "Paste the message you received. HoldOff will tell you what they actually meant — through the lens of attachment science, not your anxiety.";
+    }
+  }
+
+  function removeEmpty() {
+    const es = document.getElementById('emptyState');
+    if (es) es.remove();
+  }
+
+  function addBubble(text, type, timestamp) {
+    removeEmpty();
+    const div = document.createElement('div');
+    div.className = 'msg-bubble msg-' + type;
+    div.textContent = text;
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = new Date(timestamp || Date.now()).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.alignItems = type === 'outgoing' ? 'flex-end' : type === 'incoming' ? 'flex-start' : 'center';
+    wrap.appendChild(div);
+    wrap.appendChild(time);
+    messagesArea.appendChild(wrap);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+    return wrap;
+  }
+
+  function addSystemMsg(text) {
+    removeEmpty();
+    const div = document.createElement('div');
+    div.className = 'msg-system';
+    div.innerHTML = text;
+    messagesArea.appendChild(div);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  function addLoading() {
+    const div = document.createElement('div');
+    div.className = 'loading-dots';
+    div.id = 'loadingDots';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    messagesArea.appendChild(div);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  function removeLoading() {
+    const ld = document.getElementById('loadingDots');
+    if (ld) ld.remove();
+  }
+
+  function addVerdictCard(data) {
+    removeEmpty();
+    const card = document.createElement('div');
+    card.className = 'verdict-card';
+
+    let badgeClass = 'verdict-badge--' + (data.verdict || 'HOLD');
+    let emoji = data.verdict === 'SEND' ? '✅' : data.verdict === 'REWRITE' ? '✏️' : '🛑';
+
+    let html = '<h3>' + emoji + ' <span class="verdict-badge ' + badgeClass + '">' + (data.verdict || 'HOLD') + '</span></h3>';
+
+    if (data.pattern) {
+      html += '<div class="verdict-section"><strong>Pattern Detected</strong>' + escHtml(data.pattern) + '</div>';
+    }
+    if (data.whats_happening) {
+      html += '<div class="verdict-section"><strong>What\'s Happening</strong>' + escHtml(data.whats_happening) + '</div>';
+    }
+    if (data.grounded_voice) {
+      html += '<div class="verdict-section"><strong>Your Grounded Voice</strong>' + escHtml(data.grounded_voice) + '</div>';
+    }
+    if (data.rewrite && data.verdict !== 'SEND') {
+      html += '<div class="verdict-section"><strong>Suggested Rewrite</strong><em>' + escHtml(data.rewrite) + '</em></div>';
+    }
+
+    html += '<div class="verdict-actions">';
+    if (data.verdict === 'SEND') {
+      html += '<button class="verdict-btn verdict-btn--send" onclick="window._composeSendFinal()">' + (hasNativeAndroid ? '📱 Send SMS' : '📋 Copy & Send') + '</button>';
+    } else {
+      html += '<button class="verdict-btn verdict-btn--send" onclick="window._composeSendFinal()">Send Anyway</button>';
+      if (data.rewrite && data.rewrite !== 'send nothing tonight') {
+        html += '<button class="verdict-btn verdict-btn--rewrite" onclick="window._composeUseRewrite(\'' + escAttr(data.rewrite) + '\')">Use Rewrite</button>';
+      }
+      html += '<button class="verdict-btn verdict-btn--hold" onclick="window._composeHold()">Hold Off</button>';
+    }
+    html += '</div>';
+
+    card.innerHTML = html;
+    messagesArea.appendChild(card);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  function addInterpretCard(data) {
+    removeEmpty();
+    const card = document.createElement('div');
+    card.className = 'interpret-card';
+
+    let html = '<h3>🔍 What They Actually Meant</h3>';
+
+    if (data.detected_style) {
+      html += '<span class="style-badge">' + escHtml(data.detected_style) + '</span>';
+    }
+    if (data.what_it_means) {
+      html += '<div class="interpret-section"><strong>What It Means</strong>' + escHtml(data.what_it_means) + '</div>';
+    }
+    if (data.how_you_misread_it) {
+      html += '<div class="interpret-section"><strong>How You Might Misread It</strong>' + escHtml(data.how_you_misread_it) + '</div>';
+    }
+    if (data.what_they_need) {
+      html += '<div class="interpret-section"><strong>What They Need</strong>' + escHtml(data.what_they_need) + '</div>';
+    }
+    if (data.red_flags && data.red_flags.length) {
+      html += '<div class="interpret-section"><strong>🚩 Red Flags</strong><ul style="padding-left:1.2rem;margin-top:.3rem;">';
+      data.red_flags.forEach(function(f) { html += '<li style="font-size:.83rem;margin-bottom:.25rem;">' + escHtml(f) + '</li>'; });
+      html += '</ul></div>';
+    }
+
+    card.innerHTML = html;
+    messagesArea.appendChild(card);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function escAttr(s) {
+    return s.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+  }
+
+  // Track current message for send-anyway
+  let pendingMessage = '';
+
+  // Send handler
+  async function handleSend() {
+    const text = msgInput.value.trim();
+    if (!text) return;
+
+    // Check spiral lock
+    if (spiralLocked) {
+      spiralOverlay.classList.add('active');
+      return;
+    }
+
+    pendingMessage = text;
+    msgInput.value = '';
+    msgInput.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    if (mode === 'send') {
+      // Track attempts for spiral detection
+      const now = Date.now();
+      sendAttempts = sendAttempts.filter(function(t) { return now - t < SPIRAL_WINDOW; });
+      sendAttempts.push(now);
+
+      // Log event to spiral-lock API
+      fetch('/api/spiral-lock/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'send_attempt', thread_id: currentContact?.id || 'default' }),
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.locked) {
+          spiralLocked = true;
+          spiralOverlay.classList.add('active');
+          startSpiralTimer(d.remainingMs || SPIRAL_DURATION);
+        }
+      }).catch(function() {});
+
+      // Check local spiral
+      if (sendAttempts.length >= SPIRAL_THRESHOLD) {
+        spiralLocked = true;
+        spiralOverlay.classList.add('active');
+        startSpiralTimer(SPIRAL_DURATION);
+        addSystemMsg("🔒 Spiral Lock activated — you've sent " + sendAttempts.length + " messages rapidly. Let's pause.");
+        return;
+      }
+
+      addBubble(text, 'outgoing');
+      addLoading();
+
+      // Call AI verdict
+      try {
+        const resp = await fetch('/api/filter/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, context: currentContact ? 'Sending to: ' + contactName(currentContact) : '' }),
+        });
+        removeLoading();
+
+        if (resp.status === 402) {
+          addSystemMsg('🔒 Free verdicts used up. <a href="/pricing" style="color:#8B5CF6;">Upgrade to Pro</a> for unlimited protection.');
+          return;
+        }
+
+        const data = await resp.json();
+        addVerdictCard(data);
+
+      } catch (e) {
+        removeLoading();
+        addSystemMsg('⚠️ Couldn\'t reach HoldOff AI. The message has been held for your safety.');
+      }
+
+    } else {
+      // Decode mode — interpret incoming message
+      addBubble(text, 'incoming');
+      addLoading();
+
+      try {
+        const resp = await fetch('/api/filter/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text }),
+        });
+        removeLoading();
+
+        if (resp.status === 402) {
+          addSystemMsg('🔒 Free analyses used up. <a href="/pricing" style="color:#8B5CF6;">Upgrade to Pro</a> for unlimited decoding.');
+          return;
+        }
+
+        const data = await resp.json();
+        addInterpretCard(data);
+
+      } catch (e) {
+        removeLoading();
+        addSystemMsg("⚠️ Couldn't analyze the message. Try again in a moment.");
+      }
+    }
+  }
+
+  function contactPhone(contact) {
+    if (!contact) return '';
+    return contact.phone_number || contact.phoneNumber || contact.phone || contact.mobile || '';
+  }
+
+  function askForPhoneIfNeeded() {
+    let phone = contactPhone(currentContact);
+    if (phone) return phone;
+    phone = prompt('Enter their phone number to send this SMS:');
+    if (!phone || !phone.trim()) return '';
+    if (currentContact) {
+      currentContact.phone_number = phone.trim();
+    }
+    return phone.trim();
+  }
+
+  function copyPendingMessageFallback() {
+    navigator.clipboard.writeText(pendingMessage).then(function() {
+      addSystemMsg('📋 Message copied. Paste it into your messaging app to send.');
+    }).catch(function() {
+      const ta = document.createElement('textarea');
+      ta.value = pendingMessage;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      addSystemMsg('📋 Message copied. Paste it into your messaging app to send.');
+    });
+  }
+
+  // Global actions for verdict card buttons
+  window._composeSendFinal = function() {
+    if (!pendingMessage) return;
+
+    if (hasNativeAndroid) {
+      const phone = askForPhoneIfNeeded();
+      if (!phone) {
+        addSystemMsg('☎️ Add a phone number first, then HoldOff can send this as a real SMS.');
+        return;
+      }
+      const status = window.Android.sendSms(phone, pendingMessage);
+      if (status === 'sent') {
+        syncNativeAndroid(false).catch(function() {});
+        addSystemMsg('📱 SMS sent through HoldOff. Protected, then delivered.');
+        pendingMessage = '';
+        return;
+      }
+      if (status === 'permission_required') {
+        addSystemMsg('🔐 Android SMS permission requested. Tap send again after approving it.');
+        return;
+      }
+      addSystemMsg('⚠️ Native SMS send failed, so I copied it as a fallback.');
+      copyPendingMessageFallback();
+      return;
+    }
+
+    copyPendingMessageFallback();
+  };
+
+  window._composeUseRewrite = function(rewrite) {
+    msgInput.value = rewrite;
+    msgInput.style.height = 'auto';
+    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+    sendBtn.disabled = false;
+    msgInput.focus();
+    addSystemMsg('✏️ Rewrite loaded. Review it, then send when ready.');
+  };
+
+  window._composeHold = function() {
+    addSystemMsg('🛡️ <strong>Message held.</strong> You chose your peace over the impulse. That\'s growth.<br><br>📓 <a href="/journal" style="color:#8B5CF6;">Write about it in your journal</a> instead.');
+    pendingMessage = '';
+  };
+
+  // Spiral Lock
+  function startSpiralTimer(durationMs) {
+    let remaining = Math.max(0, Math.ceil(durationMs / 1000));
+    const tick = setInterval(function() {
+      const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const s = String(remaining % 60).padStart(2, '0');
+      spiralTimer.textContent = m + ':' + s;
+      if (remaining <= 0) {
+        clearInterval(tick);
+        spiralLocked = false;
+        spiralOverlay.classList.remove('active');
+        sendAttempts = [];
+        addSystemMsg('🔓 Spiral Lock released. Take it slow.');
+        // Notify API
+        fetch('/api/spiral-lock/unlock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ method: 'timer_wait', thread_id: currentContact?.id || 'default' }),
+        }).catch(function() {});
+      }
+      remaining -= 1;
+    }, 1000);
+  }
+
+  unlockQuizBtn.addEventListener('click', function() {
+    spiralQuiz.style.display = 'block';
+    this.style.display = 'none';
+  });
+
+  submitQuizBtn.addEventListener('click', function() {
+    const a1 = document.getElementById('sq1').value;
+    const a2 = document.getElementById('sq2').value;
+    const a3 = document.getElementById('sq3').value;
+    if (a1 && a2 && a3) {
+      spiralLocked = false;
+      spiralOverlay.classList.remove('active');
+      sendAttempts = [];
+      addSystemMsg('🔓 Spiral Lock released via reflection. You paused, you thought, you chose yourself.');
+      fetch('/api/spiral-lock/unlock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method: 'journal_entry', answers: [a1, a2, a3], thread_id: currentContact?.id || 'default' }),
+      }).catch(function() {});
+    }
+  });
+
+  // Check for existing spiral lock on load
+  fetch('/api/spiral-lock/status?thread_id=default')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.locked) {
+        spiralLocked = true;
+        spiralOverlay.classList.add('active');
+        startSpiralTimer(d.remainingMs || SPIRAL_DURATION);
+      }
+    }).catch(function() {});
+
+  async function importQueuedNativeSms() {
+    if (!nativeSyncAvailable) return;
+    const result = await syncNativeAndroid(false).catch(function() { return null; });
+    if (result && result.sync && result.sync.messagesImported) {
+      if (currentThreadId) {
+        await loadThread(currentThreadId);
+      } else {
+        addSystemMsg('📬 Synced ' + result.sync.messagesImported + ' SMS message' + (result.sync.messagesImported === 1 ? '' : 's') + '. Open Inbox to pick a thread.');
+      }
+    }
+  }
+
+  // Init
+  loadContacts().then(function() {
+    if (startupThreadId) {
+      loadThread(startupThreadId).then(importQueuedNativeSms);
+    } else {
+      importQueuedNativeSms();
+    }
+  });
+  msgInput.focus();
+
+  // Mental Health Disclaimer Modal — show on first visit
+  const disclaimerShown = localStorage.getItem('holdoff_disclaimer_acknowledged');
+  const disclaimerModal = document.getElementById('disclaimer-modal');
+  if (!disclaimerShown && disclaimerModal) {
+    disclaimerModal.style.display = 'flex';
+  }
+
+  const ackDisclaimerBtn = document.getElementById('acknowledge-disclaimer');
+  if (ackDisclaimerBtn) {
+    ackDisclaimerBtn.addEventListener('click', function() {
+      localStorage.setItem('holdoff_disclaimer_acknowledged', 'true');
+      disclaimerModal.style.display = 'none';
+    });
+  }
+
+})();
+</script>
+
+<!-- Mental Health Disclaimer Modal -->
+<div id="disclaimer-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:9998;flex-direction:column;align-items:center;justify-content:center;padding:2rem;overflow-y:auto;">
+  <div style="background:#1A1714;border:2px solid #C97B5D;border-radius:20px;padding:2rem;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.8);">
+    <h2 style="font-family:'Fraunces',serif;font-size:1.4rem;color:#8B5CF6;margin-bottom:1rem;text-align:center;">⚠️ Important Disclaimer</h2>
+    
+    <div style="color:#F2EDE5;font-size:.95rem;line-height:1.7;margin-bottom:1.5rem;">
+      <p style="margin-bottom:1rem;"><strong>HoldOff is not a mental health treatment or therapy tool.</strong></p>
+      
+      <p style="margin-bottom:1rem;">This app is designed to help you create a pause before sending messages. It uses AI to identify patterns in your communication, but:</p>
+      
+      <ul style="margin:1rem 0 1rem 1.5rem;padding:0;">
+        <li>✗ HoldOff cannot diagnose mental health conditions</li>
+        <li>✗ HoldOff is not a substitute for therapy or counseling</li>
+        <li>✗ AI verdicts are suggestions, not professional guidance</li>
+        <li>✗ We don't provide emergency mental health support</li>
+      </ul>
+      
+      <p style="margin-bottom:1rem;"><strong>If you're in crisis:</strong></p>
+      <ul style="margin:1rem 0 1rem 1.5rem;padding:0;">
+        <li>🆘 Call 988 (Suicide & Crisis Lifeline — US)</li>
+        <li>🆘 Text HOME to 741741 (Crisis Text Line)</li>
+        <li>🆘 Go to your nearest emergency room</li>
+      </ul>
+      
+      <p style="margin-top:1rem;font-size:.85rem;color:#9E948E;">
+        HoldOff is a tool for self-awareness and communication improvement. If you're struggling with mental health, please reach out to a licensed therapist or counselor. <a href="/legal#health-disclaimer" style="color:#8B5CF6;text-decoration:underline;">Read full disclaimer</a>
+      </p>
+    </div>
+    
+    <button id="acknowledge-disclaimer" style="width:100%;padding:1rem;background:#C97B5D;color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;margin-top:1rem;">I understand — Let's pause before we spiral 💜</button>
+  </div>
+</div>
+
+</body>
+</html>

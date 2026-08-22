@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>HoldOff — Download</title>
+  <style>
+    .download-page {
+      min-height:100vh; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; padding:40px 20px;
+      text-align:center;
+    }
+    .download-icon { font-size:4rem; margin-bottom:20px; }
+    .download-title { font-size:1.8rem; font-weight:700; margin-bottom:8px; }
+    .download-desc { color:var(--text-muted); font-size:1rem; margin-bottom:32px; max-width:400px; }
+    .download-options { display:flex; flex-direction:column; gap:16px; width:100%; max-width:360px; }
+    .download-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:20px; text-align:left; cursor:pointer; transition:var(--transition);
+      text-decoration:none; color:inherit;
+    }
+    .download-card:hover { background:var(--bg-card-hover); border-color:var(--primary); }
+    .download-card-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+    .download-card-icon { font-size:1.5rem; }
+    .download-card-title { font-weight:600; font-size:1rem; }
+    .download-card-desc { font-size:0.85rem; color:var(--text-muted); }
+    .download-card-badge {
+      display:inline-block; padding:2px 8px; border-radius:var(--radius-full);
+      font-size:0.7rem; font-weight:600; text-transform:uppercase;
+    }
+    .badge-recommended { background:var(--primary-glow); color:var(--primary); }
+    .badge-beta { background:rgba(251,191,36,0.15); color:#fbbf24; }
+    
+    .install-instructions {
+      margin-top:32px; padding:20px; background:var(--bg-card);
+      border:1px solid var(--border); border-radius:var(--radius);
+      max-width:360px; text-align:left;
+    }
+    .install-instructions h3 { font-size:0.95rem; margin-bottom:12px; }
+    .install-step { display:flex; gap:10px; margin-bottom:10px; font-size:0.85rem; color:var(--text-muted); }
+    .step-num {
+      width:22px; height:22px; border-radius:50%; background:var(--primary);
+      color:white; display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; font-weight:700; flex-shrink:0;
+    }
+  </style>
+</head>
+<body>
+  <div class="download-page">
+    <div class="download-icon">💜</div>
+    <h1 class="download-title">Get HoldOff</h1>
+    <p class="download-desc">Your pause button for impulsive texts. Install it like a real app — because it is one.</p>
+    
+    <div class="download-options">
+      <div class="download-card" id="pwa-install-card" onclick="installPWA()" style="display:none;">
+        <div class="download-card-header">
+          <span class="download-card-icon">📱</span>
+          <span class="download-card-title">Install Web App</span>
+          <span class="download-card-badge badge-recommended">Recommended</span>
+        </div>
+        <div class="download-card-desc">One tap install — works on any device. Always up to date.</div>
+      </div>
+      
+      <a class="download-card" href="https://github.com/stacyfoster30-design/Holdoff/releases/latest" target="_blank">
+        <div class="download-card-header">
+          <span class="download-card-icon">🤖</span>
+          <span class="download-card-title">Android APK</span>
+          <span class="download-card-badge badge-beta">Beta</span>
+        </div>
+        <div class="download-card-desc">Download the Android app directly. No Play Store needed.</div>
+      </a>
+      
+      <div class="download-card" style="opacity:0.6;cursor:default;">
+        <div class="download-card-header">
+          <span class="download-card-icon">🍎</span>
+          <span class="download-card-title">iOS App Store</span>
+        </div>
+        <div class="download-card-desc">Coming soon — use "Add to Home Screen" in Safari for now.</div>
+      </div>
+    </div>
+    
+    <div class="install-instructions">
+      <h3>📋 Manual Install (if button doesn't appear)</h3>
+      <div class="install-step">
+        <span class="step-num">1</span>
+        <span><strong>Android Chrome:</strong> Tap ⋮ menu → "Add to Home Screen"</span>
+      </div>
+      <div class="install-step">
+        <span class="step-num">2</span>
+        <span><strong>iPhone Safari:</strong> Tap Share → "Add to Home Screen"</span>
+      </div>
+      <div class="install-step">
+        <span class="step-num">3</span>
+        <span><strong>Desktop:</strong> Click the install icon in your address bar</span>
+      </div>
+    </div>
+    
+    <a href="/" style="margin-top:32px;color:var(--primary);font-size:0.9rem;">← Back to HoldOff</a>
+  </div>
+  
+  <script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('pwa-install-card').style.display = 'block';
+    });
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "message": "hey so i just wanted to check in… are we okay? i feel like you've been kind of distant lately and i don't know if i did something wrong",
+    "verdict": "HOLD",
+    "pattern": "Reassurance Seeking",
+    "whats_happening": "This message is reaching for reassurance you're not going to get — not in the way you actually need it. 'Are we okay?' puts them in the position of managing your anxiety, and the vagueness of 'did I do something wrong' opens a spiral you can't close at midnight.",
+    "grounded_voice": "You know what's real and what's your attachment brain filling gaps. Wait until you can ask for a specific conversation — not a text reassurance that will last six hours.",
+    "rewrite": "send nothing tonight"
+  },
+  {
+    "id": 2,
+    "message": "i'm proud of how far i've come this year. wanted you to know that.",
+    "verdict": "SEND",
+    "pattern": "Grounded Connection",
+    "whats_happening": "This message is clear, warm, and doesn't ask for anything. It's a genuine share — not a probe, not a test, not a bid for reassurance. It leads with your own experience instead of needing a specific response.",
+    "grounded_voice": "This is the real you. It holds no agenda and doesn't need anything back. Send it.",
+    "rewrite": "i'm proud of how far i've come this year. wanted you to know that."
+  },
+  {
+    "id": 3,
+    "message": "ok so i know it's 2am and i probably shouldn't be texting but i've been thinking about us all night and i just need to know where this is going because i can't keep not knowing and it's making me crazy",
+    "verdict": "HOLD",
+    "pattern": "Protest Behavior",
+    "whats_happening": "The 2am timestamp is doing a lot of work here — your brain has turned nighttime uncertainty into a crisis that feels urgent but isn't. 'I can't keep not knowing' is actually 'I can't sit with this feeling tonight.' That's a different problem than relationship clarity.",
+    "grounded_voice": "The answer to this question won't land the way you need it to at 2am. You'll get a half-awake response that you'll spend tomorrow dissecting. Sleep. If you still need this conversation in the morning, have it then.",
+    "rewrite": "send nothing tonight"
+  },
+  {
+    "id": 4,
+    "message": "you haven't texted me back in 3 days. i just don't get it. did i imagine everything? was any of this even real to you",
+    "verdict": "REWRITE",
+    "pattern": "Catastrophizing Silence",
+    "whats_happening": "Three days of silence has your brain rewriting the whole relationship from scratch. 'Did I imagine everything?' is catastrophizing — you're not checking in, you're testifying to an emotional jury. The second sentence turns a question into an accusation.",
+    "grounded_voice": "You don't need to attack the whole past to address the present. You want to know where they are. Ask that cleanly — one sentence, no verdict on them.",
+    "rewrite": "hey — haven't heard from you in a few days. still want to talk?"
+  },
+  {
+    "id": 5,
+    "message": "i miss you",
+    "verdict": "SEND",
+    "pattern": "Direct Vulnerability",
+    "whats_happening": "Three words, no agenda, no demand. This is honest and simple — it doesn't require a specific response, it doesn't create pressure, and it doesn't leak anything you'd regret.",
+    "grounded_voice": "Say it. It's true and it's clean.",
+    "rewrite": "i miss you"
+  },
+  {
+    "id": 6,
+    "message": "i saw you liked her photo from two years ago. like who goes that far back in someone's profile. i'm not mad, i just think it's interesting",
+    "verdict": "HOLD",
+    "pattern": "Jealousy Probe",
+    "whats_happening": "You are mad. The 'i'm not mad' is doing the exact opposite of what you intend — it signals you're mad, watching, and testing them to see how they respond. A two-year-old Instagram like is not a relationship conversation. It's a trap.",
+    "grounded_voice": "What you actually want to say is: I want to feel secure with you. That conversation exists. This one doesn't.",
+    "rewrite": "send nothing tonight"
+  },
+  {
+    "id": 7,
+    "message": "i know you said you needed space but i just wanted to drop off your hoodie and maybe we could grab coffee real quick",
+    "verdict": "HOLD",
+    "pattern": "Protest Behavior",
+    "whats_happening": "The hoodie is a prop. You're not dropping off laundry — you're finding a reason to see them after being told you needed to step back. 'Maybe real quick' is the anxious-attachment version of 'just ignore that I said I need space from you.'",
+    "grounded_voice": "They told you something important and you're trying to build a loophole around it. The hoodie can wait. If the space request made you feel terrible, that's the conversation to have — directly, not through logistics.",
+    "rewrite": "send nothing tonight"
+  },
+  {
+    "id": 8,
+    "message": "hey i know the breakup was mutual and we both agreed but i've been thinking a lot and i think we gave up too fast. we had something real and i don't think we should just let it go",
+    "verdict": "REWRITE",
+    "pattern": "Breakup Reach-Out",
+    "whats_happening": "This isn't a bad impulse — you're naming a real feeling. But 'we gave up too fast' is framed as a verdict you're delivering, not an opening for a conversation. You're asking them to agree with your reframing of history before you've even heard where they are.",
+    "grounded_voice": "If you genuinely want to revisit this, say that directly — without writing the conclusion before they respond.",
+    "rewrite": "hey. i've been sitting with us a lot lately. not sure if you have been too, but i'd want to talk if you're open to it."
+  },
+  {
+    "id": 9,
+    "message": "lol never mind forget i said anything",
+    "verdict": "HOLD",
+    "pattern": "Withdrawal Bid",
+    "whats_happening": "This message only exists to get a response. 'Never mind' after saying something means 'I need you to notice me and ask.' You're not withdrawing — you're escalating with a retreating move. This almost always creates the anxiety it's trying to relieve.",
+    "grounded_voice": "Say what you meant to say, or say nothing. This is the message that feels like control but isn't.",
+    "rewrite": "send nothing tonight"
+  },
+  {
+    "id": 10,
+    "message": "i'm sorry for how i acted last night. i think i was in my head and took it out on you. you didn't deserve that.",
+    "verdict": "SEND",
+    "pattern": "Clean Accountability",
+    "whats_happening": "This is a genuine apology — specific, no self-defense, no 'but you also.' You're naming what happened without minimizing it or dragging them into managing your feelings. This lands.",
+    "grounded_voice": "This is honest and it's enough. Don't add anything.",
+    "rewrite": "i'm sorry for how i acted last night. i think i was in my head and took it out on you. you didn't deserve that."
+  },
+  {
+    "id": 11,
+    "message": "hey so i know this is out of nowhere and you've probably moved on but i've been thinking about you a lot lately and honestly i still have feelings. i know that's probably not what you want to hear but i had to say it",
+    "verdict": "REWRITE",
+    "pattern": "Anxious Confession",
+    "whats_happening": "The feeling is real and worth saying. But this message is written to manage your own discomfort, not to open a door. 'I know that's probably not what you want to hear but I had to say it' asks them to absorb your guilt for the send. That's not fair to them.",
+    "grounded_voice": "If you want to reach out, reach out cleanly. Say the thing without the preamble and the apology for saying it.",
+    "rewrite": "hey. it's been a while. i still think about you — thought you should know. no pressure either way."
+  },
+  {
+    "id": 12,
+    "message": "this might be a weird thing to say but being around you is one of the few things that actually resets me lately. just thought you should know.",
+    "verdict": "SEND",
+    "pattern": "Grounded Appreciation",
+    "whats_happening": "You're naming something real without asking for anything in return. It's specific, it's honest, and it doesn't put them in a position to manage your feelings. This is the kind of message that actually deepens connection.",
+    "grounded_voice": "This is good. Send it.",
+    "rewrite": "this might be a weird thing to say but being around you is one of the few things that actually resets me lately. just thought you should know."
+  }
+]

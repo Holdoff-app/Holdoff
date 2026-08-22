@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>What Your Texts Say About You — HoldOff</title>
+  <meta name="description" content="Take the 3-minute attachment style quiz and find out how your relationship patterns show up in texting.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/quiz.css">
+</head>
+<body class="quiz-body">
+
+<!-- Navigation -->
+<nav class="quiz-nav">
+  <a href="/" class="quiz-nav__wordmark">HoldOff</a>
+</nav>
+
+<!-- Quiz container -->
+<div class="quiz-main">
+
+  <!-- ═══════════════════ START SCREEN ═══════════════════ -->
+  <div class="quiz-start is-visible" data-screen="start">
+    <svg class="quiz-start__icon" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="36" cy="36" r="34" stroke="#C97B5D" stroke-width="2" stroke-opacity="0.4"/>
+      <circle cx="36" cy="36" r="24" stroke="#C97B5D" stroke-width="2" stroke-opacity="0.6"/>
+      <circle cx="36" cy="36" r="14" fill="#C97B5D" fill-opacity="0.15" stroke="#C97B5D" stroke-width="2"/>
+      <path d="M36 26 L36 46 M26 36 L46 36" stroke="#C97B5D" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+
+    <h1 class="quiz-start__headline">The text that says more about you than you think.</h1>
+    <p class="quiz-start__sub">
+      22 questions about how you connect, text, and feel in relationships.
+      By the end, you'll understand why you text the way you do — and what to do about it.
+    </p>
+    <button class="quiz-start__cta" id="start-btn">Take the quiz →</button>
+    <p class="quiz-start__privacy">Takes about 3 minutes · Your answers stay private</p>
+  </div>
+
+  <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
+  <div data-screen="quiz">
+    <!-- Progress bar -->
+    <div class="quiz-progress">
+      <div class="quiz-progress__bar-wrap">
+        <div class="quiz-progress__bar" id="progress-bar"></div>
+      </div>
+      <div class="quiz-progress__text" id="progress-text">Question 1 of 5</div>
+    </div>
+
+    <!-- Question area -->
+    <div id="question-container">
+      <div class="quiz-question__number" id="question-number"></div>
+      <div class="quiz-question__text" id="question-text"></div>
+
+      <!-- Multiple choice options -->
+      <div class="quiz-options" id="options-container" role="radiogroup" aria-label="Your answer"></div>
+    </div>
+
+    <!-- Navigation row -->
+    <div class="quiz-nav-row">
+      <button class="quiz-btn--back" id="back-btn">← Back</button>
+      <button class="quiz-btn--next" id="next-btn" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ RESULTS SCREEN ═══════════════════ -->
+  <div data-screen="results">
+    <div class="quiz-results" id="results-container">
+      <div class="quiz-results__badge" id="result-badge"></div>
+      <div class="quiz-results__style-name" id="result-style-name"></div>
+      <div class="quiz-results__style-label">Your attachment style</div>
+      <div class="quiz-results__secondary" id="result-secondary"></div>
+      <div class="quiz-results__explanation" id="result-explanation"></div>
+      <div class="quiz-results__insight">
+        <div class="quiz-results__insight-title" id="insight-title">How this shows up when you text</div>
+        <ul class="quiz-results__insight-list" id="insight-list"></ul>
+      </div>
+      <div class="quiz-results__cta-wrap">
+        <a href="/filter" class="quiz-results__cta" id="result-cta">Use HoldOff with your style →</a>
+      </div>
+      <div id="login-prompt" class="quiz-login-prompt" style="display:none">
+        <span id="login-prompt-text"></span> <a href="/filter?signup=1">Sign up free</a> to save your result.
+      </div>
+      <br>
+      <button class="quiz-results__retake" id="retake-btn">Retake the quiz</button>
+    </div>
+  </div>
+
+</div><!-- /quiz-main -->
+
+<script>
+// ─── Quiz Data (server-scored 5-question quiz) ────────────────────────────────
+const QUESTIONS = [
+  {
+    id: 1,
+    text: "When you send a vulnerable or important text and see 'Read' but get no reply for over an hour, your immediate internal reaction is:",
+    options: [
+      { letter: 'A', label: '"They are mad at me, or I said something wrong." I start drafting a follow-up.' },
+      { letter: 'B', label: '"They are busy." I put my phone away without overthinking it.' },
+      { letter: 'C', label: '"They are playing games or being disrespectful." Irritation, pull back.' },
+      { letter: 'D', label: 'A mix of panic and anger. Double-text AND delete the thread.' },
+    ],
+  },
+  {
+    id: 2,
+    text: "During or right after a tense digital argument, what is your most common texting impulse?",
+    options: [
+      { letter: 'A', label: 'Spam them with long paragraphs explaining my side.' },
+      { letter: 'B', label: 'Shut down, stop replying, say "I\'m done."' },
+      { letter: 'C', label: 'State clearly I need a cool-off period, reply later.' },
+      { letter: 'D', label: 'Send a cutting message, then immediately block/mute.' },
+    ],
+  },
+  {
+    id: 3,
+    text: "What type of message do you most regret sending?",
+    options: [
+      { letter: 'A', label: 'The emotional text-wall confession demanding reassurance.' },
+      { letter: 'B', label: 'The cold, dismissive reply ("Fine," "Whatever," "K") shutting down intimacy.' },
+      { letter: 'C', label: 'I rarely regret my messages; I communicate clearly.' },
+      { letter: 'D', label: 'Volatile flip-flop: passionate paragraph, then "Nevermind, forget I said anything."' },
+    ],
+  },
+  {
+    id: 4,
+    text: "If someone you're dating says they need space for a couple of days, your digital behavior:",
+    options: [
+      { letter: 'A', label: 'Respect completely, send a simple acknowledgment.' },
+      { letter: 'B', label: 'Agree outwardly but constantly check active status / typing indicators.' },
+      { letter: 'C', label: 'Pull away harder. Show them total absence. Assume it\'s over.' },
+      { letter: 'D', label: 'Obsessively worry they are leaving. Cycle of checking in, then self-directed anger.' },
+    ],
+  },
+  {
+    id: 5,
+    text: "When you need to bring up an issue or insecurity over text, you:",
+    options: [
+      { letter: 'A', label: 'Direct, honest, calm. State the problem without accusing.' },
+      { letter: 'B', label: 'Subtle passive-aggressive hints or sarcasm to test waters without exposure.' },
+      { letter: 'C', label: 'Couch in endless qualifiers ("Sorry to bring this up," "I know I\'m being crazy").' },
+      { letter: 'D', label: 'Hold it in until I boil over, explosion of messages out of nowhere.' },
+    ],
+  },
+];
+
+// ─── Style metadata ───────────────────────────────────────────────────────────
+const STYLE_META = {
+  ANX: {
+    label: "Anxious-Preoccupied",
+    summary: "Your brain treats radio silence like a 911 call. You feel things deeply and text from that deep place. The problem isn't caring too much — it's that your nervous system can't tell the difference between 'they're busy' and 'they're gone.'",
+    insights: [
+      "You send texts to calm your own anxiety, not to communicate — and then wonder why you feel worse after.",
+      "3am drafts are your brain trying to solve a problem it can't solve by texting. It never works.",
+      "You read subtext into everything. Sometimes there isn't any.",
+    ],
+    ctaText: "Use HoldOff with your style →",
+  },
+  AVO: {
+    label: "Avoidant-Dismissive",
+    summary: "You've built a life that doesn't require much from anyone, and you're proud of that. The real cost is gradual — you might not notice how removed you've become until someone points it out. Needing people is not a weakness you need to keep proving you don't have.",
+    insights: [
+      "You process feelings by not texting back. That works until someone needs you to be present.",
+      "Saying 'I'm fine' is a full sentence. But so is 'I missed you' — you've just forgotten how to mean it.",
+      "Casual can tip into disconnected, and you may not feel the transition.",
+    ],
+    ctaText: "Use HoldOff with your style →",
+  },
+  FA: {
+    label: "Fearful-Avoidant",
+    summary: "You want intimacy the way you want to swim in cold water — you know it's good for you, but your whole system keeps pumping the brakes. You lean anxious with some people and avoidant with others, depending on who makes you feel safer or less safe.",
+    insights: [
+      "You oscillate between reaching out and retreating. Both feel necessary. Neither feels good afterward.",
+      "The closer someone gets, the more your brain scans for exits.",
+      "You may have learned early that closeness comes with a cost. Your nervous system is still paying that bill.",
+    ],
+    ctaText: "Use HoldOff with your style →",
+  },
+  SEC: {
+    label: "Secure",
+    summary: "You text like a normal human. This sounds simple but is actually rare. Secure attachment means you can be close without panicking, independent without pulling away, and honest without weaponizing your feelings. Your task isn't to fix how you text — it's to notice when other people's patterns pull you off balance.",
+    insights: [
+      "You naturally wait for people to come back. HoldOff helps you hold that space without second-guessing.",
+      "You can receive hard texts without spiraling. Help others do the same.",
+      "Secure doesn't mean perfect. It means you know how to communicate clearly.",
+    ],
+    ctaText: "Use HoldOff with your style →",
+  },
+};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentIndex = 0;
+let selectedAnswer = null; // 'A' | 'B' | 'C' | 'D'
+let answers = []; // [{ question_number: 1, selected_option: 'A' }]
+
+// ─── Routing ─────────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('[data-screen]').forEach(el => {
+    el.classList.toggle('is-visible', el.dataset.screen === name);
+  });
+}
+
+function updateProgressBar() {
+  const pct = (currentIndex / QUESTIONS.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent =
+    `Question ${currentIndex + 1} of ${QUESTIONS.length}`;
+}
+
+// ─── Render question ──────────────────────────────────────────────────────────
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+  document.getElementById('question-number').textContent = `Question ${currentIndex + 1}`;
+  document.getElementById('question-text').textContent = q.text;
+
+  const optionsContainer = document.getElementById('options-container');
+  optionsContainer.innerHTML = '';
+
+  q.options.forEach(opt => {
+    const wrapper = document.createElement('label');
+    wrapper.className = 'quiz-likert__option';
+    wrapper.setAttribute('role', 'radio');
+    wrapper.setAttribute('aria-checked', 'false');
+    wrapper.tabIndex = 0;
+
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.className = 'quiz-likert__radio';
+    radio.name = 'likert';
+    radio.value = opt.letter;
+    radio.style.display = 'none';
+
+    const letter = document.createElement('span');
+    letter.className = 'quiz-likert__letter';
+    letter.textContent = opt.letter;
+
+    const label = document.createElement('span');
+    label.className = 'quiz-likert__label';
+    label.textContent = opt.label;
+
+    wrapper.appendChild(radio);
+    wrapper.appendChild(letter);
+    wrapper.appendChild(label);
+
+    wrapper.addEventListener('click', () => selectOption(wrapper, opt.letter));
+    wrapper.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectOption(wrapper, opt.letter);
+      }
+    });
+
+    optionsContainer.appendChild(wrapper);
+  });
+
+  // Restore previously selected answer for this question
+  const prev = answers.find(a => a.question_number === q.id);
+  if (prev) {
+    const optWrapper = Array.from(optionsContainer.querySelectorAll('.quiz-likert__option'))
+      .find(w => w.querySelector('input').value === prev.selected_option);
+    if (optWrapper) selectOption(optWrapper, prev.selected_option, false);
+  } else {
+    selectedAnswer = null;
+    document.getElementById('next-btn').disabled = true;
+  }
+
+  updateProgressBar();
+  document.getElementById('back-btn').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+}
+
+function selectOption(wrapper, value, gotoNext = true) {
+  document.querySelectorAll('.quiz-likert__option').forEach(w => {
+    w.classList.remove('is-selected');
+    w.querySelector('input').removeAttribute('checked');
+  });
+  wrapper.classList.add('is-selected');
+  wrapper.querySelector('input').setAttribute('checked', 'true');
+  selectedAnswer = value;
+
+  const q = QUESTIONS[currentIndex];
+  const existing = answers.findIndex(a => a.question_number === q.id);
+  if (existing >= 0) {
+    answers[existing].selected_option = value;
+  } else {
+    answers.push({ question_number: q.id, selected_option: value });
+  }
+
+  document.getElementById('next-btn').disabled = false;
+
+  if (gotoNext) {
+    setTimeout(() => document.getElementById('next-btn').click(), 180);
+  }
+}
+
+// ─── Render results (from server response) ────────────────────────────────────
+function renderResults(data) {
+  const dominant = data.dominant_style;
+  const secondary = data.secondary_style;
+  const meta = STYLE_META[dominant];
+
+  document.getElementById('result-badge').textContent = meta.label;
+  document.getElementById('result-style-name').textContent = meta.label;
+  document.getElementById('result-explanation').textContent = meta.summary;
+
+  if (secondary) {
+    const secondaryMeta = STYLE_META[secondary];
+    document.getElementById('result-secondary').innerHTML =
+      `Also showing traits of <strong>${secondaryMeta.label}</strong>`;
+    document.getElementById('result-secondary').style.display = 'block';
+  } else {
+    document.getElementById('result-secondary').style.display = 'none';
+  }
+
+  document.getElementById('result-cta').textContent = meta.ctaText;
+
+  const insightList = document.getElementById('insight-list');
+  insightList.innerHTML = '';
+  meta.insights.forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
+    insightList.appendChild(li);
+  });
+
+  showScreen('results');
+}
+
+// ─── API calls ────────────────────────────────────────────────────────────────
+async function apiSaveAnswer(question_number, selected_option) {
+  const res = await fetch('/api/quiz/answer', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question_number, selected_option }),
+  });
+  if (!res.ok) throw new Error('Failed to save answer');
+  return res.json();
+}
+
+async function apiSubmitQuiz() {
+  const res = await fetch('/api/quiz/submit', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers }),
+  });
+  if (!res.ok) throw new Error('Failed to submit quiz');
+  return res.json();
+}
+
+async function apiResetQuiz() {
+  const res = await fetch('/api/quiz/reset', {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Failed to reset quiz');
+  return res.json();
+}
+
+async function apiGetProfile() {
+  const res = await fetch('/api/quiz/profile', { credentials: 'include' });
+  if (!res.ok) throw new Error('Failed to fetch profile');
+  return res.json();
+}
+
+// ─── Event handlers ──────────────────────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click', () => {
+  currentIndex = 0;
+  answers = [];
+  renderQuestion();
+  showScreen('quiz');
+});
+
+document.getElementById('next-btn').addEventListener('click', async () => {
+  if (selectedAnswer === null) return;
+
+  // Save answer to server
+  const q = QUESTIONS[currentIndex];
+  try {
+    await apiSaveAnswer(q.id, selectedAnswer);
+  } catch (_) {}
+
+  if (currentIndex < QUESTIONS.length - 1) {
+    currentIndex++;
+    selectedAnswer = null;
+    renderQuestion();
+  } else {
+    // Done — submit full quiz
+    try {
+      const data = await apiSubmitQuiz();
+      renderResults(data);
+      // Redirect to the page the user came from (e.g. /filter with a cached draft)
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || '/dashboard';
+      window.location.href = redirect;
+    } catch (err) {
+      console.error('Quiz submit failed:', err);
+    }
+  }
+});
+
+document.getElementById('back-btn').addEventListener('click', () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    selectedAnswer = null;
+    renderQuestion();
+  }
+});
+
+document.getElementById('retake-btn').addEventListener('click', async () => {
+  try {
+    await apiResetQuiz();
+  } catch (_) {}
+  currentIndex = 0;
+  answers = [];
+  selectedAnswer = null;
+  showScreen('start');
+});
+
+// ─── On load: check for existing completed profile ───────────────────────────
+(async function checkExistingProfile() {
+  try {
+    const data = await apiGetProfile();
+    if (data.quiz_completed) {
+      renderResults(data);
+    }
+  } catch (_) {}
+})();
+</script>
+
+
+  <nav style="position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:.45rem 0 max(.45rem,env(safe-area-inset-bottom));z-index:200;">
+    <a href="/filter" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">🛡️</span><span>Filter</span></a>
+    <a href="/journal" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">📓</span><span>Journal</span></a>
+    <a href="/community" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">💬</span><span>Community</span></a>
+    <a href="/profile" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">👤</span><span>Profile</span></a>
+  </nav>
+</body>
+</html>

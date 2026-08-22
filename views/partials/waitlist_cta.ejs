@@ -1,0 +1,38 @@
+<section class="waitlist-cta">
+  <div class="waitlist-cta__inner">
+    <h2 class="waitlist-cta__heading">Get the iOS app when it drops.</h2>
+    <p class="waitlist-cta__sub">One email. No sequences. No noise.</p>
+    <form class="waitlist-cta__form" id="waitlist-form-bottom">
+      <input
+        type="email"
+        name="email"
+        placeholder="your@email.com"
+        class="waitlist-cta__input"
+        required
+        autocomplete="email"
+      />
+      <button type="submit" class="waitlist-cta__btn">Join the waitlist</button>
+    </form>
+    <p class="waitlist-cta__confirm" id="waitlist-confirm-bottom" hidden>You're on the list. One email when it drops.</p>
+  </div>
+</section>
+
+<script>
+(function() {
+  var form = document.getElementById('waitlist-form-bottom');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = form.querySelector('input[name="email"]').value;
+    fetch('/api/waitlist/join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, source: 'bottom_cta' })
+    }).then(function(r) { return r.json(); }).then(function() {
+      form.hidden = true;
+      document.getElementById('waitlist-confirm-bottom').hidden = false;
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead', { content_name: 'waitlist_bottom' });
+    }).catch(function() {});
+  });
+})();
+</script>

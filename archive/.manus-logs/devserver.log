@@ -1,0 +1,166 @@
+[2026-06-28T02:17:55.436Z] Starting dev server with command: pnpm run dev
+[2026-06-28T02:17:57.503Z] > holdoff-app@1.0.0 dev /home/ubuntu/holdoff-app
+[2026-06-28T02:17:57.503Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-06-28T02:17:59.130Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T02:17:59.366Z] Server running on http://localhost:3000/
+[2026-06-28T02:21:31.191Z] 2:21:31 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T02:21:32.769Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T02:21:33.065Z] Server running on http://localhost:3000/
+[2026-06-28T02:25:05.930Z] 2:25:05 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T02:25:07.766Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T02:25:08.027Z] Server running on http://localhost:3000/
+[2026-06-28T02:26:05.584Z] 2:26:05 AM [vite] (client) page reload index.html
+[2026-06-28T02:28:04.071Z] 2:28:04 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T02:28:05.762Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T02:28:06.000Z] Server running on http://localhost:3000/
+[2026-06-28T02:29:12.042Z] 2:29:12 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T02:29:13.521Z] c/home/ubuntu/holdoff-app/server/routers.ts:6
+[2026-06-28T02:29:13.522Z] import { streamText, callLLM } from "./_core/llm";
+[2026-06-28T02:29:13.522Z] ^
+[2026-06-28T02:29:13.522Z] SyntaxError: The requested module './_core/llm' does not provide an export named 'callLLM'
+[2026-06-28T02:29:13.522Z] at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)
+[2026-06-28T02:29:13.522Z] at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)
+[2026-06-28T02:29:13.522Z] at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)
+[2026-06-28T02:29:13.522Z] at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[2026-06-28T02:29:13.522Z] Node.js v22.13.0
+[2026-06-28T02:29:40.991Z] 2:29:40 AM [tsx] change in ./server/routers.ts Rerunning...
+[2026-06-28T02:29:42.615Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T02:29:42.855Z] Server running on http://localhost:3000/
+[2026-06-28T02:40:27.641Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-06-28T02:40:31.458Z] 2:40:31 AM [vite] (client) ✨ new dependencies optimized: @radix-ui/react-scroll-area, @radix-ui/react-dialog
+[2026-06-28T02:40:31.458Z] 2:40:31 AM [vite] (client) ✨ optimized dependencies changed. reloading
+[2026-06-28T02:52:09.620Z] 2:52:09 AM [vite] (client) hmr update /src/index.css
+[2026-06-28T02:53:45.342Z] 2:53:45 AM [vite] (client) hmr update /src/pages/CompanionChatPage.tsx, /src/index.css
+[2026-06-28T02:53:53.837Z] 2:53:53 AM [vite] (client) hmr update /src/pages/CompanionChatPage.tsx, /src/index.css
+[2026-06-28T02:54:17.665Z] 2:54:17 AM [vite] (client) hmr update /src/pages/CompanionsPage.tsx, /src/index.css
+[2026-06-28T02:55:28.384Z] 2:55:28 AM [vite] (client) hmr update /src/pages/Home.tsx, /src/index.css
+[2026-06-28T02:59:39.023Z] 2:59:39 AM [vite] (client) hmr update /src/pages/CompanionChatPage.tsx, /src/index.css
+[2026-06-28T03:01:20.068Z] 3:01:20 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T03:01:21.832Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T03:01:22.116Z] Server running on http://localhost:3000/
+[2026-06-28T03:01:29.885Z] 3:01:29 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T03:01:31.449Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T03:01:31.677Z] Server running on http://localhost:3000/
+[2026-06-28T03:01:45.816Z] 3:01:45 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T03:01:47.476Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T03:01:47.758Z] Server running on http://localhost:3000/
+[2026-06-28T03:01:59.642Z] 3:01:59 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T03:02:01.260Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T03:02:01.513Z] Server running on http://localhost:3000/
+[2026-06-28T04:11:38.048Z] 4:11:38 AM [vite] (client) page reload index.html
+[2026-06-28T04:11:38.090Z] 4:11:38 AM [tsx] unlink in ./vite.config.ts Restarting...
+[2026-06-28T04:11:38.393Z] c
+[2026-06-28T04:11:38.394Z] node:internal/modules/run_main:122
+[2026-06-28T04:11:38.394Z] triggerUncaughtException(
+[2026-06-28T04:11:38.394Z] ^
+[2026-06-28T04:11:38.394Z] Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/ubuntu/holdoff-app/server/_core/index.ts' imported from /home/ubuntu/holdoff-app/
+[2026-06-28T04:11:38.394Z] at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+[2026-06-28T04:11:38.394Z] at moduleResolve (node:internal/modules/esm/resolve:932:10)
+[2026-06-28T04:11:38.394Z] at defaultResolve (node:internal/modules/esm/resolve:1056:11)
+[2026-06-28T04:11:38.394Z] at nextResolve (node:internal/modules/esm/hooks:748:28)
+[2026-06-28T04:11:38.394Z] at resolveBase (file:///home/ubuntu/holdoff-app/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/esm/index.mjs?1782619898248:2:3744)
+[2026-06-28T04:11:38.394Z] at resolveDirectory (file:///home/ubuntu/holdoff-app/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/esm/index.mjs?1782619898248:2:4243)
+[2026-06-28T04:11:38.394Z] at resolveTsPaths (file:///home/ubuntu/holdoff-app/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/esm/index.mjs?1782619898248:2:4984)
+[2026-06-28T04:11:38.394Z] at resolve (file:///home/ubuntu/holdoff-app/node_modules/.pnpm/tsx@4.20.6/node_modules/tsx/dist/esm/index.mjs?1782619898248:2:5361)
+[2026-06-28T04:11:38.394Z] at nextResolve (node:internal/modules/esm/hooks:748:28)
+[2026-06-28T04:11:38.394Z] at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+[2026-06-28T04:11:38.394Z] code: 'ERR_MODULE_NOT_FOUND',
+[2026-06-28T04:11:38.394Z] url: 'file:///home/ubuntu/holdoff-app/server/_core/index.ts'
+[2026-06-28T04:11:38.394Z] }
+[2026-06-28T04:11:38.395Z] Node.js v22.13.0
+[2026-06-28T06:19:52.615Z] ELIFECYCLE  Command failed.
+[2026-06-28T06:19:52.636Z] Dev server exited with code -1
+[2026-06-28T06:19:53.730Z] Starting dev server with command: pnpm run dev
+[2026-06-28T06:19:54.640Z] > holdoff-app@1.0.0 dev /home/ubuntu/holdoff-app
+[2026-06-28T06:19:54.640Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-06-28T06:19:56.522Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:19:56.962Z] 6:19:56 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+[2026-06-28T06:19:56.997Z] Server running on http://localhost:3000/
+[2026-06-28T06:20:53.872Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-06-28T06:23:46.875Z] 6:23:46 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T06:23:48.601Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:23:48.844Z] Server running on http://localhost:3000/
+[2026-06-28T06:24:06.083Z] 6:24:06 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T06:24:07.764Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:24:07.993Z] Server running on http://localhost:3000/
+[2026-06-28T06:25:38.122Z] 6:25:38 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T06:25:39.718Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:25:39.954Z] Server running on http://localhost:3000/
+[2026-06-28T06:27:27.398Z] 6:27:27 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T06:27:29.027Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:27:29.266Z] Server running on http://localhost:3000/
+[2026-06-28T06:32:27.703Z] ELIFECYCLE  Command failed.
+[2026-06-28T06:32:27.732Z] Dev server exited with code -1
+[2026-06-28T06:32:28.814Z] Starting dev server with command: pnpm run dev
+[2026-06-28T06:32:29.665Z] > holdoff-app@1.0.0 dev /home/ubuntu/holdoff-app
+[2026-06-28T06:32:29.666Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-06-28T06:32:31.313Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:32:31.546Z] Server running on http://localhost:3000/
+[2026-06-28T06:33:54.006Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-06-28T06:34:23.035Z] Dev server exited with code 0
+[2026-06-28T06:35:12.767Z] Starting dev server with command: pnpm run dev
+[2026-06-28T06:35:13.555Z] > holdoff-app@1.0.0 dev /home/ubuntu/holdoff-app
+[2026-06-28T06:35:13.555Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-06-28T06:35:15.325Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T06:35:15.585Z] Server running on http://localhost:3000/
+[2026-06-28T06:35:29.148Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-06-28T07:00:05.351Z] [Auth] Missing session cookie
+[2026-06-28T07:08:48.198Z] 7:08:48 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T07:08:49.907Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:08:50.155Z] Server running on http://localhost:3000/
+[2026-06-28T07:11:57.806Z] 7:11:57 AM [tsx] change in ./server/_core/index.ts Restarting...
+[2026-06-28T07:11:59.407Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:11:59.651Z] Server running on http://localhost:3000/
+[2026-06-28T07:13:41.544Z] 7:13:41 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T07:13:43.371Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:13:43.632Z] Server running on http://localhost:3000/
+[2026-06-28T07:20:07.897Z] 7:20:07 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T07:20:10.132Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:20:10.405Z] Server running on http://localhost:3000/
+[2026-06-28T07:20:24.719Z] 7:20:24 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T07:20:26.168Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:20:26.388Z] Server running on http://localhost:3000/
+[2026-06-28T07:21:01.367Z] 7:21:01 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T07:21:03.045Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:21:03.290Z] Server running on http://localhost:3000/
+[2026-06-28T07:21:11.177Z] 7:21:11 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T07:21:12.713Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:21:12.957Z] Server running on http://localhost:3000/
+[2026-06-28T07:21:24.378Z] 7:21:24 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T07:21:25.817Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:21:26.050Z] Server running on http://localhost:3000/
+[2026-06-28T07:22:13.694Z] 7:22:13 AM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-28T07:22:15.238Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:22:15.471Z] Server running on http://localhost:3000/
+[2026-06-28T07:23:20.420Z] 7:23:20 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T07:23:22.009Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:23:22.250Z] Server running on http://localhost:3000/
+[2026-06-28T07:23:31.728Z] 7:23:31 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T07:23:33.381Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:23:33.637Z] Server running on http://localhost:3000/
+[2026-06-28T07:24:27.272Z] 7:24:27 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T07:24:29.081Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:24:29.330Z] Server running on http://localhost:3000/
+[2026-06-28T07:30:57.275Z] 7:30:57 AM [tsx] change in ./drizzle/schema.ts Restarting...
+[2026-06-28T07:30:58.929Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:30:59.168Z] Server running on http://localhost:3000/
+[2026-06-28T07:31:15.815Z] 7:31:15 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T07:31:17.432Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:31:17.674Z] Server running on http://localhost:3000/
+[2026-06-28T07:31:48.561Z] 7:31:48 AM [tsx] change in ./server/db.ts Restarting...
+[2026-06-28T07:31:50.210Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-28T07:31:50.455Z] Server running on http://localhost:3000/
+[2026-06-28T10:29:14.173Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-06-29T12:52:12.746Z] 12:52:12 PM [tsx] change in ./server/routers.ts Restarting...
+[2026-06-29T12:52:14.554Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-06-29T12:52:15.257Z] Server running on http://localhost:3000/
+[2026-07-01T23:23:55.420Z] Starting dev server with command: pnpm run dev
+[2026-07-01T23:23:58.065Z] > holdoff-app@1.0.0 dev /home/ubuntu/holdoff-app
+[2026-07-01T23:23:58.065Z] > NODE_ENV=development tsx watch server/_core/index.ts
+[2026-07-01T23:23:59.998Z] [OAuth] Initialized with baseURL: https://api.manus.im
+[2026-07-01T23:24:00.465Z] Server running on http://localhost:3000/
+[2026-07-01T23:25:50.924Z] 11:25:50 PM [tsx] change in ./server/_core/index.ts Restarting...
+[2026-07-01T23:25:52.490Z] c[OAuth] Initialized with baseURL: https://api.manus.im
+[2026-07-01T23:25:52.744Z] Server running on http://localhost:3000/
+[2026-07-01T23:25:58.295Z] [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[2026-07-01T23:26:53.740Z] 11:26:53 PM [vite] (client) hmr update /src/index.css

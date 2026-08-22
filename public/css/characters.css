@@ -1,0 +1,101 @@
+/* =========================================
+   ANIMATED CHARACTERS
+   ========================================= */
+
+.characters-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.character {
+  position: absolute;
+  width: 120px;
+  height: 180px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.character:hover {
+  transform: scale(1.05);
+}
+
+/* Character specific styles */
+.character--female {
+  background-image: url('/assets/story-characters/stacy-cartoon-v2.png');
+}
+
+.character--male {
+  background-image: url('/assets/story-characters/danny-cartoon.png');
+}
+
+/* Walking animation */
+@keyframes walk {
+  0%, 100% {
+    transform: translateY(0) scaleX(1);
+  }
+  25% {
+    transform: translateY(-5px) scaleX(1);
+  }
+  50% {
+    transform: translateY(0) scaleX(1);
+  }
+  75% {
+    transform: translateY(-5px) scaleX(1);
+  }
+}
+
+.character.walking {
+  animation: walk 0.6s ease-in-out infinite;
+}
+
+/* Flip character when moving left */
+.character.facing-left {
+  transform: scaleX(-1);
+}
+
+.character.facing-left.walking {
+  animation: walk 0.6s ease-in-out infinite;
+  transform: scaleX(-1);
+}
+
+/* Idle bounce animation */
+@keyframes idle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.character.idle {
+  animation: idle-bounce 2s ease-in-out infinite;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .character {
+    width: 80px;
+    height: 120px;
+  }
+  
+  /* Hide on very small screens to avoid clutter */
+  @media (max-width: 480px) {
+    .characters-container {
+      display: none;
+    }
+  }
+}

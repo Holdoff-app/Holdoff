@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>My Profile — HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0E0C0B">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/filter.css">
+  <style>
+    body { background:#0E0C0B; color:#F2EDE5; font-family:'DM Sans',sans-serif; min-height:100vh; }
+    .pnav { display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #2E2924;position:sticky;top:0;background:#0E0C0B;z-index:10; }
+    .pnav a { color:#9E948E;text-decoration:none;font-size:0.88rem; }
+    .pnav__title { font-family:'Fraunces',serif;font-size:1.05rem;color:#F2EDE5; }
+    .pmain { max-width:480px;margin:0 auto;padding:1.5rem 1.25rem 5.5rem; }
+    .hero-card { background:#1A1714;border:1px solid #2E2924;border-radius:16px;padding:1.75rem;margin-bottom:1.1rem;text-align:center; }
+    .avatar { width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 0.9rem;font-family:'Fraunces',serif;font-weight:700; }
+    .user-name { font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600; }
+    .user-email { font-size:0.8rem;color:#9E948E;margin-top:0.2rem; }
+    .style-badge { display:inline-block;margin-top:0.65rem;padding:0.3rem 0.9rem;border-radius:999px;font-size:0.78rem;font-weight:600;background:rgba(201,123,93,0.12);color:#C97B5D;border:1px solid rgba(201,123,93,0.25); }
+    .quiz-summary { margin-top:0.85rem;font-size:0.82rem;color:#9E948E;line-height:1.55;font-style:italic;text-align:left; }
+    .stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.1rem; }
+    .stat { background:#1A1714;border:1px solid #2E2924;border-radius:12px;padding:1.15rem;text-align:center; }
+    .stat__n { font-family:'Fraunces',serif;font-size:2.1rem;font-weight:700;line-height:1; }
+    .stat__n--accent { color:#C97B5D; }
+    .stat__n--streak::after { content:'🔥';font-size:1.3rem;margin-left:3px; }
+    .stat__l { font-size:0.72rem;color:#9E948E;margin-top:0.35rem;text-transform:uppercase;letter-spacing:0.05em; }
+    .card { background:#1A1714;border:1px solid #2E2924;border-radius:16px;padding:1.4rem;margin-bottom:1.1rem; }
+    .card__title { font-family:'Fraunces',serif;font-size:1rem;margin-bottom:1rem;color:#F2EDE5; }
+    .xp-bar-bg { background:#0E0C0B;border-radius:999px;height:8px;overflow:hidden;margin-top:0.6rem; }
+    .xp-bar-fill { height:100%;background:#C97B5D;border-radius:999px;transition:width .6s ease; }
+    .xp-labels { display:flex;justify-content:space-between;font-size:0.72rem;color:#9E948E;margin-top:0.4rem; }
+    .badges { display:flex;flex-wrap:wrap;gap:0.45rem; }
+    .badge { display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.75rem;border-radius:999px;background:#0E0C0B;border:1px solid #2E2924;font-size:0.78rem;color:#9E948E; }
+    .badge--on { border-color:#C97B5D;color:#F2EDE5;background:rgba(201,123,93,0.1); }
+    .contact-list { list-style:none; }
+    .ci { display:flex;align-items:center;gap:0.7rem;padding:0.65rem 0;border-bottom:1px solid #2E2924; }
+    .ci:last-child { border:none; }
+    .ci-av { width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700; }
+    .ci-info { flex:1; }
+    .ci-name { font-size:0.88rem;font-weight:600; }
+    .ci-style { font-size:0.73rem;color:#9E948E;margin-top:0.1rem; }
+    .ci-score { font-size:0.75rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:999px;background:rgba(76,175,80,0.12);color:#4CAF50; }
+    .ci-score--warn { background:rgba(255,152,0,0.12);color:#FF9800; }
+    .ci-score--low { background:rgba(244,67,54,0.12);color:#F44336; }
+    .btn-row { display:flex;flex-direction:column;gap:0.5rem; }
+    .btn-ghost { display:block;width:100%;padding:0.8rem;text-align:center;border:1.5px solid #2E2924;border-radius:10px;color:#9E948E;text-decoration:none;font-size:0.88rem;font-family:'DM Sans',sans-serif;cursor:pointer;background:none;transition:.15s; }
+    .btn-ghost:hover { border-color:#C97B5D;color:#F2EDE5; }
+    .btn-red { border-color:rgba(244,67,54,0.25);color:#F44336; }
+    .btn-red:hover { border-color:#F44336;background:rgba(244,67,54,0.06); }
+    .bnav { position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:0.45rem 0 max(0.45rem,env(safe-area-inset-bottom)); }
+    .bnav a { flex:1;display:flex;flex-direction:column;align-items:center;gap:0.2rem;text-decoration:none;color:#9E948E;font-size:0.62rem;padding:0.35rem 0;transition:.15s; }
+    .bnav a.on { color:#C97B5D; }
+    .bnav a span:first-child { font-size:1.15rem;line-height:1; }
+    .spinner { width:22px;height:22px;border:2px solid #2E2924;border-top-color:#C97B5D;border-radius:50%;animation:spin .7s linear infinite;margin:3rem auto; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <nav class="pnav">
+    <a href="/filter">← Back</a>
+    <span class="pnav__title">My Profile</span>
+    <a href="/settings">Settings</a>
+  </nav>
+  <main class="pmain" id="pmain"><div class="spinner"></div></main>
+  <nav class="bnav">
+    <a href="/filter"><span>🛡️</span><span>Filter</span></a>
+    <a href="/journal"><span>📓</span><span>Journal</span></a>
+    <a href="/community"><span>💬</span><span>Community</span></a>
+    <a href="/profile" class="on"><span>👤</span><span>Profile</span></a>
+  </nav>
+  <script>
+    const STYLES={anxious_preoccupied:'Anxious-Preoccupied','anxious-preoccupied':'Anxious-Preoccupied',dismissive_avoidant:'Avoidant-Dismissive',avoidant:'Avoidant',fearful_avoidant:'Fearful-Avoidant','fearful-avoidant':'Fearful-Avoidant',secure:'Secure'};
+    const COLORS={anxious_preoccupied:'#C97B5D','anxious-preoccupied':'#C97B5D',dismissive_avoidant:'#5D8AC9',avoidant:'#5D8AC9',fearful_avoidant:'#9B5DC9','fearful-avoidant':'#9B5DC9',secure:'#5DC97B'};
+    const CPOOL=['#C97B5D','#5D8AC9','#9B5DC9','#5DC97B','#C9A85D','#C95D8A'];
+    const LEVEL_NAMES=['Beginner','Pauser','Self-Aware','Grounded','Regulated','Mindful','Centered','Wise','Enlightened','Master'];
+
+    async function init(){
+      const main=document.getElementById('pmain');
+      try {
+        const [qr,cr,hr,mr]=await Promise.all([
+          fetch('/api/quiz/result').then(r=>r.ok?r.json():{}).catch(()=>({})),
+          fetch('/api/contacts').then(r=>r.ok?r.json():[]).catch(()=>[]),
+          fetch('/api/verdict/history?limit=200').then(r=>r.ok?r.json():{verdicts:[]}).catch(()=>({verdicts:[]})),
+          fetch('/api/auth/me').then(r=>r.ok?r.json():{}).catch(()=>({})),
+        ]);
+        const profile=qr.result||null;
+        const contacts=Array.isArray(cr)?cr:(cr.contacts||[]);
+        const verdicts=hr.verdicts||[];
+        const me=mr;
+        const holds=verdicts.filter(v=>v.verdict==='HOLD'||v.verdict==='DO_NOT_SEND'||v.verdict==='WAIT').length;
+        const streak=parseInt(localStorage.getItem('holdoff_streak')||'0',10);
+        const style=profile?.primaryStyle||null;
+        const ac=COLORS[style]||'#C97B5D';
+        const xp=holds*10+verdicts.length*2;
+        const level=Math.max(1,Math.floor(xp/100)+1);
+        const xpIn=xp%100;
+        const lvName=LEVEL_NAMES[Math.min(level-1,9)];
+        const displayName=me?.email?me.email.split('@')[0]:'You';
+
+        let h=`<div class="hero-card">
+          <div class="avatar" style="background:${ac}22;color:${ac}">${style?STYLES[style]?.[0]||'?':'?'}</div>
+          <div class="user-name">${displayName}</div>
+          <div class="user-email">${me?.email||''}</div>
+          ${style?`<div class="style-badge">${STYLES[style]||style}</div>`:`<a href="/quiz" style="display:inline-block;margin-top:.65rem;padding:.3rem .9rem;border-radius:999px;font-size:.78rem;font-weight:600;background:#C97B5D;color:#fff;text-decoration:none;">Take the quiz →</a>`}
+          ${(profile?.quizSummary||profile?.quiz_summary)?`<div class="quiz-summary">"${profile.quizSummary||profile.quiz_summary}"</div>`:''}
+        </div>`;
+
+        h+=`<div class="stats-grid">
+          <div class="stat"><div class="stat__n stat__n--streak">${streak}</div><div class="stat__l">Day Streak</div></div>
+          <div class="stat"><div class="stat__n stat__n--accent">${holds}</div><div class="stat__l">Texts Held</div></div>
+          <div class="stat"><div class="stat__n">${verdicts.length}</div><div class="stat__l">Verdicts</div></div>
+          <div class="stat"><div class="stat__n">${contacts.length}</div><div class="stat__l">Contacts</div></div>
+        </div>`;
+
+        h+=`<div class="card">
+          <div class="card__title">Level ${level} — ${lvName}</div>
+          <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpIn}%"></div></div>
+          <div class="xp-labels"><span>${xp} XP</span><span>${xpIn}/100 → Level ${level+1}</span></div>
+        </div>`;
+
+        const badges=[
+          {icon:'🛡️',name:'First Hold',on:holds>=1},
+          {icon:'🔥',name:'3-Day Streak',on:streak>=3},
+          {icon:'💪',name:'10 Holds',on:holds>=10},
+          {icon:'🧘',name:'25 Verdicts',on:verdicts.length>=25},
+          {icon:'⭐',name:'50 Holds',on:holds>=50},
+          {icon:'🏆',name:'100 Verdicts',on:verdicts.length>=100},
+          {icon:'🔥',name:'7-Day Streak',on:streak>=7},
+          {icon:'💎',name:'30-Day Streak',on:streak>=30},
+        ];
+        h+=`<div class="card"><div class="card__title">Achievements</div><div class="badges">${badges.map(b=>`<div class="badge ${b.on?'badge--on':''}"><span>${b.icon}</span>${b.name}</div>`).join('')}</div></div>`;
+
+        if(contacts.length){
+          h+=`<div class="card"><div class="card__title">Contact Profiles</div><ul class="contact-list">${contacts.map((c,i)=>{
+            const s=c.health_score||75;
+            const sc=s>=80?'':'ci-score--'+(s>=60?'warn':'low');
+            const col=CPOOL[i%CPOOL.length];
+            return`<li class="ci"><div class="ci-av" style="background:${col}22;color:${col}">${(c.display_name||c.name||'?')[0].toUpperCase()}</div><div class="ci-info"><div class="ci-name">${c.display_name||c.name||'Unknown'}</div><div class="ci-style">${c.attachment_style||'Unknown'}${c.is_trusted_contact?' · Trusted':''}</div></div><div class="ci-score ${sc}">${s}%</div></li>`;
+          }).join('')}</ul></div>`;
+        }
+
+        
+        h+=\`<div class="card gift-card" style="border:1px solid rgba(139,92,246,0.3);background:linear-gradient(135deg,rgba(30,15,60,0.6),rgba(20,10,50,0.8))">
+          <div class="card__title" style="display:flex;align-items:center;gap:8px">🎁 Gift HoldOff</div>
+          <p style="color:#B8A9C9;font-style:italic;margin:8px 0 12px;line-height:1.6">
+            "It was my idea — to make something so people like me could gift it to the person they can’t stop thinking about. Because I knew she needed it. And honestly… I needed her to have it, too."<br>
+            <span style="color:#8B5CF6;font-size:0.85em;font-weight:600">— Danny</span>
+          </p>
+          <p style="color:#9E948E;font-size:0.9em;margin-bottom:12px">Give someone you love the gift of clarity. Send them HoldOff.</p>
+          <a href="/checkout?plan=gift" class="btn-ghost" style="border-color:#8B5CF6;color:#8B5CF6">Send a Gift ✨</a>
+        </div>\`;
+
+        h+=`<div class="card"><div class="card__title">Account</div><div class="btn-row">
+          <a href="/history" class="btn-ghost">View Verdict History</a>
+          <a href="/quiz" class="btn-ghost">Retake Attachment Quiz</a>
+          <a href="/journal" class="btn-ghost">Pattern Journal</a>
+          <a href="/upgrade" class="btn-ghost">Manage Subscription</a>
+          <a href="/referrals" class="btn-ghost">Refer Friends</a>
+          <a href="/suggest" class="btn-ghost">Suggestion Box</a>
+          <a href="/affiliates" class="btn-ghost">Affiliate Program</a>
+          <a href="/partnerships" class="btn-ghost">Partner With Us</a>
+          <button class="btn-ghost btn-red" id="logoutBtn">Log out</button>
+        </div></div>`;
+
+        main.innerHTML=h;
+        document.getElementById('logoutBtn')?.addEventListener('click',()=>{
+          fetch('/api/auth/logout',{method:'POST'}).then(()=>window.location.href='/');
+        });
+      } catch(e){
+        main.innerHTML='<div style="text-align:center;padding:3rem;color:#9E948E">Could not load profile. <a href="/filter" style="color:#C97B5D">Go back</a></div>';
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,64 @@
+{
+  "stacy_voice": {
+    "name": "Stacy - Narrator",
+    "tone": "Vulnerable, warm, emotionally honest",
+    "vibe": "Blonde woman from Days of Our Lives - warm, real, slightly dramatic but grounded",
+    "segments": [
+      {
+        "id": "intro",
+        "text": "I wasn't looking for connection. I was just trying to survive another day. Every text felt like a threat. Every notification sent me spiraling."
+      },
+      {
+        "id": "discovery",
+        "text": "But then something shifted. I started paying attention to the patterns. Not the surface drama, but what was really happening underneath."
+      },
+      {
+        "id": "realization",
+        "text": "The anxious texting, the obsessive checking, the endless analyzing. It wasn't about him. It was about me."
+      },
+      {
+        "id": "insight",
+        "text": "That's when I realized: I have the power to change this. Not by controlling him, but by understanding myself."
+      },
+      {
+        "id": "transformation",
+        "text": "And when I did? Everything changed. Not just with him, but with how I showed up in every single relationship."
+      }
+    ]
+  },
+  "danny_voice": {
+    "name": "Danny - Narrator",
+    "tone": "Discovering, warm, vulnerable",
+    "vibe": "Hispanic man from Days of Our Lives - calm, thoughtful, authentic, warm",
+    "segments": [
+      {
+        "id": "discovery",
+        "text": "I was closing off too. Building walls. Pretending I didn't care when I actually cared a lot."
+      },
+      {
+        "id": "awakening",
+        "text": "Watching her transform made me realize something: vulnerability isn't weakness. It's actually where real strength comes from."
+      },
+      {
+        "id": "reflection",
+        "text": "I had to look at myself. At the ways I was running, the ways I was protecting myself at the cost of real connection."
+      },
+      {
+        "id": "growth",
+        "text": "And when I stopped running? When I let myself be seen? Everything opened up."
+      },
+      {
+        "id": "perspective",
+        "text": "Now I understand: the story wasn't about fixing what's broken. It was about becoming whole."
+      }
+    ]
+  },
+  "shared_voice": {
+    "segments": [
+      {
+        "id": "ending",
+        "text": "This is the story of how two people learned that understanding themselves was the key to understanding each other. And how that changed everything."
+      }
+    ]
+  }
+}

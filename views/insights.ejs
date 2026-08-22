@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>HoldOff — Insights</title>
+  <style>
+    /* Contact selector */
+    .contact-selector {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 20px;
+      scrollbar-width: none;
+    }
+    .contact-selector::-webkit-scrollbar { display: none; }
+    .contact-chip {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .contact-chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .contact-chip-avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--primary-glow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--primary);
+    }
+
+    /* Tabs */
+    .insight-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .insight-tabs::-webkit-scrollbar { display: none; }
+    .insight-tab {
+      flex-shrink: 0;
+      flex: 1;
+      min-width: 0;
+      padding: 10px 6px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .insight-tab:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+    .insight-tab:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+    .insight-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .insight-panel { display: none; }
+    .insight-panel.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* Contact header */
+    .contact-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .contact-header-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--primary-glow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; font-weight: 700; color: var(--primary);
+      flex-shrink: 0;
+    }
+    .contact-header-info { flex: 1; min-width: 0; }
+    .contact-header-name { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .contact-header-sub { font-size: 0.8rem; color: var(--text-muted); }
+    .health-ring {
+      width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+      background: conic-gradient(var(--primary) 0% var(--ring-pct, 50%), var(--border) var(--ring-pct, 50%) 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .health-ring-inner {
+      width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: var(--text);
+    }
+
+    /* Flag cards */
+    .flag-list { display: flex; flex-direction: column; gap: 10px; }
+    .flag-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+    .flag-icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.3; }
+    .flag-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+
+    .flag-item.red { border-left: 3px solid var(--danger); }
+    .flag-item.yellow { border-left: 3px solid var(--warning); }
+    .flag-item.green { border-left: 3px solid var(--success); }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 18px 0 10px;
+    }
+    .section-label:first-child { margin-top: 0; }
+
+    /* Compatibility */
+    .compat-score-ring {
+      width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 12px;
+      background: conic-gradient(var(--primary) 0% var(--ring-pct, 50%), var(--border) var(--ring-pct, 50%) 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .compat-score-inner {
+      width: 78px; height: 78px; border-radius: 50%; background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 700; color: var(--text);
+    }
+    .compat-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .compat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .compat-row-label { color: var(--text-muted); }
+    .compat-row-value { font-weight: 600; color: var(--text); }
+    .compat-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    /* Message interpreter */
+    .interpret-form { margin-bottom: 0; }
+    .interpret-textarea {
+      width: 100%;
+      background: var(--bg-input, #15112a);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+    .interpret-textarea:focus { outline: none; border-color: var(--primary); }
+    .interpret-result {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-top: 14px;
+      display: none;
+    }
+    .interpret-result.visible { display: block; animation: fadeIn 0.3s ease; }
+    .interpret-field { margin-bottom: 14px; }
+    .interpret-field:last-child { margin-bottom: 0; }
+    .interpret-field-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 5px;
+    }
+    .interpret-field-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .style-badge {
+      display: inline-flex;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--rose-glow);
+      color: var(--rose);
+    }
+
+    /* Analyze button area */
+    .analyze-btn-row {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .last-analyzed {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Empty/loading states */
+    .empty-flags {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>💡 Insights</h1>
+    </div>
+
+    <div class="screen-content">
+      <!-- Contact selector -->
+      <div class="contact-selector" id="contactSelector">
+        <div style="padding:20px;color:var(--text-dim);font-size:0.85rem;" id="selectorLoading">Loading contacts…</div>
+      </div>
+
+      <!-- No contacts empty state -->
+      <div id="noContactsState" style="display:none;">
+        <div class="empty-state">
+          <div class="empty-icon">👤</div>
+          <div class="empty-text">No contacts yet.<br>Start a conversation in Compose to add someone.</div>
+        </div>
+      </div>
+
+      <!-- Per-contact analysis (shown when a contact is selected) -->
+      <div id="contactAnalysis" style="display:none;">
+
+        <!-- Contact header card -->
+        <div class="contact-header" id="contactHeader">
+          <div class="contact-header-avatar" id="hdrAvatar">?</div>
+          <div class="contact-header-info">
+            <div class="contact-header-name" id="hdrName">—</div>
+            <div class="contact-header-sub" id="hdrSub">No analysis yet</div>
+          </div>
+          <div class="health-ring" id="hdrRing" style="--ring-pct:0%;">
+            <div class="health-ring-inner" id="hdrScore">—</div>
+          </div>
+        </div>
+
+        <!-- Analyze button -->
+        <div class="analyze-btn-row">
+          <button class="btn btn-primary btn-sm" id="analyzeBtn" onclick="analyzeContact()">
+            🔍 Analyze Relationship
+          </button>
+          <span class="last-analyzed" id="lastAnalyzedLabel"></span>
+        </div>
+
+        <!-- Tabs: Red | Yellow | Green | Compatibility | Interpret -->
+        <div class="insight-tabs">
+          <button class="insight-tab active" onclick="showPanel('red', this)">🚩 Red</button>
+          <button class="insight-tab" onclick="showPanel('yellow', this)">🟡 Yellow</button>
+          <button class="insight-tab" onclick="showPanel('green', this)">💚 Green</button>
+          <button class="insight-tab" onclick="showPanel('compat', this)">💘 Compat</button>
+          <button class="insight-tab" onclick="showPanel('interpret', this)">🔍 Interpret</button>
+        </div>
+
+        <!-- RED FLAGS PANEL -->
+        <div class="insight-panel active" id="panel-red">
+          <div class="flag-list" id="redFlagsList">
+            <div class="empty-flags">Run "Analyze Relationship" to generate your red flags.</div>
+          </div>
+        </div>
+
+        <!-- YELLOW FLAGS PANEL -->
+        <div class="insight-panel" id="panel-yellow">
+          <div class="flag-list" id="yellowFlagsList">
+            <div class="empty-flags">Run "Analyze Relationship" to generate your yellow flags.</div>
+          </div>
+        </div>
+
+        <!-- GREEN FLAGS PANEL -->
+        <div class="insight-panel" id="panel-green">
+          <div class="flag-list" id="greenFlagsList">
+            <div class="empty-flags">Run "Analyze Relationship" to generate your green flags.</div>
+          </div>
+        </div>
+
+        <!-- COMPATIBILITY PANEL -->
+        <div class="insight-panel" id="panel-compat">
+          <div class="card" style="text-align:center;" id="compatCard">
+            <div class="compat-score-ring" id="compatRing" style="--ring-pct:0%;">
+              <div class="compat-score-inner" id="compatScore">—</div>
+            </div>
+            <p style="font-weight:700;font-size:1.05rem;margin-bottom:4px;" id="compatTitle">Compatibility</p>
+            <p style="font-size:0.8rem;color:var(--text-dim);">Based on your communication patterns</p>
+            <div class="compat-meta" id="compatMeta" style="display:none;">
+              <div class="compat-row">
+                <span class="compat-row-label">Attachment Fit</span>
+                <span class="compat-row-value" id="compatStyleFit">—</span>
+              </div>
+              <div class="compat-row">
+                <span class="compat-row-label">Comm. Style Match</span>
+                <span class="compat-row-value" id="compatCommMatch">—</span>
+              </div>
+              <div class="compat-row">
+                <span class="compat-row-label">Risk Level</span>
+                <span class="compat-row-value" id="compatRisk">—</span>
+              </div>
+              <div class="compat-row">
+                <span class="compat-row-label">Trust Trajectory</span>
+                <span class="compat-row-value" id="compatTrust">—</span>
+              </div>
+            </div>
+            <div class="compat-summary" id="compatSummary" style="display:none;text-align:left;"></div>
+            <div style="color:var(--text-dim);font-size:0.85rem;margin-top:12px;" id="compatEmpty">Run "Analyze Relationship" to generate compatibility data.</div>
+          </div>
+        </div>
+
+        <!-- MESSAGE INTERPRETER PANEL -->
+        <div class="insight-panel" id="panel-interpret">
+          <div class="card">
+            <h3 style="margin-bottom:6px;">🔍 Message Interpreter</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">
+              Paste a message they sent you. Get a deep read on what it actually means — not just a verdict.
+            </p>
+            <div class="interpret-form">
+              <textarea
+                class="interpret-textarea"
+                id="interpretInput"
+                placeholder="Paste their message here…"
+                rows="4"
+              ></textarea>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:0.78rem;color:var(--text-muted);font-weight:600;display:block;margin-bottom:6px;">Their suspected attachment style (optional)</label>
+                <select id="interpretStyle" style="width:100%;background:var(--bg-input,#15112a);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;">
+                  <option value="">Not sure — figure it out</option>
+                  <option value="Anxious">Anxious</option>
+                  <option value="Avoidant">Avoidant</option>
+                  <option value="Dismissive-Avoidant">Dismissive-Avoidant</option>
+                  <option value="Fearful-Avoidant">Fearful-Avoidant</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-block" id="interpretBtn" onclick="runInterpret()">
+                🔍 Interpret This Message
+              </button>
+            </div>
+            <div class="interpret-result" id="interpretResult">
+              <div class="interpret-field">
+                <div class="interpret-field-label">Detected Attachment Style</div>
+                <div class="interpret-field-value"><span class="style-badge" id="iStyle">—</span></div>
+              </div>
+              <div class="interpret-field">
+                <div class="interpret-field-label">What It Actually Means</div>
+                <div class="interpret-field-value" id="iMeans">—</div>
+              </div>
+              <div class="interpret-field">
+                <div class="interpret-field-label">How Your Anxious Brain Misreads It</div>
+                <div class="interpret-field-value" id="iMisread">—</div>
+              </div>
+              <div class="interpret-field">
+                <div class="interpret-field-label">What They Actually Need</div>
+                <div class="interpret-field-value" id="iNeeds">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /#contactAnalysis -->
+    </div><!-- /.screen-content -->
+
+    <%- include('partials/bottom_nav') %>
+  </div>
+
+  <script>
+    let selectedContactId = null;
+    let contactsData = [];
+
+    // ── helpers ──────────────────────────────────────────────────────────────
+
+    function showPanel(name, btn) {
+      document.querySelectorAll('.insight-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.insight-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function renderFlagList(containerId, flags, colorClass, emptyIcon, emptyMsg) {
+      const el = document.getElementById(containerId);
+      if (!flags || flags.length === 0) {
+        el.innerHTML = '<div class="empty-flags">' + emptyIcon + ' ' + emptyMsg + '</div>';
+        return;
+      }
+      const icons = { red: '🚩', yellow: '🟡', green: '💚' };
+      el.innerHTML = flags.map(f =>
+        '<div class="flag-item ' + colorClass + '">' +
+          '<span class="flag-icon">' + icons[colorClass] + '</span>' +
+          '<span class="flag-text">' + escapeHtml(f) + '</span>' +
+        '</div>'
+      ).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderInsights(insights) {
+      if (!insights) return;
+
+      renderFlagList('redFlagsList', insights.redFlags, 'red', '✅', 'No red flags found.');
+      renderFlagList('yellowFlagsList', insights.yellowFlags, 'yellow', '✅', 'No yellow flags found.');
+      renderFlagList('greenFlagsList', insights.greenFlags, 'green', 'ℹ️', 'No green flags identified yet.');
+
+      // Compatibility
+      const score = insights.compatibilityScore || 0;
+      const pct = Math.min(100, Math.max(0, score));
+      document.getElementById('compatRing').style.setProperty('--ring-pct', pct + '%');
+      document.getElementById('compatScore').textContent = score + '%';
+      document.getElementById('compatTitle').textContent = score >= 70 ? 'Strong Compatibility' : score >= 40 ? 'Moderate Compatibility' : 'Low Compatibility';
+
+      if (score > 0 || insights.attachmentStyleFit) {
+        document.getElementById('compatEmpty').style.display = 'none';
+        document.getElementById('compatMeta').style.display = 'flex';
+        document.getElementById('compatStyleFit').textContent = insights.attachmentStyleFit || '—';
+        document.getElementById('compatCommMatch').textContent = (insights.communicationStyleMatch || 0) + '%';
+        document.getElementById('compatRisk').textContent = insights.riskLevel || '—';
+        document.getElementById('compatTrust').textContent = insights.trustLevel || '—';
+        if (insights.compatibilitySummary) {
+          document.getElementById('compatSummary').textContent = insights.compatibilitySummary;
+          document.getElementById('compatSummary').style.display = 'block';
+        }
+      }
+
+      // Header ring
+      const hScore = insights.compatibilityScore || 0;
+      document.getElementById('hdrRing').style.setProperty('--ring-pct', Math.min(100, hScore) + '%');
+      document.getElementById('hdrScore').textContent = hScore ? hScore + '%' : '—';
+
+      if (insights.updatedAt) {
+        const d = new Date(insights.updatedAt);
+        document.getElementById('lastAnalyzedLabel').textContent =
+          'Last analyzed ' + d.toLocaleDateString();
+      }
+      if (insights.riskLevel || insights.attachmentStyleFit) {
+        document.getElementById('hdrSub').textContent =
+          (insights.attachmentStyleFit || '') + (insights.riskLevel ? ' · ' + insights.riskLevel + ' risk' : '');
+      }
+    }
+
+    // ── load contacts ─────────────────────────────────────────────────────────
+
+    async function loadContacts() {
+      try {
+        const res = await fetch('/api/contacts');
+        const data = await res.json();
+        contactsData = Array.isArray(data) ? data : (data.contacts || []);
+
+        const selector = document.getElementById('contactSelector');
+        document.getElementById('selectorLoading').remove();
+
+        if (contactsData.length === 0) {
+          document.getElementById('noContactsState').style.display = 'block';
+          return;
+        }
+
+        contactsData.forEach((c, i) => {
+          const chip = document.createElement('button');
+          chip.className = 'contact-chip' + (i === 0 ? ' active' : '');
+          chip.dataset.id = c.id;
+          const name = c.name || c.display_name || 'Contact';
+          chip.innerHTML =
+            '<span class="contact-chip-avatar">' + escapeHtml(name.charAt(0).toUpperCase()) + '</span>' +
+            '<span>' + escapeHtml(name) + '</span>';
+          chip.addEventListener('click', () => selectContact(c));
+          selector.appendChild(chip);
+        });
+
+        // Auto-select first contact
+        selectContact(contactsData[0]);
+      } catch (e) {
+        console.error('[insights] loadContacts failed:', e);
+        document.getElementById('selectorLoading').textContent = 'Failed to load contacts.';
+      }
+    }
+
+    function selectContact(contact) {
+      selectedContactId = contact.id;
+
+      // Update chips
+      document.querySelectorAll('.contact-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.id == contact.id);
+      });
+
+      // Update header
+      const name = contact.name || contact.display_name || 'Contact';
+      document.getElementById('hdrAvatar').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('hdrName').textContent = name;
+      document.getElementById('hdrSub').textContent = contact.attachment_style || contact.relationship || 'No analysis yet';
+      document.getElementById('hdrScore').textContent = '—';
+      document.getElementById('hdrRing').style.setProperty('--ring-pct', '0%');
+      document.getElementById('lastAnalyzedLabel').textContent = '';
+
+      // Reset flags to empty-prompt state
+      const promptMsg = 'Run "Analyze Relationship" to generate this.';
+      ['redFlagsList', 'yellowFlagsList', 'greenFlagsList'].forEach(id => {
+        document.getElementById(id).innerHTML = '<div class="empty-flags">' + promptMsg + '</div>';
+      });
+      document.getElementById('compatEmpty').style.display = 'block';
+      document.getElementById('compatMeta').style.display = 'none';
+      document.getElementById('compatSummary').style.display = 'none';
+      document.getElementById('compatScore').textContent = '—';
+      document.getElementById('compatRing').style.setProperty('--ring-pct', '0%');
+      document.getElementById('compatTitle').textContent = 'Compatibility';
+
+      // Show analysis section
+      document.getElementById('noContactsState').style.display = 'none';
+      document.getElementById('contactAnalysis').style.display = 'block';
+
+      // Load existing insights for this contact
+      loadContactInsights(contact.id);
+    }
+
+    async function loadContactInsights(contactId) {
+      try {
+        const res = await fetch('/api/contact-insights/' + contactId);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.insights) renderInsights(data.insights);
+      } catch (e) {
+        // Non-fatal
+      }
+    }
+
+    // ── analyze ───────────────────────────────────────────────────────────────
+
+    async function analyzeContact() {
+      if (!selectedContactId) return;
+      const btn = document.getElementById('analyzeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Analyzing…';
+
+      try {
+        const res = await fetch('/api/contact-insights/' + selectedContactId + '/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        if (data.insights) {
+          renderInsights(data.insights);
+        } else {
+          alert(data.error || 'Analysis failed. Try again.');
+        }
+      } catch (e) {
+        alert('Analysis request failed. Check your connection.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔍 Analyze Relationship';
+      }
+    }
+
+    // ── interpret ─────────────────────────────────────────────────────────────
+
+    async function runInterpret() {
+      const message = document.getElementById('interpretInput').value.trim();
+      const style = document.getElementById('interpretStyle').value;
+      if (!message) {
+        document.getElementById('interpretInput').focus();
+        return;
+      }
+
+      const btn = document.getElementById('interpretBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Interpreting…';
+      document.getElementById('interpretResult').classList.remove('visible');
+
+      try {
+        const res = await fetch('/api/filter/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, style }),
+        });
+        const data = await res.json();
+
+        if (data.error && data.error === 'free_limit_reached') {
+          btn.innerHTML = '🔍 Interpret This Message';
+          btn.disabled = false;
+          window.location.href = '/upgrade';
+          return;
+        }
+
+        document.getElementById('iStyle').textContent = data.detected_style || '—';
+        document.getElementById('iMeans').textContent = data.what_it_means || '—';
+        document.getElementById('iMisread').textContent = data.how_you_misread_it || '—';
+        document.getElementById('iNeeds').textContent = data.what_they_need || '—';
+        document.getElementById('interpretResult').classList.add('visible');
+      } catch (e) {
+        alert('Interpretation failed. Try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔍 Interpret This Message';
+      }
+    }
+
+    // ── init ──────────────────────────────────────────────────────────────────
+    loadContacts();
+  </script>
+</body>
+</html>

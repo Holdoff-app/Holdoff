@@ -1,0 +1,16 @@
+.git
+.github
+node_modules
+npm-debug.log*
+.env
+.env.*
+.DS_Store
+coverage
+.cache
+work
+android/.gradle
+android/app/build
+android/build
+*.tar.gz
+*.zip
+archive

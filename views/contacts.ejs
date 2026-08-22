@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts - HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="theme-color" content="#0F172A">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #8B5CF6;
+      --accent: #3B82F6;
+      --bg-dark: #0F172A;
+      --bg-darker: #09101F;
+      --bg-card: #1A2847;
+      --text-primary: #F1F5F9;
+      --text-muted: #CBD5E1;
+      --text-dim: #94A3B8;
+      --border: #334155;
+      --red: #EF4444;
+      --green: #10B981;
+      --radius: 12px;
+      --transition: all 0.2s ease;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+      color: var(--text-primary);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 20px 20px 90px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+    }
+    .add-btn:hover { transform: scale(1.08); }
+
+    /* Spiral lock banner */
+    .spiral-banner {
+      display: none;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.4);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #FCA5A5;
+    }
+    .spiral-banner.visible { display: block; }
+    .spiral-banner strong { color: var(--red); }
+
+    /* Contact cards */
+    .contacts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      transition: var(--transition);
+    }
+    .contact-card:hover {
+      border-color: rgba(139,92,246,0.4);
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .contact-initials {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.2));
+      border: 1px solid rgba(139,92,246,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .contact-info { flex: 1; min-width: 0; }
+    .contact-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .contact-meta { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+
+    .contact-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: var(--transition);
+    }
+    .action-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .action-btn.call:hover { border-color: var(--green); color: var(--green); }
+    .action-btn.text:hover { border-color: var(--accent); color: var(--accent); }
+    .action-btn.locked { opacity: 0.5; cursor: not-allowed; }
+    .action-btn.locked:hover { border-color: var(--red); color: var(--red); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h2 { font-size: 20px; margin-bottom: 8px; color: var(--text-muted); }
+    .empty-state p { font-size: 14px; color: var(--text-dim); }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(24px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .form-field { margin-bottom: 14px; }
+    .form-field label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .form-field input, .form-field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .form-field input:focus, .form-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-cancel { background: var(--border); color: var(--text-primary); }
+    .btn-save {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+    }
+    .btn-save:hover { opacity: 0.9; }
+    .btn-delete { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid var(--red) !important; }
+
+    /* Spiral lock overlay (inline) */
+    .spiral-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 300;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px 24px;
+    }
+    .spiral-overlay.active { display: flex; }
+    .spiral-icon { font-size: 48px; margin-bottom: 16px; }
+    .spiral-overlay h2 { font-size: 22px; color: #F87171; margin-bottom: 12px; }
+    .spiral-overlay p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+    .spiral-timer-big { font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 24px; font-variant-numeric: tabular-nums; }
+    .spiral-options { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; }
+    .spiral-options a, .spiral-options button {
+      display: block;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+    }
+    .spiral-rewrite { background: var(--primary); color: #fff; }
+    .spiral-dismiss { background: transparent; color: var(--text-dim); border: 1px solid var(--border) !important; }
+    .spiral-dismiss:hover { color: var(--text-primary); border-color: var(--text-muted) !important; }
+
+    /* Error toast */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1>📱 Contacts</h1>
+    <button class="add-btn" id="addContactBtn" title="Add contact">+</button>
+  </div>
+
+  <!-- Spiral lock active banner -->
+  <div class="spiral-banner" id="spiralBanner">
+    <strong>🔒 Spiral Lock is active.</strong> Calling and texting are paused to protect your peace.
+    Remaining: <span id="bannerTimer">—</span>
+    — <a href="/filter" style="color:#FCA5A5;font-weight:600;">Rewrite instead →</a>
+  </div>
+
+  <!-- Contact list -->
+  <div class="contacts-list" id="contactsList"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">🫂</div>
+    <h2>No contacts yet</h2>
+    <p>Tap <strong>+</strong> to add someone — include their phone number<br>to enable the in-app dialer with spiral lock protection.</p>
+  </div>
+
+  <!-- Add / Edit modal -->
+  <div class="modal-backdrop" id="contactModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalTitle">Add Contact</div>
+      <input type="hidden" id="contactId">
+      <div class="form-field">
+        <label>Name *</label>
+        <input type="text" id="fieldName" placeholder="e.g. Alex" autocomplete="off">
+      </div>
+      <div class="form-field">
+        <label>Phone Number</label>
+        <input type="tel" id="fieldPhone" placeholder="e.g. +1 555 000 0000" autocomplete="tel">
+      </div>
+      <div class="form-field">
+        <label>Relationship</label>
+        <select id="fieldRelationship">
+          <option value="">— select —</option>
+          <option value="partner">Partner / ex</option>
+          <option value="situationship">Situationship</option>
+          <option value="friend">Friend</option>
+          <option value="family">Family</option>
+          <option value="coworker">Coworker</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="modalCancel">Cancel</button>
+        <button class="btn-save" id="modalSave">Save</button>
+      </div>
+      <div class="modal-actions" id="deleteRow" style="display:none;margin-top:4px">
+        <button class="btn-delete" id="modalDelete" style="flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Remove contact</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spiral lock full-screen overlay -->
+  <div class="spiral-overlay" id="spiralOverlay">
+    <div class="spiral-icon">🌀</div>
+    <h2>Spiral Lock Active</h2>
+    <p>Calling and texting are paused.<br>Wait out the timer or rewrite your message instead.</p>
+    <div class="spiral-timer-big" id="overlayTimer">5:00</div>
+    <div class="spiral-options">
+      <a href="/filter" class="spiral-rewrite">✏️ Rewrite instead →</a>
+      <button class="spiral-dismiss" id="spiralDismiss">Dismiss</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let contacts = [];
+    let spiralLocked = false;
+    let spiralRemainingMs = 0;
+    let timerInterval = null;
+
+    // ── Spiral lock ─────────────────────────────────────────────────────────────
+
+    function formatTimer(ms) {
+      const s = Math.max(0, Math.ceil(ms / 1000));
+      return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    async function checkSpiralLock() {
+      try {
+        const r = await fetch('/api/spiral-lock/status');
+        const data = await r.json();
+        spiralLocked = !!data.locked;
+        spiralRemainingMs = data.remainingMs || 0;
+        updateSpiralUI();
+      } catch (_) {}
+    }
+
+    function updateSpiralUI() {
+      const banner = document.getElementById('spiralBanner');
+      if (spiralLocked) {
+        banner.classList.add('visible');
+        document.getElementById('bannerTimer').textContent = formatTimer(spiralRemainingMs);
+      } else {
+        banner.classList.remove('visible');
+      }
+      // Refresh call/text button states
+      document.querySelectorAll('.action-btn.call, .action-btn.text').forEach(btn => {
+        btn.classList.toggle('locked', spiralLocked);
+        btn.title = spiralLocked ? '🔒 Spiral Lock active — pause before reaching out' : btn.dataset.defaultTitle || '';
+      });
+    }
+
+    function startBannerTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!spiralLocked) { clearInterval(timerInterval); return; }
+        spiralRemainingMs = Math.max(0, spiralRemainingMs - 1000);
+        if (spiralRemainingMs <= 0) {
+          spiralLocked = false;
+          clearInterval(timerInterval);
+          checkSpiralLock();
+        } else {
+          document.getElementById('bannerTimer').textContent = formatTimer(spiralRemainingMs);
+          const overlayT = document.getElementById('overlayTimer');
+          if (overlayT) overlayT.textContent = formatTimer(spiralRemainingMs);
+        }
+      }, 1000);
+    }
+
+    function showSpiralOverlay() {
+      document.getElementById('overlayTimer').textContent = formatTimer(spiralRemainingMs);
+      document.getElementById('spiralOverlay').classList.add('active');
+      startBannerTimer();
+    }
+
+    document.getElementById('spiralDismiss').addEventListener('click', () => {
+      document.getElementById('spiralOverlay').classList.remove('active');
+    });
+
+    // ── Contacts ────────────────────────────────────────────────────────────────
+
+    function getInitials(name) {
+      return (name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    }
+
+    function escHtml(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderContacts() {
+      const list = document.getElementById('contactsList');
+      const empty = document.getElementById('emptyState');
+      if (!contacts.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      list.innerHTML = contacts.map(c => {
+        const phone = c.phone || '';
+        const callBtn = phone
+          ? `<button class="action-btn call${spiralLocked?' locked':''}" data-phone="${escHtml(phone)}" data-default-title="Call ${escHtml(c.name)}" title="${spiralLocked?'🔒 Spiral Lock active':'Call '+escHtml(c.name)}" aria-label="Call ${escHtml(c.name)}">📞</button>`
+          : '';
+        const textBtn = phone
+          ? `<button class="action-btn text${spiralLocked?' locked':''}" data-phone="${escHtml(phone)}" data-default-title="Text ${escHtml(c.name)}" title="${spiralLocked?'🔒 Spiral Lock active':'Text '+escHtml(c.name)}" aria-label="Text ${escHtml(c.name)}">💬</button>`
+          : '';
+        const rel = c.relationship ? `<span style="margin-right:6px">${escHtml(c.relationship)}</span>` : '';
+        const ph  = phone ? `<span>📱 ${escHtml(phone)}</span>` : '<span style="opacity:.5">No phone number</span>';
+        return `
+          <div class="contact-card">
+            <div class="contact-row">
+              <div class="contact-initials">${escHtml(getInitials(c.name))}</div>
+              <div class="contact-info">
+                <div class="contact-name">${escHtml(c.name)}</div>
+                <div class="contact-meta">${rel}${ph}</div>
+              </div>
+              <div class="contact-actions">
+                ${callBtn}${textBtn}
+                <button class="action-btn edit" data-id="${c.id}" title="Edit" aria-label="Edit ${escHtml(c.name)}">✏️</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Wire up call/text/edit buttons
+      list.querySelectorAll('.action-btn.call').forEach(btn => {
+        btn.addEventListener('click', () => handleCall(btn.dataset.phone));
+      });
+      list.querySelectorAll('.action-btn.text').forEach(btn => {
+        btn.addEventListener('click', () => handleText(btn.dataset.phone));
+      });
+      list.querySelectorAll('.action-btn.edit').forEach(btn => {
+        btn.addEventListener('click', () => openEdit(btn.dataset.id));
+      });
+    }
+
+    async function loadContacts() {
+      try {
+        const r = await fetch('/api/contacts');
+        if (!r.ok) throw new Error(r.status);
+        const data = await r.json();
+        contacts = Array.isArray(data) ? data : (data.contacts || []);
+        renderContacts();
+      } catch (err) {
+        console.error('[contacts] load error:', err);
+        showToast('Could not load contacts.');
+        document.getElementById('emptyState').style.display = 'block';
+      }
+    }
+
+    // ── Dialer with spiral lock check ───────────────────────────────────────────
+
+    function handleCall(phone) {
+      if (spiralLocked) { showSpiralOverlay(); return; }
+      // Record a send_attempt so spiral lock can track velocity
+      fetch('/api/spiral-lock/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'send_attempt' }),
+      }).then(r => r.json()).then(data => {
+        if (data.locked) {
+          spiralLocked = true;
+          spiralRemainingMs = data.remainingMs || 300000;
+          updateSpiralUI();
+          showSpiralOverlay();
+        } else {
+          window.location.href = 'tel:' + phone.replace(/[^+\d]/g, '');
+        }
+      }).catch(() => {
+        window.location.href = 'tel:' + phone.replace(/[^+\d]/g, '');
+      });
+    }
+
+    function handleText(phone) {
+      if (spiralLocked) { showSpiralOverlay(); return; }
+      fetch('/api/spiral-lock/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_type: 'send_attempt' }),
+      }).then(r => r.json()).then(data => {
+        if (data.locked) {
+          spiralLocked = true;
+          spiralRemainingMs = data.remainingMs || 300000;
+          updateSpiralUI();
+          showSpiralOverlay();
+        } else {
+          window.location.href = 'sms:' + phone.replace(/[^+\d]/g, '');
+        }
+      }).catch(() => {
+        window.location.href = 'sms:' + phone.replace(/[^+\d]/g, '');
+      });
+    }
+
+    // ── Add / Edit modal ─────────────────────────────────────────────────────────
+
+    function openAdd() {
+      document.getElementById('modalTitle').textContent = 'Add Contact';
+      document.getElementById('contactId').value = '';
+      document.getElementById('fieldName').value = '';
+      document.getElementById('fieldPhone').value = '';
+      document.getElementById('fieldRelationship').value = '';
+      document.getElementById('deleteRow').style.display = 'none';
+      document.getElementById('contactModal').classList.add('open');
+    }
+
+    function openEdit(id) {
+      const c = contacts.find(x => String(x.id) === String(id));
+      if (!c) return;
+      document.getElementById('modalTitle').textContent = 'Edit Contact';
+      document.getElementById('contactId').value = c.id;
+      document.getElementById('fieldName').value = c.name || '';
+      document.getElementById('fieldPhone').value = c.phone || '';
+      document.getElementById('fieldRelationship').value = c.relationship || '';
+      document.getElementById('deleteRow').style.display = 'flex';
+      document.getElementById('contactModal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('contactModal').classList.remove('open');
+    }
+
+    document.getElementById('addContactBtn').addEventListener('click', openAdd);
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+
+    document.getElementById('modalSave').addEventListener('click', async () => {
+      const id = document.getElementById('contactId').value;
+      const displayName = document.getElementById('fieldName').value.trim();
+      const phoneNumber = document.getElementById('fieldPhone').value.trim();
+      const relationship = document.getElementById('fieldRelationship').value;
+
+      if (!displayName) { showToast('Name is required.'); return; }
+
+      const body = { displayName, phoneNumber: phoneNumber || null, relationship: relationship || null };
+      try {
+        const r = await fetch(id ? `/api/contacts/${id}` : '/api/contacts', {
+          method: id ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (!r.ok) throw new Error(r.status);
+        closeModal();
+        showToast(id ? 'Contact updated.' : 'Contact added.');
+        await loadContacts();
+      } catch (err) {
+        showToast('Could not save contact. Please try again.');
+      }
+    });
+
+    document.getElementById('modalDelete').addEventListener('click', async () => {
+      const id = document.getElementById('contactId').value;
+      if (!id || !confirm('Remove this contact?')) return;
+      try {
+        await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+        closeModal();
+        showToast('Contact removed.');
+        await loadContacts();
+      } catch (_) {
+        showToast('Could not remove contact.');
+      }
+    });
+
+    // ── Toast ────────────────────────────────────────────────────────────────────
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // ── Init ────────────────────────────────────────────────────────────────────
+
+    (async () => {
+      await checkSpiralLock();
+      await loadContacts();
+      if (spiralLocked) startBannerTimer();
+    })();
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>
+

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff - Messaging</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-purple: #2a1a4a;
+      --dark-purple: #1a0f2e;
+      --romantic-blue: #1E3A6E;
+      --accent-purple: #8B5CF6;
+      --light-text: #e8dff5;
+      --subtle-text: #b8a8d0;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--dark-purple) 0%, var(--romantic-blue) 100%);
+      color: var(--light-text);
+      min-height: 100vh;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      gap: 0;
+    }
+
+    /* CONTACTS LIST */
+    .contacts-panel {
+      width: 320px;
+      background: rgba(26, 15, 46, 0.95);
+      border-right: 1px solid rgba(139, 92, 246, 0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .contacts-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--light-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .settings-btn {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: var(--light-text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .settings-btn:hover {
+      background: rgba(139, 92, 246, 0.4);
+      border-color: rgba(139, 92, 246, 0.8);
+    }
+
+    .contact-item {
+      padding: 12px;
+      margin-bottom: 8px;
+      background: rgba(42, 26, 74, 0.6);
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover,
+    .contact-item.active {
+      background: rgba(139, 92, 246, 0.4);
+      border-left-color: var(--accent-purple);
+    }
+
+    .contact-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .contact-preview {
+      font-size: 12px;
+      color: var(--subtle-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* THREAD AREA */
+    .thread-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, rgba(42, 26, 74, 0.5) 0%, rgba(30, 58, 110, 0.3) 100%);
+      padding: 0;
+    }
+
+    .thread-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(26, 15, 46, 0.7);
+    }
+
+    .thread-header h2 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--light-text);
+    }
+
+    .thread-header p {
+      font-size: 12px;
+      color: var(--subtle-text);
+      margin-top: 4px;
+    }
+
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* MESSAGE BUBBLES */
+    .message-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      word-wrap: break-word;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .message-bubble.incoming {
+      align-self: flex-start;
+      background: rgba(139, 92, 246, 0.3);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .message-bubble.outgoing {
+      align-self: flex-end;
+      background: rgba(30, 58, 110, 0.5);
+      border-right: 3px solid var(--romantic-blue);
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: var(--subtle-text);
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* INTERPRETER OVERLAY */
+    .interpreter-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .interpreter-panel.active {
+      display: flex;
+    }
+
+    .interpreter-modal {
+      background: linear-gradient(135deg, var(--dark-purple) 0%, var(--romantic-blue) 50%, var(--dark-purple) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px var(--shadow);
+    }
+
+    .interpreter-section {
+      margin-bottom: 24px;
+    }
+
+    .interpreter-section-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .interpreter-section-content {
+      background: rgba(42, 26, 74, 0.6);
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--light-text);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .interpreter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-button {
+      padding: 12px 16px;
+      background: rgba(139, 92, 246, 0.4);
+      border: 1px solid var(--accent-purple);
+      border-radius: 8px;
+      color: var(--light-text);
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 13px;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .option-button:hover {
+      background: rgba(139, 92, 246, 0.6);
+      transform: translateX(4px);
+    }
+
+    .option-label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--accent-purple);
+    }
+
+    .option-text {
+      font-size: 12px;
+      color: var(--subtle-text);
+    }
+
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(139, 92, 246, 0.4);
+      border: none;
+      border-radius: 50%;
+      color: var(--light-text);
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .close-button:hover {
+      background: rgba(139, 92, 246, 0.7);
+    }
+
+    /* VERDICT MODAL */
+    .verdict-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .verdict-panel.active {
+      display: flex;
+    }
+
+    .verdict-modal {
+      background: linear-gradient(135deg, var(--dark-purple) 0%, var(--romantic-blue) 50%, var(--dark-purple) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px var(--shadow);
+    }
+
+    .verdict-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--light-text);
+      margin-bottom: 16px;
+    }
+
+    .verdict-message {
+      background: rgba(42, 26, 74, 0.6);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--romantic-blue);
+      font-style: italic;
+      color: var(--subtle-text);
+    }
+
+    .verdict-analysis {
+      background: rgba(42, 26, 74, 0.6);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--accent-purple);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--light-text);
+    }
+
+    .verdict-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .verdict-button {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--accent-purple);
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .verdict-button.send {
+      background: rgba(139, 92, 246, 0.6);
+      color: var(--light-text);
+    }
+
+    .verdict-button.send:hover {
+      background: rgba(139, 92, 246, 0.8);
+    }
+
+    .verdict-button.edit {
+      background: transparent;
+      color: var(--accent-purple);
+    }
+
+    .verdict-button.edit:hover {
+      background: rgba(139, 92, 246, 0.3);
+    }
+
+    /* COMPOSE AREA */
+    .compose-area {
+      padding: 24px;
+      border-top: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(26, 15, 46, 0.7);
+      display: flex;
+      gap: 12px;
+    }
+
+    .compose-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(42, 26, 74, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 8px;
+      color: var(--light-text);
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      max-height: 100px;
+      transition: border-color 0.2s;
+    }
+
+    .compose-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+      background: rgba(42, 26, 74, 0.8);
+    }
+
+    .compose-input::placeholder {
+      color: var(--subtle-text);
+    }
+
+    .compose-button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--romantic-blue));
+      border: none;
+      border-radius: 8px;
+      color: var(--light-text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .compose-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .compose-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .disclaimer {
+      font-size: 11px;
+      color: var(--subtle-text);
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(139, 92, 246, 0.2);
+      border-radius: 4px;
+      border-left: 2px solid var(--accent-purple);
+    }
+
+    /* SAFETY COLOR INDICATOR */
+    .safety-indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--subtle-text);
+      transition: background-color 0.3s;
+    }
+
+    .safety-indicator.green {
+      background: #4ade80;
+    }
+
+    .safety-indicator.yellow {
+      background: #facc15;
+    }
+
+    .safety-indicator.red {
+      background: #f87171;
+    }
+
+    .safety-indicator.spiral {
+      animation: spiralFlash 0.5s infinite;
+    }
+
+    @keyframes spiralFlash {
+      0%, 100% {
+        background: #f87171;
+      }
+      50% {
+        background: #3b82f6;
+      }
+    }
+
+    /* VERDICT MODAL WITH SAFETY COLOR */
+    .verdict-modal {
+      position: relative;
+      border-top: 4px solid var(--accent-purple);
+    }
+
+    .verdict-modal.green {
+      border-top-color: #4ade80;
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(30, 58, 110, 0.3) 100%);
+    }
+
+    .verdict-modal.yellow {
+      border-top-color: #facc15;
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.1) 0%, rgba(30, 58, 110, 0.3) 100%);
+    }
+
+    .verdict-modal.red {
+      border-top-color: #f87171;
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.1) 0%, rgba(30, 58, 110, 0.3) 100%);
+    }
+
+    .verdict-modal.spiral {
+      animation: spiralAlert 0.5s infinite;
+    }
+
+    @keyframes spiralAlert {
+      0%, 100% {
+        border-top-color: #f87171;
+        box-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+      }
+      50% {
+        border-top-color: #3b82f6;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    .safety-label {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .safety-label.green {
+      background: rgba(74, 222, 128, 0.3);
+      color: #4ade80;
+    }
+
+    .safety-label.yellow {
+      background: rgba(250, 204, 21, 0.3);
+      color: #facc15;
+    }
+
+    .safety-label.red {
+      background: rgba(248, 113, 113, 0.3);
+      color: #f87171;
+    }
+
+    .safety-label.spiral {
+      background: rgba(248, 113, 113, 0.5);
+      color: #fff;
+      animation: spiralFlash 0.5s infinite;
+    }
+
+    .spiral-lockout-warning {
+      background: rgba(248, 113, 113, 0.2);
+      border: 2px solid #f87171;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .spiral-lockout-warning h3 {
+      color: #f87171;
+      margin-bottom: 8px;
+      animation: spiralFlash 0.5s infinite;
+    }
+
+    .spiral-lockout-warning p {
+      color: var(--light-text);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .cooldown-timer {
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
+      font-weight: bold;
+      color: #f87171;
+      margin: 12px 0;
+    }
+
+    .safety-explanation {
+      background: rgba(42, 26, 74, 0.6);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 12px;
+      border-left: 3px solid;
+    }
+
+    .safety-explanation.green {
+      border-left-color: #4ade80;
+    }
+
+    .safety-explanation.yellow {
+      border-left-color: #facc15;
+    }
+
+    .safety-explanation.red {
+      border-left-color: #f87171;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.4);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.6);
+    }
+
+    /* CONTACT INSIGHTS PANEL */
+    .insights-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 450px;
+      height: 100vh;
+      background: linear-gradient(180deg, rgba(26, 15, 46, 0.98) 0%, rgba(42, 26, 74, 0.95) 100%);
+      border-left: 2px solid rgba(139, 92, 246, 0.4);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .insights-panel.active {
+      display: flex;
+    }
+
+    .insights-header {
+      padding: 24px;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      position: sticky;
+      top: 0;
+      background: rgba(26, 15, 46, 0.98);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .insights-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--light-text);
+    }
+
+    .insights-close {
+      background: none;
+      border: none;
+      color: var(--subtle-text);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .insights-close:hover {
+      color: var(--light-text);
+    }
+
+    .insights-content {
+      padding: 24px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .insights-section {
+      margin-bottom: 24px;
+    }
+
+    .insights-section-title {
+      font-weight: 600;
+      color: var(--accent-purple);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .insights-section-content {
+      background: rgba(42, 26, 74, 0.6);
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--light-text);
+      line-height: 1.6;
+      font-size: 14px;
+      border-left: 3px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .flag-badge {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--light-text);
+      margin-right: 8px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .flag-badge.red {
+      border-color: #f87171;
+      background: rgba(248, 113, 113, 0.1);
+      color: #fca5a5;
+    }
+
+    .flag-badge.yellow {
+      border-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+      color: #fcd34d;
+    }
+
+    .flag-badge.green {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.1);
+      color: #86efac;
+    }
+
+    .score-bar {
+      background: rgba(42, 26, 74, 0.6);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-purple), var(--romantic-blue));
+      border-radius: 4px;
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--subtle-text);
+      margin-top: 4px;
+    }
+
+    .verdict-card {
+      background: rgba(139, 92, 246, 0.15);
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .verdict-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .verdict-badge.safe {
+      background: rgba(74, 222, 128, 0.2);
+      color: #86efac;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+    }
+
+    .verdict-badge.caution {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fcd34d;
+      border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .verdict-badge.unsafe {
+      background: rgba(248, 113, 113, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(248, 113, 113, 0.4);
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+      color: var(--subtle-text);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(139, 92, 246, 0.2);
+      border-top-color: var(--accent-purple);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--subtle-text);
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- CONTACTS LIST -->
+    <div class="contacts-panel">
+      <div class="contacts-header">
+        <span>Contacts</span>
+        <div class="header-actions">
+          <a href="/settings" class="settings-btn">⚙️ Settings</a>
+        </div>
+      </div>
+      <div id="contactsList"></div>
+    </div>
+
+    <!-- THREAD -->
+    <div class="thread-panel">
+      <div class="thread-header">
+        <h2 id="threadName">Select a contact</h2>
+        <p id="threadStatus">No thread selected</p>
+      </div>
+
+      <div class="messages-container" id="messagesContainer">
+        <p style="text-align: center; color: var(--subtle-text); margin-top: 40px;">
+          Select a contact to view messages
+        </p>
+      </div>
+
+      <div class="compose-area">
+        <div style="flex: 1;">
+          <textarea
+            id="composeInput"
+            class="compose-input"
+            placeholder="Type your message here... HoldOff will analyze before you send"
+            rows="3"
+          ></textarea>
+          <div class="disclaimer">
+            💜 HoldOff will show you how your message reads + analyze incoming replies through your conditions
+          </div>
+        </div>
+        <button class="compose-button" id="sendButton" disabled>Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERPRETER MODAL (incoming message analysis) -->
+  <div class="interpreter-panel" id="interpreterPanel">
+    <div class="interpreter-modal">
+      <button class="close-button" onclick="closeInterpreter()">&times;</button>
+      <div style="margin-top: 20px;">
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">🎯 What they MEANT</div>
+          <div class="interpreter-section-content" id="theirIntent"></div>
+        </div>
+
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">🌀 How your conditions might distort it</div>
+          <div class="interpreter-section-content" id="yourDistortion"></div>
+        </div>
+
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">✨ What's actually happening</div>
+          <div class="interpreter-section-content" id="truthCheck"></div>
+        </div>
+
+        <!-- RED FLAGS -->
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">🚩 RED FLAGS (Harmful patterns)</div>
+          <div class="interpreter-section-content" id="redFlags"></div>
+        </div>
+
+        <!-- YELLOW FLAGS -->
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">🟡 YELLOW FLAGS (Caution signs)</div>
+          <div class="interpreter-section-content" id="yellowFlags"></div>
+        </div>
+
+        <!-- GREEN FLAGS -->
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">🟢 GREEN FLAGS (Positive patterns)</div>
+          <div class="interpreter-section-content" id="greenFlags"></div>
+        </div>
+
+        <!-- RELATIONSHIP ANALYSIS -->
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">💞 Relationship & Compatibility Analysis</div>
+          <div class="interpreter-section-content" id="relationshipAnalysis"></div>
+        </div>
+
+        <!-- VERDICT -->
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">📊 VERDICT</div>
+          <div class="interpreter-section-content" id="verdictText"></div>
+        </div>
+
+        <div class="interpreter-section">
+          <div class="interpreter-section-title">💬 3 safe response options</div>
+          <div class="interpreter-options" id="responseOptions"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERDICT MODAL (outgoing message analysis) -->
+  <div class="verdict-panel" id="verdictPanel">
+    <div class="verdict-modal" id="verdictModal">
+      <div class="safety-indicator" id="safetyIndicator"></div>
+      <button class="close-button" onclick="closeVerdict()">&times;</button>
+      <div style="margin-top: 20px;">
+        <div class="safety-label" id="safetyLabel"></div>
+        <div class="verdict-title" id="verdictTitle">Your Message Through Your Lens</div>
+        
+        <div id="spiralLockoutWarning" style="display: none;">
+          <div class="spiral-lockout-warning">
+            <h3>🚨 SPIRAL LOCK ACTIVATED</h3>
+            <p>You're rapid-fire messaging. Your brain is in a spiral.</p>
+            <p>Taking a 5-minute break to help you reset.</p>
+            <div class="cooldown-timer" id="cooldownTimer">5:00</div>
+          </div>
+        </div>
+
+        <div class="verdict-message" id="verdictMessage"></div>
+        <div class="verdict-analysis" id="verdictAnalysis"></div>
+        <div class="safety-explanation" id="safetyExplanation"></div>
+
+        <div class="verdict-controls" id="verdictControls">
+          <button class="verdict-button edit" onclick="closeVerdict()">Edit Message</button>
+          <button class="verdict-button send" onclick="sendVerifiedMessage()">Send Anyway</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT INSIGHTS PANEL -->
+  <div class="insights-panel" id="insightsPanel">
+    <div class="insights-header">
+      <h3 id="insightsContactName">Relationship Profile</h3>
+      <button class="insights-close" onclick="closeInsights()">&times;</button>
+    </div>
+    <div class="insights-content" id="insightsContent">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading insights...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentContactId = null;
+    let userConditions = <%- JSON.stringify(userConditions || []) %>;
+    let pendingMessage = null;
+    let spiralLockCooldownEnd = null;
+    let cooldownInterval = null;
+
+    // Load contacts
+    async function loadContacts() {
+      try {
+        const res = await fetch('/api/contacts', { method: 'GET' });
+        const contacts = await res.json();
+        const list = document.getElementById('contactsList');
+        list.innerHTML = '';
+
+        contacts.forEach(contact => {
+          const div = document.createElement('div');
+          div.className = 'contact-item';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div style="flex: 1;">
+                <div class="contact-name">${contact.name}</div>
+                <div class="contact-preview">${contact.lastMessage || 'No messages'}</div>
+              </div>
+              <button 
+                class="insights-button" 
+                title="View relationship insights"
+                onclick="event.stopPropagation(); showContactInsights(${contact.id}, '${contact.name}')"
+                style="background: none; border: none; color: var(--accent-purple); cursor: pointer; font-size: 18px; padding: 4px 8px; hover: opacity: 0.8;"
+              >
+                📊
+              </button>
+            </div>
+          `;
+          div.onclick = () => loadThread(contact.id);
+          list.appendChild(div);
+        });
+      } catch (err) {
+        console.error('Error loading contacts:', err);
+      }
+    }
+
+    // Load thread
+    async function loadThread(contactId) {
+      currentContactId = contactId;
+      try {
+        const res = await fetch(`/api/thread/${contactId}`);
+        const thread = await res.json();
+
+        document.getElementById('threadName').textContent = thread.contact.name;
+        document.getElementById('threadStatus').textContent = `@${thread.contact.phone}`;
+
+        const container = document.getElementById('messagesContainer');
+        container.innerHTML = '';
+
+        thread.messages.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = 'message-group';
+          div.innerHTML = `
+            <div class="message-bubble ${msg.direction}">
+              ${msg.body}
+            </div>
+            <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+          `;
+
+          if (msg.direction === 'incoming') {
+            div.onclick = () => analyzeIncoming(msg);
+            div.style.cursor = 'pointer';
+          }
+
+          container.appendChild(div);
+        });
+
+        container.scrollTop = container.scrollHeight;
+        document.getElementById('composeInput').focus();
+      } catch (err) {
+        console.error('Error loading thread:', err);
+      }
+    }
+
+    // Analyze incoming message with Interpreter
+    async function analyzeIncoming(message) {
+      try {
+        // Get contact name from current thread
+        const contactName = document.getElementById('threadName')?.textContent || 'Contact';
+        
+        // Get thread history for context
+        const messages = Array.from(document.querySelectorAll('.message-group')).map(el => ({
+          senderType: el.classList.contains('incoming') ? 'contact' : 'user',
+          body: el.querySelector('.message-bubble')?.textContent || '',
+        }));
+
+        const res = await fetch('/api/interpreter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: message.body,
+            senderName: contactName,
+            userConditions: userConditions,
+            threadHistory: messages,
+          }),
+        });
+
+        const { analysis } = await res.json();
+
+        // Map new API fields to UI
+        document.getElementById('theirIntent').textContent = analysis.theirIntent;
+        document.getElementById('yourDistortion').textContent = analysis.yourDistortion;
+        document.getElementById('truthCheck').textContent = analysis.truthCheck;
+
+        // RED FLAGS
+        const redFlagsDiv = document.getElementById('redFlags');
+        if (analysis.redFlags && analysis.redFlags.length > 0) {
+          redFlagsDiv.innerHTML = analysis.redFlags.map(flag => `<div>• ${flag}</div>`).join('');
+        } else {
+          redFlagsDiv.textContent = 'None detected in this message.';
+        }
+
+        // YELLOW FLAGS
+        const yellowFlagsDiv = document.getElementById('yellowFlags');
+        if (analysis.yellowFlags && analysis.yellowFlags.length > 0) {
+          yellowFlagsDiv.innerHTML = analysis.yellowFlags.map(flag => `<div>• ${flag}</div>`).join('');
+        } else {
+          yellowFlagsDiv.textContent = 'None detected in this message.';
+        }
+
+        // GREEN FLAGS
+        const greenFlagsDiv = document.getElementById('greenFlags');
+        if (analysis.greenFlags && analysis.greenFlags.length > 0) {
+          greenFlagsDiv.innerHTML = analysis.greenFlags.map(flag => `<div>• ${flag}</div>`).join('');
+        } else {
+          greenFlagsDiv.textContent = 'None detected in this message.';
+        }
+
+        // RELATIONSHIP ANALYSIS
+        document.getElementById('relationshipAnalysis').textContent = analysis.relationshipAnalysis;
+
+        // VERDICT
+        const verdict = analysis.verdict;
+        const verdictHtml = `
+          <div><strong>Safety:</strong> ${verdict.isSafe ? '✅ Safe' : '⚠️ Proceed with caution'}</div>
+          <div><strong>Risk Level:</strong> ${verdict.riskLevel}</div>
+          <div><strong>Trust Level:</strong> ${verdict.trustLevel}</div>
+        `;
+        document.getElementById('verdictText').innerHTML = verdictHtml;
+
+        // Populate 3 response options
+        const optionsDiv = document.getElementById('responseOptions');
+        optionsDiv.innerHTML = '';
+        
+        const options = analysis.responseOptions || [];
+        options.forEach((option, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-button';
+          btn.innerHTML = `
+            <div class="option-label">${option.label || `Option ${idx + 1}`}</div>
+            <div class="option-text">${option.text}</div>
+          `;
+          btn.onclick = () => {
+            document.getElementById('composeInput').value = option.text;
+            closeInterpreter();
+          };
+          optionsDiv.appendChild(btn);
+        });
+
+        document.getElementById('interpreterPanel').classList.add('active');
+      } catch (err) {
+        console.error('Error interpreting message:', err);
+        alert('Could not analyze message. Please try again.');
+      }
+    }
+
+    // Analyze outgoing message with Verdict
+    async function analyzeOutgoing() {
+      const message = document.getElementById('composeInput').value.trim();
+      if (!message || !currentContactId) return;
+
+      pendingMessage = message;
+
+      try {
+        const res = await fetch('/api/verdict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            outgoingMessage: message,
+            userConditions: userConditions,
+            contactId: currentContactId,
+            userId: 'user', // In production: actual user ID
+          }),
+        });
+
+        const verdict = await res.json();
+        const safetyLevel = verdict.safetyLevel;
+
+        // Update modal with safety color
+        const modal = document.getElementById('verdictModal');
+        const indicator = document.getElementById('safetyIndicator');
+        const label = document.getElementById('safetyLabel');
+        const title = document.getElementById('verdictTitle');
+        const warningDiv = document.getElementById('spiralLockoutWarning');
+        const controlsDiv = document.getElementById('verdictControls');
+
+        // Remove previous colors
+        modal.classList.remove('green', 'yellow', 'red', 'spiral');
+        indicator.classList.remove('green', 'yellow', 'red', 'spiral');
+        label.classList.remove('green', 'yellow', 'red', 'spiral');
+
+        // Apply new color
+        modal.classList.add(safetyLevel);
+        indicator.classList.add(safetyLevel);
+        label.classList.add(safetyLevel);
+
+        // Set label text (reader's perspective)
+        if (safetyLevel === 'green') {
+          label.textContent = '✅ THEY\'LL READ THIS WELL';
+          title.textContent = 'This lands safely. Send with confidence.';
+        } else if (safetyLevel === 'yellow') {
+          label.textContent = '⚠️ THEY MIGHT MISREAD IT';
+          title.textContent = 'Consider how they\'ll interpret this. You might be anxious about their response.';
+        } else if (safetyLevel === 'red') {
+          label.textContent = '🛑 THIS WILL ESCALATE';
+          title.textContent = 'They\'re likely to read this defensively or coldly. High risk of spiral.';
+        } else if (safetyLevel === 'spiral') {
+          label.textContent = '🚨 SPIRAL LOCK ACTIVATED';
+          title.textContent = 'You\'re rapid-fire messaging. Take a break.';
+        }
+
+        // Handle Spiral Lock
+        if (safetyLevel === 'spiral') {
+          warningDiv.style.display = 'block';
+          controlsDiv.style.display = 'none';
+
+          spiralLockCooldownEnd = Date.now() + (verdict.spiralLockout || 300000);
+          startCooldownTimer();
+        } else {
+          warningDiv.style.display = 'none';
+          controlsDiv.style.display = 'flex';
+        }
+
+        // Set analysis
+        document.getElementById('verdictMessage').textContent = `"${message}"`;
+        document.getElementById('verdictAnalysis').textContent = verdict.analysis;
+
+        const explanation = document.getElementById('safetyExplanation');
+        explanation.className = `safety-explanation ${safetyLevel}`;
+        explanation.textContent = verdict.reasoning;
+
+        document.getElementById('verdictPanel').classList.add('active');
+      } catch (err) {
+        console.error('Error analyzing message:', err);
+        alert('Could not analyze message. Sending anyway...');
+        sendMessage();
+      }
+    }
+
+    // Cooldown timer for Spiral Lock
+    function startCooldownTimer() {
+      if (cooldownInterval) clearInterval(cooldownInterval);
+
+      const updateTimer = () => {
+        const remaining = Math.max(0, spiralLockCooldownEnd - Date.now());
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        document.getElementById('cooldownTimer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (remaining <= 0) {
+          clearInterval(cooldownInterval);
+          closeVerdict();
+        }
+      };
+
+      updateTimer();
+      cooldownInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Send message after Verdict
+    async function sendVerifiedMessage() {
+      if (!pendingMessage || !currentContactId) return;
+
+      try {
+        const res = await fetch('/api/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contactId: currentContactId,
+            message: pendingMessage,
+          }),
+        });
+
+        if (res.ok) {
+          document.getElementById('composeInput').value = '';
+          closeVerdict();
+          loadThread(currentContactId);
+        } else {
+          alert('Failed to send message');
+        }
+      } catch (err) {
+        console.error('Error sending message:', err);
+        alert('Error sending message');
+      }
+    }
+
+    // Send button logic
+    document.getElementById('sendButton').addEventListener('click', () => {
+      const message = document.getElementById('composeInput').value.trim();
+      if (message && currentContactId) {
+        analyzeOutgoing();
+      }
+    });
+
+    // Enable/disable send button
+    document.getElementById('composeInput').addEventListener('input', (e) => {
+      document.getElementById('sendButton').disabled = !e.target.value.trim() || !currentContactId;
+    });
+
+    // Close modals
+    function closeInterpreter() {
+      document.getElementById('interpreterPanel').classList.remove('active');
+    }
+
+    function closeVerdict() {
+      document.getElementById('verdictPanel').classList.remove('active');
+      pendingMessage = null;
+      if (cooldownInterval) clearInterval(cooldownInterval);
+    }
+
+    function closeInsights() {
+      document.getElementById('insightsPanel').classList.remove('active');
+    }
+
+    // Show contact insights dashboard
+    async function showContactInsights(contactId, contactName) {
+      document.getElementById('insightsPanel').classList.add('active');
+      document.getElementById('insightsContactName').textContent = contactName;
+      document.getElementById('insightsContent').innerHTML = `
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading insights...</p>
+        </div>
+      `;
+
+      try {
+        const res = await fetch(`/api/contact-insights/${contactId}`);
+        if (!res.ok) throw new Error('Failed to fetch insights');
+
+        const data = await res.json();
+        const { insights } = data;
+
+        let html = '';
+
+        // Verdict card
+        const riskColor = insights.riskLevel === 'Low' ? 'safe' : insights.riskLevel === 'Medium' ? 'caution' : 'unsafe';
+        html += `
+          <div class="verdict-card">
+            <div style="color: var(--subtle-text); font-size: 12px; margin-bottom: 8px;">RELATIONSHIP STATUS</div>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Risk: <span class="verdict-badge ${riskColor}">${insights.riskLevel}</span></div>
+            <div style="font-size: 14px; color: var(--light-text);">Trust: <strong>${insights.trustLevel}</strong></div>
+          </div>
+        `;
+
+        // Compatibility scores
+        if (insights.compatibilityScore > 0 || insights.communicationStyleMatch > 0) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">💕 Compatibility Metrics</div>
+              <div class="insights-section-content">
+                <div>
+                  <div style="font-size: 12px; color: var(--subtle-text); margin-bottom: 8px;">Relationship Compatibility</div>
+                  <div class="score-bar"><div class="score-fill" style="width: ${insights.compatibilityScore}%"></div></div>
+                  <div class="score-label"><span>Low</span><span>${insights.compatibilityScore}%</span><span>High</span></div>
+                </div>
+                <div style="margin-top: 16px;">
+                  <div style="font-size: 12px; color: var(--subtle-text); margin-bottom: 8px;">Communication Match</div>
+                  <div class="score-bar"><div class="score-fill" style="width: ${insights.communicationStyleMatch}%"></div></div>
+                  <div class="score-label"><span>Low</span><span>${insights.communicationStyleMatch}%</span><span>High</span></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Green flags
+        if (insights.greenFlags.length > 0) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">🟢 Green Flags</div>
+              <div class="insights-section-content">
+                ${insights.greenFlags.map(flag => `<div class="flag-badge green">${flag}</div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        // Yellow flags
+        if (insights.yellowFlags.length > 0) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">🟡 Yellow Flags</div>
+              <div class="insights-section-content">
+                ${insights.yellowFlags.map(flag => `<div class="flag-badge yellow">${flag}</div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        // Red flags
+        if (insights.redFlags.length > 0) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">🚩 Red Flags</div>
+              <div class="insights-section-content">
+                ${insights.redFlags.map(flag => `<div class="flag-badge red">${flag}</div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        // Attachment style fit
+        if (insights.attachmentStyleFit) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">🔗 Attachment Style Fit</div>
+              <div class="insights-section-content">${insights.attachmentStyleFit}</div>
+            </div>
+          `;
+        }
+
+        // Analysis count
+        if (insights.analysisCount > 0) {
+          html += `
+            <div class="insights-section">
+              <div class="insights-section-title">📊 Analysis Info</div>
+              <div class="insights-section-content">
+                <div>Messages analyzed: <strong>${insights.analysisCount}</strong></div>
+                <div style="margin-top: 8px; font-size: 12px; color: var(--subtle-text);">
+                  Last updated: ${new Date(insights.updatedAt).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        if (!insights.redFlags.length && !insights.yellowFlags.length && !insights.greenFlags.length) {
+          html += `
+            <div class="empty-state">
+              <p>📊 No relationship insights yet</p>
+              <p style="font-size: 12px;">Start analyzing their messages to build their profile</p>
+            </div>
+          `;
+        }
+
+        document.getElementById('insightsContent').innerHTML = html;
+      } catch (err) {
+        console.error('Error loading insights:', err);
+        document.getElementById('insightsContent').innerHTML = `
+          <div class="empty-state">
+            <p>Error loading insights</p>
+            <p style="font-size: 12px;">${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Init
+    loadContacts();
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Conditions & Wellness Questionnaire</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0a0015 0%, #1a0033 50%, #2d1b4e 100%);
+      color: #e0d5f5;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(15, 8, 25, 0.9);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #e0d5f5, #9d7fd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #a89ac7;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(138, 43, 226, 0.2);
+      border-radius: 3px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8a2be2, #6b5bb6);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0d5f5;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-description {
+      font-size: 12px;
+      color: #a89ac7;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .question-group {
+      background: rgba(138, 43, 226, 0.08);
+      border: 1px solid rgba(138, 43, 226, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #e0d5f5;
+      margin-bottom: 12px;
+    }
+
+    .question-description {
+      font-size: 12px;
+      color: #a89ac7;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper:last-child {
+      margin-bottom: 0;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #8a2be2;
+    }
+
+    .checkbox-wrapper label {
+      cursor: pointer;
+      font-size: 13px;
+      color: #e0d5f5;
+      flex: 1;
+    }
+
+    .radio-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(138, 43, 226, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(138, 43, 226, 0.1);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .radio-option:hover {
+      background: rgba(138, 43, 226, 0.12);
+      border-color: rgba(138, 43, 226, 0.2);
+    }
+
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #8a2be2;
+    }
+
+    .radio-option label {
+      cursor: pointer;
+      font-size: 13px;
+      color: #e0d5f5;
+      flex: 1;
+      margin: 0;
+    }
+
+    .scale-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .scale-button {
+      flex: 1;
+      padding: 12px;
+      background: rgba(138, 43, 226, 0.1);
+      border: 1px solid rgba(138, 43, 226, 0.2);
+      border-radius: 8px;
+      color: #e0d5f5;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .scale-button:hover {
+      background: rgba(138, 43, 226, 0.2);
+      border-color: rgba(138, 43, 226, 0.4);
+    }
+
+    .scale-button.selected {
+      background: linear-gradient(135deg, #8a2be2, #6b5bb6);
+      border-color: #8a2be2;
+      color: #fff;
+    }
+
+    .results-section {
+      display: none;
+      margin-top: 40px;
+      padding: 30px;
+      background: rgba(138, 43, 226, 0.1);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      border-radius: 12px;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .results-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0d5f5;
+      margin-bottom: 20px;
+    }
+
+    .condition-badge {
+      display: inline-block;
+      background: rgba(138, 43, 226, 0.2);
+      border: 1px solid rgba(138, 43, 226, 0.4);
+      color: #e0d5f5;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin: 4px;
+      margin-bottom: 16px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8a2be2, #6b5bb6);
+      color: #fff;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(138, 43, 226, 0.15);
+      color: #e0d5f5;
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(138, 43, 226, 0.25);
+      border-color: rgba(138, 43, 226, 0.5);
+    }
+
+    .info-box {
+      background: rgba(138, 43, 226, 0.08);
+      border-left: 3px solid #8a2be2;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #a89ac7;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-indicator {
+      text-align: center;
+      font-size: 12px;
+      color: #a89ac7;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .section-title {
+        font-size: 16px;
+      }
+
+      .scale-container {
+        gap: 4px;
+      }
+
+      .scale-button {
+        padding: 8px;
+        font-size: 11px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .container {
+        background: #fff;
+        border: 1px solid #ddd;
+        box-shadow: none;
+      }
+
+      .btn, .page-indicator, .progress-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>HoldOff Conditions & Wellness Questionnaire</h1>
+      <p>This questionnaire helps us understand your relationship patterns, mental health needs, and communication style. Your answers are completely confidential and help personalize your HoldOff experience.</p>
+      <p style="margin-top: 12px; font-size: 12px; color: #888;">⚠️ <strong>Disclaimer:</strong> This questionnaire is for self-awareness only and is not a medical diagnosis. If you're experiencing mental health concerns, please consult a qualified healthcare provider.</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <form id="questionnaire">
+      <!-- PAGE 1: RELATIONSHIP MENTAL HEALTH -->
+      <div class="page active" data-page="1">
+        <div class="section">
+          <div class="section-title">💔 Relationship Mental Health</div>
+          <div class="section-description">These questions help identify relationship-specific mental health patterns. Select all that apply to your experiences.</div>
+
+          <div class="question-group">
+            <div class="question-text">Rejection Sensitive Dysphoria (RSD)</div>
+            <div class="question-description">Emotional pain from perceived or actual rejection, criticism, or failure</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="rsd_intense" name="conditions" value="rsd">
+              <label for="rsd_intense">I experience intense emotional pain from perceived rejection</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="rsd_criticism" name="conditions" value="rsd">
+              <label for="rsd_criticism">Critical feedback or "no" response feels devastating</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="rsd_people_please" name="conditions" value="rsd">
+              <label for="rsd_people_please">I over-accommodate others' needs to avoid rejection</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="rsd_ruminate" name="conditions" value="rsd">
+              <label for="rsd_ruminate">I ruminate for days about perceived slights or rejection</label>
+            </div>
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Relationship Anxiety</div>
+            <div class="question-description">Persistent worry about relationships, abandonment, or conflict</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="anxiety_abandonment" name="conditions" value="anxiety">
+              <label for="anxiety_abandonment">I fear being abandoned or left alone in relationships</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="anxiety_conflict" name="conditions" value="anxiety">
+              <label for="anxiety_conflict">I become anxious during conflict or disagreements</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="anxiety_text" name="conditions" value="anxiety">
+              <label for="anxiety_text">I feel anxious waiting for messages or responses</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="anxiety_interpret" name="conditions" value="anxiety">
+              <label for="anxiety_interpret">I overthink how others interpret my messages</label>
+            </div>
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Relationship Depression</div>
+            <div class="question-description">Hopelessness, withdrawal, or low mood related to relationships</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="depression_hopeless" name="conditions" value="depression">
+              <label for="depression_hopeless">I feel hopeless about finding healthy relationships</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="depression_withdraw" name="conditions" value="depression">
+              <label for="depression_withdraw">I withdraw from people when I feel low</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="depression_pattern" name="conditions" value="depression">
+              <label for="depression_pattern">I see relationship patterns repeating and feel stuck</label>
+            </div>
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Relationship Addiction / Codependency</div>
+            <div class="question-description">Compulsive relationship patterns, obsessive thoughts, or loss of self</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="addiction_obsess" name="conditions" value="addiction">
+              <label for="addiction_obsess">I obsessively think about someone I'm interested in</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="addiction_check" name="conditions" value="addiction">
+              <label for="addiction_check">I compulsively check their messages/social media</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="addiction_identity" name="conditions" value="addiction">
+              <label for="addiction_identity">I lose my sense of self in relationships</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="addiction_fix" name="conditions" value="addiction">
+              <label for="addiction_fix">I try to fix or rescue people I care about</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-indicator">Page 1 of 4</div>
+        <div class="button-group">
+          <button type="button" class="btn btn-primary" onclick="nextPage(2)">Continue</button>
+        </div>
+      </div>
+
+      <!-- PAGE 2: ATTACHMENT STYLE -->
+      <div class="page" data-page="2">
+        <div class="section">
+          <div class="section-title">🔗 Attachment Style</div>
+          <div class="section-description">Your attachment style shapes how you connect with others. This helps us understand your relationship patterns.</div>
+
+          <div class="info-box">
+            ℹ️ Attachment styles are formed in early relationships and influence how you seek closeness, handle separation, and trust others.
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Which attachment style resonates most with you?</div>
+            <div class="radio-wrapper">
+              <div class="radio-option">
+                <input type="radio" id="secure" name="attachment_style" value="secure">
+                <label for="secure">
+                  <strong>Secure</strong> — I feel comfortable with closeness and independence. I trust others and communicate openly about needs.
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="anxious" name="attachment_style" value="anxious">
+                <label for="anxious">
+                  <strong>Anxious</strong> — I crave closeness and worry about being abandoned. I need reassurance and can become clingy.
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="avoidant" name="attachment_style" value="avoidant">
+                <label for="avoidant">
+                  <strong>Avoidant</strong> — I value independence and feel uncomfortable with emotional closeness. I withdraw when things get serious.
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="fearful_avoidant" name="attachment_style" value="fearful-avoidant">
+                <label for="fearful_avoidant">
+                  <strong>Fearful-Avoidant (Disorganized)</strong> — I want closeness but fear being hurt. I approach then withdraw, creating confusion.
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="unsure_attachment" name="attachment_style" value="unsure">
+                <label for="unsure_attachment">
+                  <strong>I'm not sure</strong> — I want to learn more as I use HoldOff
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Have you experienced trauma in relationships?</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="trauma_yes" name="conditions" value="trauma">
+              <label for="trauma_yes">Yes, I've experienced emotional, physical, or sexual abuse</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="trauma_betrayal" name="conditions" value="trauma">
+              <label for="trauma_betrayal">I've experienced significant betrayal or heartbreak</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="trauma_complex" name="conditions" value="trauma">
+              <label for="trauma_complex">I'm working through complex relationship trauma</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-indicator">Page 2 of 4</div>
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevPage(1)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextPage(3)">Continue</button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: AUTISM & ADHD -->
+      <div class="page" data-page="3">
+        <div class="section">
+          <div class="section-title">🧠 Neurodivergence Screening</div>
+          <div class="section-description">Autism and ADHD affect communication and relationship patterns. These questions help personalize your experience.</div>
+
+          <div class="info-box">
+            ⚠️ This is a screening tool only, not a diagnosis. A qualified professional should evaluate for autism or ADHD.
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">Autism Spectrum Signs</div>
+            <div class="question-description">Including sensory sensitivities, social communication differences, and detailed thinking</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_social" name="conditions" value="autism">
+              <label for="autism_social">I struggle with unwritten social rules or reading social cues</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_special" name="conditions" value="autism">
+              <label for="autism_special">I have intense focused interests or deep dives into topics</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_sensory" name="conditions" value="autism">
+              <label for="autism_sensory">I'm sensitive to sensory input (sound, light, textures)</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_literal" name="conditions" value="autism">
+              <label for="autism_literal">I prefer direct, literal communication over hints/subtext</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_routine" name="conditions" value="autism">
+              <label for="autism_routine">I find comfort in routines and struggle with unexpected changes</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="autism_diagnosed" name="conditions" value="autism">
+              <label for="autism_diagnosed">I'm diagnosed or suspect I'm autistic</label>
+            </div>
+          </div>
+
+          <div class="question-group">
+            <div class="question-text">ADHD Traits</div>
+            <div class="question-description">Including attention, impulse control, and executive function patterns</div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_focus" name="conditions" value="adhd">
+              <label for="adhd_focus">I struggle to focus on conversations or texts for long</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_impulsive" name="conditions" value="adhd">
+              <label for="adhd_impulsive">I send impulsive messages I later regret</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_respond" name="conditions" value="adhd">
+              <label for="adhd_respond">I struggle to respond to messages in a timely way</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_hyperfocus" name="conditions" value="adhd">
+              <label for="adhd_hyperfocus">I hyperfocus on people I'm interested in</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_executive" name="conditions" value="adhd">
+              <label for="adhd_executive">I struggle with executive function (planning, organizing)</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="adhd_diagnosed" name="conditions" value="adhd">
+              <label for="adhd_diagnosed">I'm diagnosed or suspect I have ADHD</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-indicator">Page 3 of 4</div>
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevPage(2)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextPage(4)">Continue</button>
+        </div>
+      </div>
+
+      <!-- PAGE 4: SUMMARY & RESULTS -->
+      <div class="page" data-page="4">
+        <div class="section">
+          <div class="section-title">📊 Your Wellness Profile</div>
+          <div class="section-description">Based on your answers, here's your personalized HoldOff configuration.</div>
+
+          <div id="resultsSection" class="results-section show">
+            <h3>Your Selected Conditions:</h3>
+            <div id="selectedConditions"></div>
+
+            <h3 style="margin-top: 20px;">Your Attachment Style:</h3>
+            <div id="attachmentResult"></div>
+
+            <div class="info-box" style="margin-top: 20px;">
+              ✅ These selections will personalize your Verdict & Interpreter insights, helping you communicate more clearly and navigate relationships with confidence.
+            </div>
+          </div>
+        </div>
+
+        <div class="page-indicator">Page 4 of 4</div>
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevPage(3)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="submitQuestionnaire()">Save & Continue</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadPDF()">Download as PDF</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const totalPages = 4;
+
+    function updateProgress() {
+      const progress = (currentPage - 1) / (totalPages - 1) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function showPage(pageNum) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelector(`[data-page="${pageNum}"]`).classList.add('active');
+      currentPage = pageNum;
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextPage(pageNum) {
+      if (pageNum === 4) {
+        updateResults();
+      }
+      showPage(pageNum);
+    }
+
+    function prevPage(pageNum) {
+      showPage(pageNum);
+    }
+
+    function updateResults() {
+      const selectedConditions = Array.from(
+        document.querySelectorAll('input[name="conditions"]:checked')
+      ).map(input => input.value);
+
+      const attachmentStyle = document.querySelector('input[name="attachment_style"]:checked');
+
+      // Remove duplicates
+      const uniqueConditions = [...new Set(selectedConditions)];
+
+      const conditionsHTML = uniqueConditions.length > 0
+        ? uniqueConditions.map(c => {
+            const names = {
+              rsd: '💔 RSD (Rejection Sensitive Dysphoria)',
+              anxiety: '😰 Relationship Anxiety',
+              depression: '😔 Relationship Depression',
+              addiction: '🔄 Relationship Addiction/Codependency',
+              trauma: '⚠️ Relationship Trauma',
+              autism: '🧩 Autism Spectrum',
+              adhd: '⚡ ADHD'
+            };
+            return `<div class="condition-badge">${names[c] || c}</div>`;
+          }).join('')
+        : '<div class="condition-badge">No conditions selected</div>';
+
+      document.getElementById('selectedConditions').innerHTML = conditionsHTML;
+
+      const attachmentHTML = attachmentStyle
+        ? `<div class="condition-badge">${attachmentStyle.value.charAt(0).toUpperCase() + attachmentStyle.value.slice(1)}</div>`
+        : '<div class="condition-badge">Not specified</div>';
+
+      document.getElementById('attachmentResult').innerHTML = attachmentHTML;
+    }
+
+    function submitQuestionnaire() {
+      const selectedConditions = Array.from(
+        document.querySelectorAll('input[name="conditions"]:checked')
+      ).map(input => input.value);
+
+      const attachmentStyle = document.querySelector('input[name="attachment_style"]:checked')?.value || null;
+
+      // Deduplicate conditions
+      const uniqueConditions = [...new Set(selectedConditions)];
+
+      alert(`✅ Your profile has been saved!\n\nConditions: ${uniqueConditions.join(', ') || 'None'}\nAttachment Style: ${attachmentStyle || 'Not specified'}`);
+
+      // In production, send to backend
+      console.log({
+        conditions: uniqueConditions,
+        attachment_style: attachmentStyle
+      });
+    }
+
+    function downloadPDF() {
+      window.print();
+    }
+
+    // Init
+    updateProgress();
+  </script>
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Are You a Text Spiraler? | HoldOff</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0d0a1a 0%, #1a1428 50%, #2d1b4e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #e0d5f0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(26, 20, 40, 0.95);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #d4c5e2;
+            margin-bottom: 10px;
+        }
+
+        .subtext {
+            font-size: 14px;
+            color: #9380a8;
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #f5f3ff;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(147, 51, 234, 0.2);
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a78bfa 0%, #c084fc 100%);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            background: rgba(147, 51, 234, 0.1);
+            border: 2px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            color: #d4c5e2;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: rgba(147, 51, 234, 0.2);
+            border-color: rgba(192, 132, 252, 0.6);
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            background: rgba(192, 132, 252, 0.3);
+            border-color: #c084fc;
+            color: #f5f3ff;
+        }
+
+        .result-section {
+            text-align: center;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f5f3ff;
+            margin-bottom: 15px;
+        }
+
+        .result-message {
+            font-size: 15px;
+            color: #d4c5e2;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .viral-section {
+            background: rgba(192, 132, 252, 0.1);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .viral-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f5f3ff;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .viral-subtitle {
+            font-size: 13px;
+            color: #d4c5e2;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .contact-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-item {
+            padding: 8px;
+            margin-bottom: 6px;
+            background: rgba(147, 51, 234, 0.15);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .contact-item:hover {
+            background: rgba(192, 132, 252, 0.2);
+            border-color: rgba(192, 132, 252, 0.4);
+        }
+
+        .contact-checkbox {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #c084fc;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-name {
+            font-weight: 500;
+            color: #f5f3ff;
+        }
+
+        .contact-detail {
+            font-size: 12px;
+            color: #9380a8;
+        }
+
+        .contact-spinner {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            color: #9380a8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(147, 51, 234, 0.3);
+            border-top-color: #c084fc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .selected-count {
+            text-align: center;
+            font-size: 12px;
+            color: #a78bfa;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);
+            color: #0d0a1a;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(192, 132, 252, 0.3);
+            width: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(192, 132, 252, 0.4);
+        }
+
+        .cta-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .secondary-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid rgba(147, 51, 234, 0.5);
+            color: #d4c5e2;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .secondary-button:hover {
+            border-color: #c084fc;
+            color: #f5f3ff;
+        }
+
+        .emoji {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .question {
+                font-size: 18px;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+
+            .score {
+                font-size: 40px;
+            }
+
+            .result-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">HoldOff</div>
+            <div class="tagline">Are You a Text Spiraler?</div>
+            <div class="subtext">Take the 4-question challenge</div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Questions -->
+        <div class="quiz-section active" id="q1">
+            <div class="question">1. It's 2 AM and you just thought of something to say to your crush...</div>
+            <div class="options">
+                <div class="option" onclick="answer(1, 'send_immediately')">Send it immediately 🚀</div>
+                <div class="option" onclick="answer(1, 'draft_first')">Draft it first, send in morning</div>
+                <div class="option" onclick="answer(1, 'think_first')">Think about it for 10 mins</div>
+                <div class="option" onclick="answer(1, 'sleep_on_it')">Wait until morning, most of the time</div>
+            </div>
+        </div>
+
+        <div class="quiz-section" id="q2">
+            <div class="question">2. How often do you regret sending a text within an hour?</div>
+            <div class="options">
+                <div class="option" onclick="answer(2, 'always')">Always 😰</div>
+                <div class="option" onclick="answer(2, 'often')">Often (3-4x per week)</div>
+                <div class="option" onclick="answer(2, 'sometimes')">Sometimes (1-2x per week)</div>
+                <div class="option" onclick="answer(2, 'rarely')">Rarely, I think before I send</div>
+            </div>
+        </div>
+
+        <div class="quiz-section" id="q3">
+            <div class="question">3. Someone doesn't reply to your text. Do you...</div>
+            <div class="options">
+                <div class="option" onclick="answer(3, 'spiral')">Send 3+ follow-up messages 🌀</div>
+                <div class="option" onclick="answer(3, 'double_text')">Send 1-2 more messages</div>
+                <div class="option" onclick="answer(3, 'wait')">Wait a few hours, send once</div>
+                <div class="option" onclick="answer(3, 'chill')">Chill and wait for them to respond</div>
+            </div>
+        </div>
+
+        <div class="quiz-section" id="q4">
+            <div class="question">4. Your ideal texting pause feature would be...</div>
+            <div class="options">
+                <div class="option" onclick="answer(4, 'instant')">Instant – stop sending NOW</div>
+                <div class="option" onclick="answer(4, 'short')">3-5 minutes before send</div>
+                <div class="option" onclick="answer(4, 'medium')">10-30 minutes before send</div>
+                <div class="option" onclick="answer(4, 'flexible')">Flexible, depends on mood</div>
+            </div>
+        </div>
+
+        <!-- Results with Viral Share -->
+        <div class="quiz-section" id="results">
+            <div class="result-section">
+                <div class="emoji" id="resultEmoji">🎯</div>
+                <div class="score" id="resultScore">7/10</div>
+                <div class="result-title" id="resultTitle">You're a Moderate Text Spiraler</div>
+                <div class="result-message" id="resultMessage">You know the struggle. Time to take control of your texts before they take control of you.</div>
+                
+                <div class="viral-section">
+                    <div class="viral-title">🚀 Invite Friends & Unlock Bonus</div>
+                    <div class="viral-subtitle">Pick 10 people to send them the quiz. When they complete it, they'll get 10 more free invites!</div>
+                    
+                    <div id="contactsContainer">
+                        <div class="contact-spinner">
+                            <div class="spinner"></div>
+                            <p style="margin-top: 10px;">Loading your contacts...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-count" id="selectedCount" style="display: none;">
+                        Selected: <span id="selectedNum">0</span> / 10
+                    </div>
+                    
+                    <button class="cta-button" id="sendInvitesBtn" onclick="sendInvites()" style="margin-top: 15px; display: none;">Send Invites to 10 Friends</button>
+                    <div class="success-message" id="successMsg" style="display: none;">✅ Invites sent! Your friends will get the quiz link</div>
+                </div>
+
+                <a href="https://shouldiholdoff.live" class="cta-button">⬇️ Download HoldOff Now</a>
+                
+                <div class="button-row">
+                    <button class="secondary-button" onclick="resetQuiz()">Try Again</button>
+                    <button class="secondary-button" onclick="skipShare()">Skip Invites</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const answers = {};
+        let currentQuestion = 1;
+        let selectedContacts = [];
+        
+        const scoreMap = {
+            'send_immediately': 4, 'draft_first': 2, 'think_first': 1, 'sleep_on_it': 0,
+            'always': 4, 'often': 3, 'sometimes': 2, 'rarely': 0,
+            'spiral': 4, 'double_text': 2, 'wait': 1, 'chill': 0,
+            'instant': 4, 'short': 3, 'medium': 2, 'flexible': 1
+        };
+
+        const results = {
+            '0-2': {
+                emoji: '😇',
+                title: 'You\'re Text Zen',
+                message: 'Honestly impressive. You might not even need HoldOff. But your friends probably do!'
+            },
+            '3-6': {
+                emoji: '🤔',
+                title: 'You\'re a Selective Spiraler',
+                message: 'Sometimes you send things you shouldn\'t. HoldOff is your safety net.',
+            },
+            '7-10': {
+                emoji: '🌪️',
+                title: 'You\'re a Full-On Text Spiraler',
+                message: 'We see you. The 3 AM text thread to your ex. HoldOff is literally made for you.',
+            },
+            '11-14': {
+                emoji: '🚨',
+                title: 'You\'re a Serial Text Spiraler',
+                message: 'Critical condition. Install HoldOff immediately. Your future self will thank you.',
+            },
+            '15-16': {
+                emoji: '💀',
+                title: 'You\'re THE Text Spiraler',
+                message: 'Legend status. You\'ve sent things that will haunt you. HoldOff is your only hope.',
+            }
+        };
+
+        function getResultRange(score) {
+            if (score <= 2) return '0-2';
+            if (score <= 6) return '3-6';
+            if (score <= 10) return '7-10';
+            if (score <= 14) return '11-14';
+            return '15-16';
+        }
+
+        function answer(question, value) {
+            answers[question] = value;
+            const option = event.target;
+            
+            const siblings = option.parentElement.querySelectorAll('.option');
+            siblings.forEach(s => s.classList.remove('selected'));
+            option.classList.add('selected');
+
+            setTimeout(() => {
+                if (question < 4) {
+                    showQuestion(question + 1);
+                } else {
+                    showResults();
+                }
+            }, 300);
+        }
+
+        function showQuestion(num) {
+            document.querySelectorAll('.quiz-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('q' + num).classList.add('active');
+            
+            const progress = (num / 4) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            currentQuestion = num;
+        }
+
+        function showResults() {
+            const totalScore = Object.values(answers).reduce((sum, ans) => sum + (scoreMap[ans] || 0), 0);
+            const range = getResultRange(totalScore);
+            const result = results[range];
+
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultScore').textContent = totalScore + '/16';
+            document.getElementById('resultTitle').textContent = result.title;
+            document.getElementById('resultMessage').textContent = result.message;
+            document.getElementById('progressFill').style.width = '100%';
+
+            document.querySelectorAll('.quiz-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('results').classList.add('active');
+
+            loadContacts();
+        }
+
+        async function loadContacts() {
+            const container = document.getElementById('contactsContainer');
+            
+            try {
+                // Request contacts permission (Web Contacts API)
+                if ('contacts' in navigator && 'ContactsManager' in window) {
+                    const contacts = await navigator.contacts.select(['name', 'tel', 'email'], { multiple: true });
+                    
+                    if (contacts && contacts.length > 0) {
+                        displayContacts(contacts);
+                    } else {
+                        showFallback();
+                    }
+                } else {
+                    showFallback();
+                }
+            } catch (error) {
+                showFallback();
+            }
+        }
+
+        function displayContacts(contacts) {
+            const container = document.getElementById('contactsContainer');
+            let html = '<div class="contact-list">';
+            
+            contacts.slice(0, 50).forEach((contact, idx) => {
+                const name = contact.name ? contact.name[0] : 'Unknown';
+                const phone = contact.tel ? contact.tel[0] : '';
+                const email = contact.email ? contact.email[0] : '';
+                const detail = phone || email || 'No contact info';
+                
+                html += `
+                    <div class="contact-item">
+                        <input type="checkbox" class="contact-checkbox" data-index="${idx}" data-name="${name}" data-contact="${phone || email}">
+                        <div class="contact-info">
+                            <div class="contact-name">${name}</div>
+                            <div class="contact-detail">${detail}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.contact-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateSelectedCount);
+            });
+            
+            document.getElementById('selectedCount').style.display = 'block';
+            document.getElementById('sendInvitesBtn').style.display = 'block';
+        }
+
+        function showFallback() {
+            const container = document.getElementById('contactsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #9380a8;">
+                    <p>📱 Can't access your contacts directly on this device.</p>
+                    <p style="margin-top: 10px; font-size: 13px;">Share your HoldOff referral link instead:</p>
+                    <input type="text" id="referralLink" value="https://shouldiholdoff.live/quiz?ref=YOU" readonly style="width: 100%; padding: 8px; margin-top: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(147, 51, 234, 0.3); border-radius: 6px; color: #d4c5e2; font-size: 12px; text-align: center;">
+                    <button class="cta-button" style="margin-top: 10px;" onclick="copyAndShare()">Copy & Share Link</button>
+                </div>
+            `;
+            document.getElementById('selectedCount').style.display = 'none';
+            document.getElementById('sendInvitesBtn').style.display = 'none';
+        }
+
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('.contact-checkbox:checked').length;
+            document.getElementById('selectedNum').textContent = checked;
+            document.getElementById('sendInvitesBtn').disabled = checked < 1;
+            
+            selectedContacts = [];
+            document.querySelectorAll('.contact-checkbox:checked').forEach(cb => {
+                selectedContacts.push({
+                    name: cb.dataset.name,
+                    contact: cb.dataset.contact
+                });
+            });
+        }
+
+        async function sendInvites() {
+            const btn = document.getElementById('sendInvitesBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending invites...';
+            
+            try {
+                // Send selected contacts to backend
+                const response = await fetch('/api/send-quiz-invites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contacts: selectedContacts.slice(0, 10),
+                        referrer: 'quiz-taker'
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('successMsg').style.display = 'block';
+                    btn.textContent = '✅ Invites Sent!';
+                    setTimeout(() => {
+                        btn.style.display = 'none';
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to send invites');
+                }
+            } catch (error) {
+                btn.textContent = 'Error - Try Again';
+                btn.disabled = false;
+                console.error(error);
+            }
+        }
+
+        function skipShare() {
+            window.location.href = 'https://shouldiholdoff.live';
+        }
+
+        function resetQuiz() {
+            Object.keys(answers).forEach(key => delete answers[key]);
+            selectedContacts = [];
+            currentQuestion = 1;
+            document.getElementById('progressFill').style.width = '0%';
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            document.getElementById('successMsg').style.display = 'none';
+            showQuestion(1);
+        }
+
+        function copyAndShare() {
+            const link = document.getElementById('referralLink').value;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Link copied! Paste it in texts, social, or emails to share.');
+            });
+        }
+
+        // Initialize
+        showQuestion(1);
+    </script>
+</body>
+</html>

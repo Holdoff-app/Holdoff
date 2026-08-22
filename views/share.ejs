@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= streakCount %> fires I didn't start. — HoldOff</title>
+
+  <!-- OG / Twitter card meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HoldOff">
+  <meta property="og:title" content="<%= streakCount %> fires I didn't start.">
+  <meta property="og:description" content="<%= ogDescription %>">
+  <meta property="og:url" content="<%= pageUrl %>">
+  <meta property="og:image" content="<%= pageUrl.replace('/share/', '/api/share/og/') %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= streakCount %> fires I didn't start.">
+  <meta name="twitter:description" content="<%= ogDescription %>">
+  <meta name="twitter:image" content="<%= pageUrl.replace('/share/', '/api/share/og/') %>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/share.css">
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '878230961304067');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=878230961304067&ev=PageView&noscript=1"/>
+  </noscript>
+</head>
+<body class="share-body">
+
+  <nav class="share-nav">
+    <a href="/" class="share-nav__wordmark">HoldOff</a>
+  </nav>
+
+  <main class="share-main">
+
+    <div class="share-card">
+
+      <!-- Big streak number -->
+      <div class="share-streak-number"><%= streakCount %></div>
+      <div class="share-streak-headline">fires I didn't start.</div>
+
+      <!-- Verdict / pattern context -->
+      <% if (patternName) { %>
+        <div class="share-pattern">
+          Last one held: a "<%= patternName %>" moment.
+        </div>
+      <% } else { %>
+        <div class="share-pattern">
+          Last verdict: <%= verdictType === 'REWRITE' ? 'rewritten before sending' : 'held back entirely' %>.
+        </div>
+      <% } %>
+
+      <!-- Reframe line (curated, never contains user message) -->
+      <% if (reframeLine) { %>
+        <div class="share-reframe">"<%= reframeLine %>"</div>
+      <% } %>
+
+      <!-- Divider -->
+      <div class="share-divider"></div>
+
+      <!-- Brand + CTA -->
+      <p class="share-tagline">
+        HoldOff intercepts the texts you'll regret.
+      </p>
+
+      <a href="https://shouldiholdoff.live/filter<%= refToken ? '?ref=' + refToken : '' %>" class="share-cta-btn">
+        Try it free →
+      </a>
+
+    </div>
+
+  </main>
+
+  <footer class="share-footer">
+    <p>Only their streak was shared. Never their message.</p>
+  </footer>
+
+</body>
+</html>

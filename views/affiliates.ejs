@@ -1,0 +1,549 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Affiliate Program — HoldOff</title>
+  <meta name="description" content="You teach the patterns. HoldOff catches them at 11 PM. Partner with us and earn 30% recurring commission for every subscriber you refer.">
+  <link rel="canonical" href="https://shouldiholdoff.live/affiliates">
+
+  <\!-- Open Graph -->
+  <meta property="og:title" content="HoldOff Affiliate Program — For Therapists & Coaches">
+  <meta property="og:description" content="You teach the patterns. HoldOff catches them at 11 PM. 30% recurring commission, 90-day attribution window.">
+  <meta property="og:url" content="https://shouldiholdoff.live/affiliates">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HoldOff">
+  <meta property="og:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+
+  <\!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HoldOff Affiliate Program">
+  <meta name="twitter:description" content="30% recurring commission for every subscriber you refer.">
+  <meta name="twitter:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+
+  <\!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="theme-color" content="#FAF6F0">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+
+  <\!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <\!-- Meta Pixel -->
+  <script>
+    \!function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(\!f._fbq)f._fbq=n;n.push=n;n.loaded=\!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=\!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '878230961304067');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=878230961304067&ev=PageView&noscript=1"/></noscript>
+
+  <style>
+    /* Affiliates page styles */
+    .aff-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem 5rem;
+    }
+
+    /* Hero */
+    .aff-hero__eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .aff-hero__h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--fg);
+      margin-bottom: 1.25rem;
+    }
+    .aff-hero__subhead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 560px;
+      margin-bottom: 3rem;
+    }
+
+    /* Section headings */
+    .aff-section {
+      margin-bottom: 3.5rem;
+    }
+    .aff-section__heading {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .aff-section__body {
+      font-size: 1rem;
+      color: #4A3F3A;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    /* Steps */
+    .aff-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .aff-step {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+    .aff-step__num {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+    .aff-step__text {
+      font-size: 0.95rem;
+      color: #4A3F3A;
+      line-height: 1.65;
+    }
+    .aff-step__text strong {
+      color: var(--fg);
+    }
+
+    /* Commission callout */
+    .aff-callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .aff-callout__stat {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .aff-callout__number {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .aff-callout__label {
+      font-size: 0.95rem;
+      color: #4A3F3A;
+      line-height: 1.4;
+    }
+
+    /* Why partner — bullets */
+    .aff-why-list {
+      list-style: none;
+      padding: 0;
+      margin: 1.25rem 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .aff-why-list li {
+      font-size: 0.95rem;
+      color: #4A3F3A;
+      line-height: 1.65;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    .aff-why-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* Signup form */
+    .aff-form {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+    }
+    .aff-form__heading {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 0.5rem;
+    }
+    .aff-form__sub {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .aff-form__fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .aff-form__field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .aff-form__field--full {
+      grid-column: 1 / -1;
+    }
+    .aff-form__label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .aff-form__input,
+    .aff-form__select {
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .aff-form__input:focus,
+    .aff-form__select:focus { border-color: var(--accent); }
+    .aff-form__input::placeholder { color: var(--muted); }
+    .aff-form__btn {
+      margin-top: 1.25rem;
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .aff-form__btn:hover { background: var(--accent-deep); }
+    .aff-form__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .aff-form__confirm {
+      margin-top: 1.25rem;
+      font-size: 0.95rem;
+      color: var(--fg);
+      font-weight: 500;
+      text-align: center;
+    }
+    .aff-form__confirm em { color: var(--accent); font-style: italic; }
+    .aff-form__note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 560px) {
+      .aff-form__fields { grid-template-columns: 1fr; }
+      .aff-form__field--full { grid-column: 1; }
+    }
+
+    /* FAQ */
+    .aff-faq {
+      margin-bottom: 3.5rem;
+    }
+    .aff-faq__heading {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 1.5rem;
+    }
+    .aff-faq__item {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 0;
+    }
+    .aff-faq__item:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+    .aff-faq__q {
+      font-size: 0.975rem;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 0.5rem;
+    }
+    .aff-faq__a {
+      font-size: 0.9rem;
+      color: #4A3F3A;
+      line-height: 1.65;
+    }
+  </style>
+
+  <\!-- FAQPage schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the 30% commission work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You earn 30% of every monthly or annual payment made by a subscriber you referred, for the lifetime of their subscription. If someone you referred stays subscribed for two years, you keep getting paid every month."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long is the attribution window?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "90 days. If someone clicks your referral link and subscribes within 90 days, the conversion is credited to you."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When do I get paid?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Payouts are processed monthly once you have at least $25 in earned commissions. V1 uses manual bank transfer or PayPal — Stripe Connect automation is on the roadmap."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if a subscriber cancels?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Commission stops when the subscription ends. If they re-subscribe later through your link (within 90 days), attribution resets and you earn again."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a compliance issue recommending an app to clients?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HoldOff is a self-help tool, not a clinical intervention. As with any resource you recommend — a book, a podcast, a journal — you disclose the affiliate relationship to clients and use your professional judgment about fit."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <main class="aff-page">
+
+    <\!-- Hero -->
+    <p class="aff-hero__eyebrow">Affiliate Program</p>
+    <h1 class="aff-hero__h1">You teach the patterns.<br>HoldOff catches them at 11 PM.</h1>
+    <p class="aff-hero__subhead">
+      Partner with HoldOff and earn 30% recurring commission for every client or follower
+      who subscribes through your referral link. No code required. No cap on earnings.
+    </p>
+
+    <\!-- How it works -->
+    <div class="aff-section">
+      <h2 class="aff-section__heading">How it works</h2>
+      <div class="aff-steps">
+        <div class="aff-step">
+          <div class="aff-step__num">1</div>
+          <p class="aff-step__text"><strong>Apply below.</strong> We review every application manually — we want partners who genuinely work with attachment patterns.</p>
+        </div>
+        <div class="aff-step">
+          <div class="aff-step__num">2</div>
+          <p class="aff-step__text"><strong>Get your unique link.</strong> Your link looks like: <code style="font-size:0.85rem;color:var(--accent);">shouldiholdoff.live/?aff=yourcode</code>. Share it anywhere — social, newsletter, session handouts.</p>
+        </div>
+        <div class="aff-step">
+          <div class="aff-step__num">3</div>
+          <p class="aff-step__text"><strong>90-day attribution cookie.</strong> Anyone who clicks your link has it attributed to you for 90 days. They can come back a month later and you still get credit.</p>
+        </div>
+        <div class="aff-step">
+          <div class="aff-step__num">4</div>
+          <p class="aff-step__text"><strong>Get paid monthly.</strong> 30% of every subscription payment, for the life of the subscriber. No clawbacks on renewals.</p>
+        </div>
+      </div>
+
+      <div class="aff-callout">
+        <div class="aff-callout__stat">
+          <div class="aff-callout__number">30%</div>
+          <div class="aff-callout__label">recurring commission on every payment,<br>for the lifetime of the subscription</div>
+        </div>
+        <div class="aff-callout__stat">
+          <div class="aff-callout__number">90</div>
+          <div class="aff-callout__label">day attribution window — clicks from your link<br>are credited for 3 months</div>
+        </div>
+        <div class="aff-callout__stat">
+          <div class="aff-callout__number">$0</div>
+          <div class="aff-callout__label">cost to join — no fees, no minimums,<br>no exclusivity requirements</div>
+        </div>
+      </div>
+    </div>
+
+    <\!-- Why partner -->
+    <div class="aff-section">
+      <h2 class="aff-section__heading">Why partner with HoldOff</h2>
+      <p class="aff-section__body">
+        Your clients do the work in session. Then they go home, get a text at 11 PM that sets off every pattern you've been working on together — and there's nothing standing between them and the send button.
+      </p>
+      <p class="aff-section__body">HoldOff is that pause.</p>
+      <ul class="aff-why-list">
+        <li>It works between sessions, not instead of them. You stay the clinician.</li>
+        <li>No intake forms, no credentials required — clients self-install in 2 minutes.</li>
+        <li>The AI explains <em>why</em> it's flagging a message (protest behavior, reassurance bid, double text) using the same language you use in session.</li>
+        <li>It intercepts the real thing on Android — not a journaling app. When the message is drafted, HoldOff catches it.</li>
+        <li>Pricing starts at $19.99/month — less than one co-pay.</li>
+      </ul>
+    </div>
+
+    <\!-- Signup form -->
+    <div class="aff-form" id="affSignupSection">
+      <h2 class="aff-form__heading">Apply to partner</h2>
+      <p class="aff-form__sub">Takes 60 seconds. We'll review and reply within a few business days.</p>
+      <form id="affSignupForm">
+        <div class="aff-form__fields">
+          <div class="aff-form__field">
+            <label class="aff-form__label" for="affName">Your name *</label>
+            <input type="text" id="affName" name="name" class="aff-form__input" placeholder="Dr. Sarah Kim" required autocomplete="name" />
+          </div>
+          <div class="aff-form__field">
+            <label class="aff-form__label" for="affEmail">Email *</label>
+            <input type="email" id="affEmail" name="email" class="aff-form__input" placeholder="sarah@yourpractice.com" required autocomplete="email" />
+          </div>
+          <div class="aff-form__field">
+            <label class="aff-form__label" for="affPractice">Practice or handle</label>
+            <input type="text" id="affPractice" name="practiceHandle" class="aff-form__input" placeholder="@sarahkimtherapy or yoursite.com" />
+          </div>
+          <div class="aff-form__field">
+            <label class="aff-form__label" for="affAudience">Audience size</label>
+            <select id="affAudience" name="audienceSize" class="aff-form__select">
+              <option value="">Prefer not to say</option>
+              <option value="0-500">0–500 (clients / followers)</option>
+              <option value="500-2000">500–2,000</option>
+              <option value="2000-10000">2,000–10,000</option>
+              <option value="10000+">10,000+</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="aff-form__btn" id="affSubmitBtn">Apply now →</button>
+      </form>
+      <p class="aff-form__confirm" id="affConfirm" hidden>
+        Application received. <em>Check your inbox for next steps.</em>
+      </p>
+      <p class="aff-form__note">By applying you confirm you'll disclose the affiliate relationship wherever required by your professional code or advertising regulations.</p>
+    </div>
+
+    <\!-- FAQ -->
+    <div class="aff-faq">
+      <h2 class="aff-faq__heading">Frequently asked questions</h2>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">How does the 30% commission work?</p>
+        <p class="aff-faq__a">You earn 30% of every monthly or annual payment made by a subscriber you referred, for the lifetime of their subscription. If someone you referred stays subscribed for two years, you keep getting paid every month.</p>
+      </div>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">How long is the attribution window?</p>
+        <p class="aff-faq__a">90 days. If someone clicks your referral link and subscribes anytime within 90 days of that click, the conversion is credited to you — even if they close the tab and come back later.</p>
+      </div>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">When do I get paid?</p>
+        <p class="aff-faq__a">Payouts are processed monthly once you have at least $25 in earned commissions. V1 uses manual transfer (bank or PayPal). Stripe Connect automation is on the roadmap.</p>
+      </div>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">What happens if a subscriber cancels?</p>
+        <p class="aff-faq__a">Commission stops when the subscription ends. If they re-subscribe later through your link within the 90-day window, attribution resets and you earn again.</p>
+      </div>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">Is there a compliance issue recommending an app to my clients?</p>
+        <p class="aff-faq__a">HoldOff is a self-help tool, not a clinical intervention — the same category as a book, a podcast, or a journal you might recommend. You disclose the affiliate relationship to clients wherever required by your professional code (NASW, APA, NBCC, etc.) and use your clinical judgment about fit.</p>
+      </div>
+
+      <div class="aff-faq__item">
+        <p class="aff-faq__q">Can I apply as a content creator, not a therapist?</p>
+        <p class="aff-faq__a">Yes. Coaches, podcasters, TikTok creators, and newsletter writers who address anxious attachment are welcome. The form asks for your handle or audience size — just fill in what applies to you.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <\!-- HoldOff Analytics --><!-- Analytics removed -->
+
+  <script>
+  (function () {
+    var form = document.getElementById('affSignupForm');
+    var confirmEl = document.getElementById('affConfirm');
+    var submitBtn = document.getElementById('affSubmitBtn');
+    if (\!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = form.querySelector('[name="name"]').value.trim();
+      var email = form.querySelector('[name="email"]').value.trim();
+      var practiceHandle = form.querySelector('[name="practiceHandle"]').value.trim();
+      var audienceSize = form.querySelector('[name="audienceSize"]').value;
+
+      if (\!name || \!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      fetch('/api/affiliates/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, practiceHandle: practiceHandle, audienceSize: audienceSize })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function () {
+          form.hidden = true;
+          confirmEl.hidden = false;
+          if (typeof fbq \!== 'undefined') fbq('track', 'Lead', { content_name: 'affiliate_signup' });
+        })
+        .catch(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Apply now →';
+          alert('Something went wrong. Please try again.');
+        });
+    });
+  })();
+  </script>
+</body>
+</html>

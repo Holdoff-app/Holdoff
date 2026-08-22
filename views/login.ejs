@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Log in — HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="theme-color" content="#0E0C0B">
+  <meta name="google-client-id" content="<%= typeof googleClientId !== 'undefined' ? googleClientId : '' %>">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    .forgot-links {
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+      margin-top: .25rem; margin-bottom: 1rem;
+    }
+    .forgot-links a {
+      color: var(--accent); font-size: .8rem; text-decoration: none;
+      padding: 4px 0; min-height: 44px; display: flex; align-items: center;
+    }
+    .forgot-links a:hover { text-decoration: underline; }
+  </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    .auth-wrap { max-width: 420px; margin: 6rem auto 4rem; padding: 0 1.5rem; }
+    .auth-wrap h1 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: .5rem; }
+    .auth-wrap p { color: #9ca3af; margin-bottom: 2rem; }
+    .auth-field { margin-bottom: 1.2rem; }
+    .auth-field label { display: block; font-size: .875rem; color: #d1d5db; margin-bottom: .4rem; }
+    .auth-field input { width: 100%; padding: .75rem 1rem; background: #1a1a2e; border: 1px solid #374151; border-radius: 8px; color: #fff; font-size: 1rem; box-sizing: border-box; }
+    .auth-field input:focus { outline: none; border-color: var(--accent); }
+    .auth-submit { width: 100%; padding: .9rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: .5rem; }
+    .auth-submit:hover { opacity: .9; }
+    .auth-error { color: #f87171; font-size: .875rem; margin-top: .5rem; display: none; }
+    .auth-footer { text-align: center; margin-top: 1.5rem; color: #9ca3af; font-size: .875rem; }
+    .auth-footer a { color: var(--accent); }
+    .auth-divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: #6b7280; font-size: .8rem; }
+    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #374151; }
+    .google-btn-wrap { display: flex; justify-content: center; margin-bottom: .5rem; }
+    #googleSignInBtn { min-height: 44px; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav__logo">HoldOff</a>
+  </nav>
+
+  <div class="auth-wrap">
+    <h1>Welcome back</h1>
+    <p>Log in to your HoldOff account.</p>
+
+    <!-- Google Sign-In -->
+    <div class="google-btn-wrap">
+      <div id="googleSignInBtn"></div>
+    </div>
+
+    <div class="auth-divider">or</div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="auth-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+      <div class="auth-field">
+        <label for="password">Password</label>
+        <div style="position:relative;">
+          <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••" style="padding-right:3rem;">
+          <button type="button" onclick="togglePassword()" id="togglePwBtn" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;font-size:1.1rem;padding:0;" title="Show password">👁</button>
+        </div>
+      </div>
+      <div class="auth-error" id="loginError"><%
+        try {
+          if (typeof locals !== 'undefined' && locals && locals.query && locals.query.error) { %><%= locals.query.error %><% }
+        } catch (e) { /* ignore */ }
+      %></div>
+      <button type="submit" class="auth-submit">Log in</button>
+    </form>
+
+    <div class="forgot-links">
+      <a href="/forgot-email">Forgot your email?</a>
+      <a href="/forgot-password">Forgot password?</a>
+    </div>
+
+    <div class="auth-footer">
+      Do not have an account? <a href="/signup">Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    // Google Sign-In initialization
+    function handleGoogleCredential(response) {
+      const err = document.getElementById("loginError");
+      err.style.display = "none";
+
+      fetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential })
+      })
+      .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+      .then(({ ok, data }) => {
+        if (ok) {
+          const ret = new URLSearchParams(window.location.search).get("returnTo") || "/filter";
+          window.location = ret;
+        } else {
+          err.textContent = data.error || "Google sign-in failed";
+          err.style.display = "block";
+        }
+      })
+      .catch(() => {
+        err.textContent = "Network error — try again";
+        err.style.display = "block";
+      });
+    }
+
+    // Initialize Google Sign-In when the GSI library loads
+    function initGoogleSignIn() {
+      if (typeof google === "undefined" || !google.accounts) {
+        setTimeout(initGoogleSignIn, 200);
+        return;
+      }
+      // Get client ID from a meta tag or inline config
+      const clientId = document.querySelector('meta[name="google-client-id"]')?.content;
+      if (!clientId) return; // No client ID configured yet
+
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleCredential,
+        ux_mode: "popup",
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignInBtn"),
+        {
+          theme: "filled_black",
+          size: "large",
+          width: 380,
+          text: "signin_with",
+          shape: "pill",
+          logo_alignment: "left",
+        }
+      );
+    }
+    initGoogleSignIn();
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.querySelector(".auth-submit");
+      const err = document.getElementById("loginError");
+      btn.textContent = "Logging in..."; btn.disabled = true; err.style.display = "none";
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: document.getElementById("email").value, password: document.getElementById("password").value })
+        });
+        const d = await res.json();
+        if (res.ok) {
+          const ret = new URLSearchParams(window.location.search).get("returnTo") || "/filter";
+          window.location = ret;
+        } else {
+          err.textContent = d.error || "Login failed"; err.style.display = "block";
+          btn.textContent = "Log in"; btn.disabled = false;
+        }
+      } catch(ex) { err.textContent = "Network error — try again"; err.style.display = "block"; btn.textContent = "Log in"; btn.disabled = false; }
+    }
+
+    // Password visibility toggle
+    function togglePassword() {
+      const pw = document.getElementById("password");
+      const btn = document.getElementById("togglePwBtn");
+      if (pw.type === "password") {
+        pw.type = "text";
+        btn.textContent = "🙈";
+        btn.title = "Hide password";
+      } else {
+        pw.type = "password";
+        btn.textContent = "👁";
+        btn.title = "Show password";
+      }
+    }
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

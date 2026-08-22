@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real verdict examples — HoldOff</title>
+  <meta name="description" content="12 real HoldOff verdicts — see how the AI names patterns, rewrites anxious texts, and tells you when to hold off entirely.">
+  <link rel="canonical" href="https://shouldiholdoff.live/examples">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Real HoldOff verdicts — see what the AI actually says">
+  <meta property="og:description" content="12 curated examples: the 3am spiral, the double-text, the breakup reach-out. Real product output, real patterns named.">
+  <meta property="og:url" content="https://shouldiholdoff.live/examples">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HoldOff">
+  <meta property="og:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Real HoldOff verdicts — see what the AI actually says">
+  <meta name="twitter:description" content="12 curated examples: the 3am spiral, the double-text, the breakup reach-out.">
+  <meta name="twitter:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <meta name="theme-color" content="#FAF6F0">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '878230961304067');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=878230961304067&ev=PageView&noscript=1"/></noscript>
+
+  <style>
+    /* ── Examples page layout ── */
+    .ex-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 1.25rem 4rem;
+    }
+
+    .ex-hero {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .ex-hero__eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .ex-hero__h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .ex-hero__sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 1.75rem;
+      line-height: 1.6;
+    }
+    .ex-hero__cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .ex-hero__cta:hover { background: var(--accent-deep); }
+
+    /* ── Example cards ── */
+    .ex-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .ex-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .ex-card:hover {
+      box-shadow: 0 4px 24px rgba(42,37,34,0.08);
+      border-color: #D4C9BF;
+    }
+
+    /* Verdict colour stripe on top */
+    .ex-card--HOLD  { border-top: 3px solid #C97B5D; }
+    .ex-card--REWRITE { border-top: 3px solid #7B9CC9; }
+    .ex-card--SEND  { border-top: 3px solid #7BC97B; }
+
+    .ex-card__head {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem 0.5rem;
+    }
+
+    .ex-verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+    }
+    .ex-verdict-badge--HOLD    { background: #FFF0E8; color: #9B4F32; }
+    .ex-verdict-badge--REWRITE { background: #E8F0FF; color: #2E4F9B; }
+    .ex-verdict-badge--SEND    { background: #E8FFE8; color: #2E6B2E; }
+
+    .ex-pattern {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .ex-card__message {
+      padding: 0.5rem 1.25rem 1rem;
+    }
+    .ex-card__message blockquote {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      background: var(--surface);
+      border-left: 3px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.93rem;
+      color: #4A3F3A;
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    .ex-card__analysis {
+      padding: 0 1.25rem 1rem;
+    }
+    .ex-card__analysis-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .ex-card__analysis p {
+      font-size: 0.9rem;
+      color: #3A3330;
+      line-height: 1.65;
+    }
+
+    .ex-card__reframe {
+      padding: 0 1.25rem 1rem;
+    }
+    .ex-card__reframe-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .ex-card__reframe p {
+      font-size: 0.9rem;
+      color: #3A3330;
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    /* Rewrite bubble — only for REWRITE verdict */
+    .ex-card__rewrite {
+      margin: 0 1.25rem 1rem;
+      padding: 0.75rem 1rem;
+      background: #E8F0FF;
+      border-radius: 8px;
+      border: 1px solid #C5D4F0;
+    }
+    .ex-card__rewrite-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #2E4F9B;
+      margin-bottom: 0.3rem;
+    }
+    .ex-card__rewrite p {
+      font-size: 0.9rem;
+      color: #2A3A5A;
+      line-height: 1.6;
+    }
+
+    /* Card footer actions */
+    .ex-card__actions {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0 1.25rem 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .ex-btn-try {
+      display: inline-block;
+      background: var(--fg);
+      color: #FAF6F0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem;
+      border-radius: 7px;
+      text-decoration: none;
+      transition: background 0.12s;
+    }
+    .ex-btn-try:hover { background: #3A3330; }
+
+    .ex-btn-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.5rem 1.1rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .ex-btn-share:hover { border-color: var(--accent); color: var(--accent); }
+    .ex-btn-share.copied { color: #2E6B2E; border-color: #7BC97B; }
+
+    /* Bottom CTA strip */
+    .ex-bottom-cta {
+      margin-top: 3.5rem;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: var(--fg);
+      border-radius: 16px;
+    }
+    .ex-bottom-cta h2 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #FAF6F0;
+      margin-bottom: 0.75rem;
+    }
+    .ex-bottom-cta p {
+      color: #A89F99;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .ex-bottom-cta a {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .ex-bottom-cta a:hover { background: var(--accent-deep); }
+
+    @media (min-width: 640px) {
+      .ex-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (min-width: 900px) {
+      .ex-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <main class="ex-page">
+
+    <div class="ex-hero">
+      <div class="ex-hero__eyebrow">Real product output</div>
+      <h1 class="ex-hero__h1">See what HoldOff actually says.</h1>
+      <p class="ex-hero__sub">12 curated verdicts — real AI output, anonymized scenarios. The 3am spiral, the breakup reach-out, the jealousy text. This is what you get.</p>
+      <a href="/filter" class="ex-hero__cta">Try yours free →</a>
+    </div>
+
+    <div class="ex-grid">
+      <% examples.forEach(function(ex) { %>
+        <% const prefill = encodeURIComponent(ex.message); %>
+        <div class="ex-card ex-card--<%= ex.verdict %>">
+
+          <div class="ex-card__head">
+            <span class="ex-verdict-badge ex-verdict-badge--<%= ex.verdict %>">
+              <% if (ex.verdict === 'HOLD') { %>🔥<% } %>
+              <% if (ex.verdict === 'REWRITE') { %>✏️<% } %>
+              <% if (ex.verdict === 'SEND') { %>✓<% } %>
+              <%= ex.verdict %>
+            </span>
+            <span class="ex-pattern"><%= ex.pattern %></span>
+          </div>
+
+          <div class="ex-card__message">
+            <blockquote>"<%= ex.message %>"</blockquote>
+          </div>
+
+          <div class="ex-card__analysis">
+            <div class="ex-card__analysis-label">What's happening</div>
+            <p><%= ex.whats_happening %></p>
+          </div>
+
+          <div class="ex-card__reframe">
+            <div class="ex-card__reframe-label">Grounded voice</div>
+            <p><%= ex.grounded_voice %></p>
+          </div>
+
+          <% if (ex.verdict === 'REWRITE') { %>
+          <div class="ex-card__rewrite">
+            <div class="ex-card__rewrite-label">Rewritten →</div>
+            <p><%= ex.rewrite %></p>
+          </div>
+          <% } %>
+
+          <div class="ex-card__actions">
+            <a href="/filter?prefill=<%= prefill %>" class="ex-btn-try">Try this in HoldOff →</a>
+            <button
+              class="ex-btn-share"
+              data-message="<%= ex.message.replace(/"/g, '&quot;') %>"
+              data-verdict="<%= ex.verdict %>"
+              data-pattern="<%= ex.pattern %>"
+              onclick="shareExample(this)"
+            >
+              Share
+            </button>
+          </div>
+
+        </div>
+      <% }); %>
+    </div>
+
+    <div class="ex-bottom-cta">
+      <h2>Now try your own message.</h2>
+      <p>Paste the text you're about to send. Get a verdict in 5 seconds.<br>No account needed for your first three.</p>
+      <a href="/filter">Open HoldOff free →</a>
+    </div>
+
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    async function shareExample(btn) {
+      const message = btn.dataset.message;
+      const verdict = btn.dataset.verdict;
+      const pattern = btn.dataset.pattern;
+
+      // Create share card via API
+      try {
+        const resp = await fetch('/api/share/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ streak_count: 1, verdict_type: verdict, pattern_name: pattern }),
+        });
+        const data = await resp.json();
+        if (!data.url) throw new Error('No URL');
+
+        if (navigator.share) {
+          await navigator.share({
+            title: 'HoldOff verdict: ' + verdict,
+            text: '"' + message.slice(0, 80) + (message.length > 80 ? '…' : '') + '" — ' + verdict + ' (' + pattern + ')',
+            url: data.url,
+          });
+        } else {
+          await navigator.clipboard.writeText(data.url);
+          btn.textContent = 'Link copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Share';
+            btn.classList.remove('copied');
+          }, 2000);
+        }
+      } catch (err) {
+        // Clipboard fallback if API fails
+        const fallbackUrl = window.location.origin + '/examples';
+        try {
+          await navigator.clipboard.writeText(fallbackUrl);
+          btn.textContent = 'Link copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Share';
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (_) {
+          // Silent — share just didn't work
+        }
+      }
+    }
+  </script>
+</body>
+</html>

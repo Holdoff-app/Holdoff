@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HoldOff — Upgrade to Pro</title>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="theme-color" content="#0E0C0B">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <meta name="description" content="Upgrade to HoldOff Pro — unlock your full filter history, streak tracking, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <style>
+    body {
+      background: #FAF6F0;
+      color: #2A2522;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .upgrade-hero {
+      background: #0E0C0B;
+      color: #FAF6F0;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .upgrade-hero__eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .upgrade-hero__headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #FAF6F0;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    .upgrade-hero__sub {
+      font-size: 1.05rem;
+      color: rgba(250,246,240,0.55);
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .upgrade-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .tier-card {
+      background: #fff;
+      border: 1.5px solid #E5DED4;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      position: relative;
+      transition: box-shadow 0.2s, transform 0.15s;
+      cursor: pointer;
+      text-align: center;
+    }
+    .tier-card:hover {
+      box-shadow: 0 8px 32px rgba(42,37,34,0.1);
+      transform: translateY(-2px);
+    }
+    .tier-card--highlighted {
+      border-color: var(--accent);
+      background: #FFFBF8;
+    }
+    .tier-card__badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.85rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .tier-card__label {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #2A2522;
+      margin-bottom: 0.5rem;
+    }
+    .tier-card__interval {
+      font-size: 0.8rem;
+      color: #8A7F79;
+      margin-bottom: 1rem;
+    }
+    .tier-card__price {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.25rem;
+    }
+    .tier-card__price-sub {
+      font-size: 0.8rem;
+      color: #8A7F79;
+      margin-bottom: 1.25rem;
+    }
+    .tier-card__cta {
+      display: block;
+      background: var(--fg);
+      color: #FAF6F0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.7rem 1.25rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .tier-card__cta:hover {
+      background: #1a1614;
+    }
+    .tier-card--highlighted .tier-card__cta {
+      background: var(--accent);
+    }
+    .tier-card--highlighted .tier-card__cta:hover {
+      background: var(--accent-deep);
+    }
+    .upgrade-note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #8A7F79;
+      margin-top: -2rem;
+      padding: 0 2rem 3rem;
+    }
+    .upgrade-note a {
+      color: var(--accent);
+    }
+    /* Annual savings callout */
+    .savings-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6B8F71;
+      font-weight: 600;
+      margin-top: -1rem;
+      padding: 0 2rem 2rem;
+    }
+    /* Checkout loading state */
+    .tier-card--loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    /* Error toast */
+    #checkoutError {
+      display: none;
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.875rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="upgrade-hero">
+    <p class="upgrade-hero__eyebrow">HoldOff Pro</p>
+    <h1 class="upgrade-hero__headline">Upgrade your filter.</h1>
+    <p class="upgrade-hero__sub">Unlock verdict history, streak tracking, and priority support. Cancel anytime.</p>
+  </div>
+
+  <p class="savings-note" id="savingsNote">Annual plans save you up to 17% vs. monthly</p>
+
+  <div class="upgrade-grid" id="tierGrid">
+    <!-- Tiers injected by JS -->
+  </div>
+
+  <p class="upgrade-note">
+    Already a Pro subscriber? <a href="/api/checkout/portal">Manage subscription →</a>
+  </p>
+
+  <div id="checkoutError"></div>
+
+  <script>
+    const TIER_INTERVALS = {
+      online_weekly:  'Weekly',
+      online_monthly: 'Monthly',
+      online_annual:  'Yearly',
+      app_weekly:     'Weekly',
+      app_monthly:    'Monthly',
+      app_annual:     'Yearly',
+      lifetime:       'One-time',
+    };
+
+    async function loadTiers() {
+      try {
+        const res = await fetch('/api/checkout/tiers');
+        const data = await res.json();
+        renderTiers(data.tiers || []);
+      } catch {
+        document.getElementById('tierGrid').innerHTML =
+          '<p style="text-align:center;color:#8A7F79;grid-column:1/-1;">Could not load tiers. Refresh to try again.</p>';
+      }
+    }
+
+    function renderTiers(tiers) {
+      const grid = document.getElementById('tierGrid');
+
+      tiers.forEach(tier => {
+        const isLifetime = tier.interval === 'once';
+        const card = document.createElement('div');
+        card.className = 'tier-card' + (tier.highlight ? ' tier-card--highlighted' : '');
+        card.dataset.tier = tier.id;
+
+        card.innerHTML = `
+          ${tier.highlight ? '<span class="tier-card__badge">Most Popular</span>' : ''}
+          <div class="tier-card__label">${tier.label}</div>
+          <div class="tier-card__interval">${TIER_INTERVALS[tier.id] || tier.interval}</div>
+          <div class="tier-card__price">${tier.priceDisplay.replace('/wk', '').replace('/mo', '').replace('/yr', '')}</div>
+          <div class="tier-card__price-sub">${isLifetime ? 'no renewal' : tier.priceDisplay}</div>
+          <a href="#" class="tier-card__cta" data-tier="${tier.id}">
+            ${isLifetime ? 'Get Lifetime →' : 'Start Pro →'}
+          </a>
+        `;
+
+        card.querySelector('.tier-card__cta').addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          startCheckout(tier.id, card);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    async function startCheckout(tierId, card) {
+      if (card) card.classList.add('tier-card--loading');
+
+      try {
+        const res = await fetch('/api/checkout/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier: tierId }),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 401) {
+          // Not logged in — redirect to login
+          window.location.href = '/login?returnTo=/upgrade';
+          return;
+        }
+
+        if (!res.ok || !data.url) {
+          throw new Error(data.error || 'Could not create checkout session.');
+        }
+
+        window.location.href = data.url;
+      } catch (err) {
+        if (card) card.classList.remove('tier-card--loading');
+        showError(err.message);
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('checkoutError');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    loadTiers();
+  </script>
+
+
+  <nav style="position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:.45rem 0 max(.45rem,env(safe-area-inset-bottom));z-index:200;">
+    <a href="/filter" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">🛡️</span><span>Filter</span></a>
+    <a href="/journal" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">📓</span><span>Journal</span></a>
+    <a href="/community" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">💬</span><span>Community</span></a>
+    <a href="/profile" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">👤</span><span>Profile</span></a>
+  </nav>
+</body>
+</html>

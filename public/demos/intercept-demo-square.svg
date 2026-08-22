@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HoldOff Auto-Intercept Demo — 1080x1080 Square Export
+  For: Twitter/X, Reddit comments, social sharing
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1080 1080"
+     width="1080" height="1080"
+     role="img"
+     aria-label="HoldOff intercepts a text before it's sent. HOLD — protest behavior — Jordan didn't get distant. You got scared. Those are different.">
+
+  <defs>
+    <linearGradient id="sqBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A1410"/>
+      <stop offset="100%" style="stop-color:#2E1F14"/>
+    </linearGradient>
+    <linearGradient id="sqPhone" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C1C1E"/>
+      <stop offset="100%" style="stop-color:#111113"/>
+    </linearGradient>
+    <linearGradient id="sqOverlay" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2A1A0E;stop-opacity:0.97"/>
+      <stop offset="100%" style="stop-color:#1A0E07;stop-opacity:0.98"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="url(#sqBg)"/>
+
+  <!-- Brand top -->
+  <text x="540" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="28" font-weight="400" fill="#C97B5D" letter-spacing="0.05em">HoldOff</text>
+  <text x="540" y="102" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" fill="rgba(250,246,240,0.5)">AI message filter for anxious attachment</text>
+
+  <!-- Phone frame (centered, scaled) -->
+  <rect x="320" y="120" width="440" height="780" rx="50" fill="url(#sqPhone)"/>
+  <rect x="332" y="132" width="416" height="756" rx="38" fill="#0A0A0C"/>
+  <rect x="338" y="140" width="404" height="740" rx="30" fill="#131315"/>
+
+  <!-- Dynamic island -->
+  <rect x="476" y="150" width="128" height="28" rx="14" fill="#0A0A0C"/>
+
+  <!-- Status bar -->
+  <text x="358" y="174" font-family="system-ui,sans-serif" font-size="13" font-weight="600" fill="#FFFAF5" opacity="0.9">9:41</text>
+  <rect x="690" y="162" width="28" height="14" rx="3.5" fill="none" stroke="#FFFAF5" stroke-width="1.5" opacity="0.7"/>
+  <rect x="692" y="164" width="20" height="10" rx="2" fill="#34C759"/>
+
+  <!-- Conversation header area -->
+  <rect x="338" y="188" width="404" height="66" rx="0" fill="#1C1C1E"/>
+  <!-- Avatar -->
+  <circle cx="540" cy="222" r="22" fill="#3A3A3C"/>
+  <text x="540" y="228" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="600" fill="#FFFAF5">J</text>
+  <text x="540" y="248" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#8E8E93">Jordan</text>
+
+  <!-- Received bubble -->
+  <rect x="350" y="278" width="180" height="44" rx="22" fill="#2C2C2E"/>
+  <text x="440" y="305" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" fill="#FFFAF5">hey you ok?</text>
+
+  <!-- Sent bubble -->
+  <rect x="558" y="338" width="160" height="44" rx="22" fill="#007AFF"/>
+  <text x="638" y="365" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" fill="#FFF">yeah why</text>
+
+  <!-- Input bar -->
+  <rect x="338" y="548" width="404" height="46" rx="0" fill="#1C1C1E"/>
+  <rect x="350" y="555" width="330" height="32" rx="16" fill="#2C2C2E"/>
+  <text x="370" y="576" font-family="system-ui,sans-serif" font-size="14" fill="#FFFAF5">are you mad at me??</text>
+  <circle cx="706" cy="571" r="16" fill="#007AFF"/>
+  <path d="M699 571 L713 571" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M707 565 L713 571 L707 577" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Dark scrim -->
+  <rect x="338" y="254" width="404" height="626" rx="0" fill="#000" opacity="0.58"/>
+
+  <!-- Verdict overlay panel -->
+  <rect x="338" y="560" width="404" height="380" rx="28" fill="url(#sqOverlay)"/>
+
+  <!-- Drag handle -->
+  <rect x="516" y="572" width="48" height="5" rx="2.5" fill="#5A5A5C"/>
+
+  <!-- HOLD badge -->
+  <rect x="464" y="588" width="112" height="38" rx="19" fill="#C0392B"/>
+  <text x="520" y="612" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#FFF" letter-spacing="0.1em">HOLD</text>
+
+  <!-- HoldOff pill -->
+  <rect x="477" y="636" width="86" height="22" rx="11" fill="none" stroke="#C97B5D" stroke-width="1.5"/>
+  <text x="520" y="652" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#C97B5D">HoldOff</text>
+
+  <!-- Pattern name -->
+  <text x="520" y="680" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#C97B5D" letter-spacing="0.08em">PROTEST BEHAVIOR</text>
+
+  <!-- Reframe text -->
+  <text x="520" y="708" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#FAF6F0" font-style="italic">Jordan didn't get distant.</text>
+  <text x="520" y="732" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#FAF6F0" font-style="italic">You got scared.</text>
+  <text x="520" y="756" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#FAF6F0" font-style="italic">Those are different.</text>
+
+  <!-- Divider -->
+  <line x1="370" y1="776" x2="670" y2="776" stroke="#3A2E26" stroke-width="1"/>
+
+  <!-- Action buttons -->
+  <rect x="352" y="786" width="112" height="44" rx="22" fill="#C0392B"/>
+  <text x="408" y="813" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#FFF" letter-spacing="0.05em">HOLD</text>
+
+  <rect x="476" y="786" width="112" height="44" rx="22" fill="none" stroke="#C97B5D" stroke-width="1.5"/>
+  <text x="532" y="813" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="600" fill="#C97B5D">REWRITE</text>
+
+  <rect x="600" y="786" width="130" height="44" rx="22" fill="none" stroke="#3A3A3C" stroke-width="1"/>
+  <text x="665" y="813" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#636366">send anyway</text>
+
+  <!-- Phone home indicator -->
+  <rect x="505" y="868" width="70" height="4" rx="2" fill="#4A4A4C"/>
+
+  <!-- Bottom tagline -->
+  <text x="540" y="990" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="400" fill="#C97B5D">holdoff.polsia.app</text>
+  <text x="540" y="1022" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="rgba(250,246,240,0.4)">stop the spiral before you send it</text>
+</svg>

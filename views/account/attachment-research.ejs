@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>HoldOff — Attachment Research</title>
+  <style>
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-size:0.9rem; margin-bottom:16px; }
+    .back-link:hover { color:var(--primary-light); }
+    .research-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:18px; margin-bottom:14px; cursor:pointer; transition:var(--transition);
+    }
+    .research-card:hover { border-color:var(--primary); transform:translateY(-1px); }
+    .research-card h3 { font-size:0.95rem; margin-bottom:6px; }
+    .research-card p { font-size:0.85rem; color:var(--text-muted); line-height:1.5; }
+    .research-card .tag { display:inline-block; padding:3px 10px; border-radius:var(--radius-full); font-size:0.7rem; font-weight:600; margin-top:8px; }
+    .tag-anxious { background:rgba(255,107,107,0.15); color:#ff6b6b; }
+    .tag-avoidant { background:rgba(78,205,196,0.15); color:#4ecdc4; }
+    .tag-fearful { background:rgba(162,155,254,0.15); color:var(--primary-light); }
+    .tag-secure { background:rgba(46,213,115,0.15); color:#2ed573; }
+    .tag-general { background:var(--primary-glow); color:var(--primary); }
+    .research-detail { display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+    .research-detail.open { display:block; }
+    .research-detail p { font-size:0.85rem; color:var(--text-muted); line-height:1.6; margin-bottom:10px; }
+    .research-detail ul { padding-left:20px; margin-bottom:10px; }
+    .research-detail li { font-size:0.85rem; color:var(--text-muted); line-height:1.5; margin-bottom:6px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>🔗 Attachment Research</h1>
+    </div>
+    <div class="screen-content">
+      <a href="/account" class="back-link">← Back to Account</a>
+
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">
+        Understanding attachment styles is the first step to breaking the cycle. Tap any topic to learn more.
+      </p>
+
+      <div class="research-card" onclick="this.querySelector('.research-detail').classList.toggle('open')">
+        <h3>🔗 What Is Attachment Theory?</h3>
+        <p>The science behind why you love the way you do</p>
+        <span class="tag tag-general">Foundation</span>
+        <div class="research-detail">
+          <p>Attachment theory, developed by John Bowlby and Mary Ainsworth, explains how early bonds with caregivers shape your adult relationships. Your attachment style influences how you handle intimacy, conflict, and emotional regulation.</p>
+          <ul>
+            <li><strong>Secure:</strong> Comfortable with intimacy and independence</li>
+            <li><strong>Anxious:</strong> Craves closeness, fears abandonment</li>
+            <li><strong>Avoidant:</strong> Values independence, uncomfortable with closeness</li>
+            <li><strong>Fearful-Avoidant:</strong> Wants closeness but fears it — the push-pull</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="research-card" onclick="this.querySelector('.research-detail').classList.toggle('open')">
+        <h3>😰 Anxious-Preoccupied Attachment</h3>
+        <p>The "why haven't they texted back" spiral</p>
+        <span class="tag tag-anxious">Anxious</span>
+        <div class="research-detail">
+          <p>If you're anxiously attached, you likely experience intense fear of rejection and abandonment. You may over-analyze texts, need constant reassurance, and feel panicked when your partner seems distant.</p>
+          <p><strong>Common patterns:</strong></p>
+          <ul>
+            <li>Double/triple texting when anxious</li>
+            <li>Reading into every word and emoji</li>
+            <li>Difficulty self-soothing during silence</li>
+            <li>Protest behaviors (picking fights to get attention)</li>
+          </ul>
+          <p><strong>HoldOff helps by:</strong> Intercepting those anxious texts before they send, giving you the 3-minute pause your nervous system needs.</p>
+        </div>
+      </div>
+
+      <div class="research-card" onclick="this.querySelector('.research-detail').classList.toggle('open')">
+        <h3>🧊 Dismissive-Avoidant Attachment</h3>
+        <p>The "I don't need anyone" shield</p>
+        <span class="tag tag-avoidant">Avoidant</span>
+        <div class="research-detail">
+          <p>Dismissive-avoidants learned early that depending on others leads to disappointment. You may shut down emotionally, pull away when things get intense, or convince yourself you don't care.</p>
+          <p><strong>Common patterns:</strong></p>
+          <ul>
+            <li>Withdrawing when partner needs closeness</li>
+            <li>Suppressing emotions until they explode</li>
+            <li>Keeping relationships surface-level</li>
+            <li>Sending cold or dismissive messages you later regret</li>
+          </ul>
+          <p><strong>HoldOff helps by:</strong> Catching those cold shut-down texts and showing you what you actually mean vs. what you're about to send.</p>
+        </div>
+      </div>
+
+      <div class="research-card" onclick="this.querySelector('.research-detail').classList.toggle('open')">
+        <h3>💔 Fearful-Avoidant (Disorganized)</h3>
+        <p>Want them close, push them away — the hardest cycle</p>
+        <span class="tag tag-fearful">Fearful-Avoidant</span>
+        <div class="research-detail">
+          <p>Fearful-avoidant attachment is the most painful pattern. You desperately want love but are terrified of it. You oscillate between clinging and pushing away, often in the same conversation.</p>
+          <p><strong>Common patterns:</strong></p>
+          <ul>
+            <li>Hot-cold behavior that confuses partners</li>
+            <li>Intense emotions followed by emotional shutdown</li>
+            <li>Self-sabotage when things are going well</li>
+            <li>Sending vulnerable texts then immediately regretting them</li>
+          </ul>
+          <p><strong>HoldOff helps by:</strong> Catching BOTH the clingy spiral texts AND the cold push-away texts. The AI Verdict shows you which pattern you're in so you can choose differently.</p>
+        </div>
+      </div>
+
+      <div class="research-card" onclick="this.querySelector('.research-detail').classList.toggle('open')">
+        <h3>💚 Earned Secure Attachment</h3>
+        <p>You can change your attachment style — here's how</p>
+        <span class="tag tag-secure">Secure</span>
+        <div class="research-detail">
+          <p>"Earned security" means developing a secure attachment style through self-awareness, therapy, and practice — even if you didn't start there. It's the goal, and it's absolutely achievable.</p>
+          <p><strong>Steps toward earned security:</strong></p>
+          <ul>
+            <li>Recognizing your patterns (HoldOff Insights help with this)</li>
+            <li>Pausing before reacting (the 3-minute pause)</li>
+            <li>Developing self-soothing skills</li>
+            <li>Communicating needs without manipulation</li>
+            <li>Choosing partners who are willing to grow too</li>
+          </ul>
+          <p><strong>Remember:</strong> Every time you use HoldOff to pause instead of spiral, you're literally rewiring your attachment patterns. That's earned security in action. 💜</p>
+        </div>
+      </div>
+    </div>
+    <%- include('../partials/bottom_nav') %>
+  </div>
+</body>
+</html>

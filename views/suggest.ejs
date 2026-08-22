@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Suggestion Box — Shape Our Future</title>
+  <meta name="description" content="Have an idea for HoldOff? We'd love to hear it. Submit feature requests, bug reports, and feedback directly.">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #e0e7ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .logo { font-size: 24px; font-weight: 700; color: #c4b5fd; }
+
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin: 0 1.5rem;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #a78bfa; }
+
+    .hero {
+      text-align: center;
+      padding: 40px 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #a78bfa, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin-bottom: 0;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .form-container {
+      flex: 1;
+      max-width: 700px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 2rem;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #a78bfa;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 6px;
+      color: #e0e7ff;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      accent-color: #8b5cf6;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      font-weight: 400;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    .success-message {
+      display: none;
+      padding: 1rem;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      border-radius: 8px;
+      color: #10b981;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: auto;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    footer a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; }
+      .form-container {
+        margin: 30px 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">HoldOff</div>
+    <nav>
+      <a href="https://shouldiholdoff.live">Home</a>
+      <a href="https://shouldiholdoff.live/pricing">Pricing</a>
+      <a href="https://shouldiholdoff.live/contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Your Ideas Matter</h1>
+    <p>Have a feature request? Found a bug? Or just have feedback? We read every submission and use your ideas to shape HoldOff's future.</p>
+  </section>
+
+  <section class="form-container">
+    <div class="success-message" id="successMsg">✓ Thank you! Your suggestion has been received. We'll review it shortly.</div>
+    
+    <form method="POST" action="/api/suggestion" id="suggestionForm">
+      <div class="form-group">
+        <label for="type">What type of feedback? *</label>
+        <select id="type" name="type" required>
+          <option value="">-- Select --</option>
+          <option value="feature">Feature Request</option>
+          <option value="bug">Bug Report</option>
+          <option value="ui">UI/Design Feedback</option>
+          <option value="performance">Performance / Technical Issue</option>
+          <option value="general">General Feedback</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" required placeholder="Brief summary of your idea or issue">
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description *</label>
+        <textarea id="description" name="description" required placeholder="Tell us more. The more detail, the better we can help. For bug reports, please describe the steps to reproduce."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="impact">How would this help you? *</label>
+        <textarea id="impact" name="impact" required placeholder="What problem does this solve? How would it improve your experience?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Would you like us to follow up? *</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="followup-yes" name="followup" value="yes">
+            <label for="followup-yes">Yes, email me updates</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="followup-no" name="followup" value="no">
+            <label for="followup-no">No, just wanted to share</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address (optional)</label>
+        <input type="email" id="email" name="email" placeholder="your@email.com">
+      </div>
+
+      <button type="submit" class="submit-btn">Send Feedback</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 HoldOff. Made for people who deserve better.</p>
+    <p>
+      <a href="/privacy">Privacy</a> &nbsp;|&nbsp;
+      <a href="/terms">Terms</a> &nbsp;|&nbsp;
+      <a href="https://shouldiholdoff.live/contact">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('suggestionForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/api/suggestion', {
+          method: 'POST',
+          body: formData
+        });
+        if (response.ok) {
+          document.getElementById('successMsg').style.display = 'block';
+          this.reset();
+          setTimeout(() => {
+            document.getElementById('successMsg').style.display = 'none';
+          }, 5000);
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error submitting feedback.');
+      }
+    });
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

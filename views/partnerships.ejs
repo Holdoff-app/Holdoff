@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Partnerships — Let's Work Together</title>
+  <meta name="description" content="Explore partnership opportunities with HoldOff. We collaborate with therapists, coaches, creators, and organizations aligned with our mission.">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #e0e7ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo { font-size: 24px; font-weight: 700; color: #c4b5fd; }
+
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin: 0 1.5rem;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #a78bfa; }
+
+    .hero {
+      text-align: center;
+      padding: 60px 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #a78bfa, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btn {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin: 0.5rem;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    .opportunities {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .opportunities { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+    }
+
+    .opp-card {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      padding: 2rem;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .opp-card:hover {
+      border-color: rgba(139, 92, 246, 0.5);
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .opp-card h3 {
+      color: #a78bfa;
+      margin-bottom: 1rem;
+      font-size: 18px;
+    }
+
+    .opp-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 2rem;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #a78bfa;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 6px;
+      color: #e0e7ff;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: 4rem;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    footer a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">HoldOff</div>
+    <nav>
+      <a href="https://shouldiholdoff.live">Home</a>
+      <a href="https://shouldiholdoff.live/pricing">Pricing</a>
+      <a href="https://shouldiholdoff.live/contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Work With Us</h1>
+    <p>We're looking for partners who share our mission: helping people respect themselves. Whether you're a therapist, coach, creator, or organization, let's explore how we can collaborate.</p>
+    <button class="cta-btn" onclick="document.querySelector('.form-container').scrollIntoView({behavior: 'smooth'})">Apply Today</button>
+  </section>
+
+  <section class="opportunities">
+    <div class="opp-card">
+      <h3>🩺 Therapists & Counselors</h3>
+      <p>Refer HoldOff to your clients as a complementary tool between sessions. We offer partner discounts and co-marketing opportunities to therapists and mental health professionals.</p>
+    </div>
+    <div class="opp-card">
+      <h3>💬 Life Coaches & Mentors</h3>
+      <p>Integrate HoldOff into your coaching practice. White-label options available for coaches who want to offer their own branded version.</p>
+    </div>
+    <div class="opp-card">
+      <h3>🎓 Organizations & Nonprofits</h3>
+      <p>Bulk licenses, custom pricing, and integration partnerships for schools, universities, employee wellness programs, and nonprofits focused on mental health.</p>
+    </div>
+    <div class="opp-card">
+      <h3>📱 App & SaaS Platforms</h3>
+      <p>API partnerships and embedding opportunities for apps in the wellness, dating, relationships, and mental health spaces.</p>
+    </div>
+  </section>
+
+  <section class="form-container">
+    <h2 style="text-align: center; margin-bottom: 2rem; color: #a78bfa;">Apply for a Partnership</h2>
+    <form method="POST" action="/api/partnership-apply" id="partnershipForm">
+      <div class="form-group">
+        <label for="name">Your Name *</label>
+        <input type="text" id="name" name="name" required placeholder="Jane Smith">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+      </div>
+
+      <div class="form-group">
+        <label for="organization">Organization / Business Name *</label>
+        <input type="text" id="organization" name="organization" required placeholder="Your Company">
+      </div>
+
+      <div class="form-group">
+        <label for="type">Type of Partnership *</label>
+        <select id="type" name="type" required>
+          <option value="">-- Select --</option>
+          <option value="therapist">Therapist / Counselor</option>
+          <option value="coach">Life Coach / Mentor</option>
+          <option value="nonprofit">Organization / Nonprofit</option>
+          <option value="platform">App / SaaS Platform</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="details">Tell us about your partnership idea *</label>
+        <textarea id="details" name="details" required placeholder="What kind of partnership are you interested in? How many users might benefit? What's your vision?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="website">Website or Portfolio</label>
+        <input type="url" id="website" name="website" placeholder="https://yourwebsite.com">
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Application</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 HoldOff. Made for people who deserve better.</p>
+    <p>
+      <a href="/privacy">Privacy</a> &nbsp;|&nbsp;
+      <a href="/terms">Terms</a> &nbsp;|&nbsp;
+      <a href="https://shouldiholdoff.live/contact">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('partnershipForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/api/partnership-apply', {
+          method: 'POST',
+          body: formData
+        });
+        if (response.ok) {
+          alert('Thanks for applying! Our partnerships team will review your application and contact you within 48 hours.');
+          this.reset();
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error submitting application.');
+      }
+    });
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

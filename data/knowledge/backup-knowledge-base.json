@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-25",
+  "description": "Local fallback knowledge base used when external providers are unavailable.",
+  "source_files": [
+    "SADIE_KNOWLEDGE.md"
+  ],
+  "entries": [
+    {
+      "id": "safety-boundary",
+      "title": "Mental health safety boundary",
+      "topic": "safety",
+      "text": "HoldOff is a support tool and companion. It is not therapy, not diagnosis, and not a substitute for professional care."
+    },
+    {
+      "id": "core-mission",
+      "title": "HoldOff mission",
+      "topic": "mission",
+      "text": "HoldOff helps users pause before sending emotionally charged texts and return to a grounded response."
+    },
+    {
+      "id": "feature-pause",
+      "title": "The Pause",
+      "topic": "feature",
+      "text": "Core product behavior is creating a pause between impulse and send so users can avoid escalation."
+    },
+    {
+      "id": "feature-companion",
+      "title": "Sadie companion framing",
+      "topic": "companion",
+      "text": "Sadie offers empathic companionship and pattern reflection while staying within non-diagnostic boundaries."
+    },
+    {
+      "id": "degraded-ops",
+      "title": "Degraded mode expectation",
+      "topic": "operations",
+      "text": "Public pages should remain available in degraded mode while dependency-backed actions fail safely with explicit, non-crashing errors."
+    }
+  ]
+}

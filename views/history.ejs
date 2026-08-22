@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Verdict History — HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#0E0C0B">
+  <meta name="description" content="Your HoldOff verdict history and streak.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/filter.css">
+</head>
+<body class="filter-body">
+
+  <nav class="filter-nav">
+    <a href="/" class="filter-nav__wordmark">HoldOff</a>
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <a href="/filter" style="font-size:0.8rem;color:#9A8F8A;text-decoration:none;">Filter</a>
+      <a href="/referrals" style="font-size:0.8rem;color:#C97B5D;text-decoration:none;font-weight:600;">Referrals</a>
+      <span style="font-size:0.8rem;color:#9A8F8A;"><%= user.email %></span>
+      <button id="logoutBtn" style="background:none;border:none;color:#9A8F8A;cursor:pointer;font-size:0.8rem;font-family:inherit;">Log out</button>
+    </div>
+  </nav>
+
+  <main class="filter-main" style="padding-top:1rem;">
+    <!-- Streak banner -->
+    <div id="streakBanner" style="display:none;text-align:center;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1.5rem;">
+      <div style="font-size:2rem;font-weight:700;color:var(--verdict-hold);" id="streakCount">0</div>
+      <div style="font-size:0.9rem;color:var(--muted);" id="streakSubtitle">day streak</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:0.25rem;" id="totalHolds"></div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" style="margin-bottom:1.25rem;">
+      <button class="filter-tab-btn filter-tab-btn--active" data-filter="ALL" id="filterAll">All</button>
+      <button class="filter-tab-btn" data-filter="HOLD" id="filterHold">Hold</button>
+      <button class="filter-tab-btn" data-filter="SEND" id="filterSend">Send</button>
+      <button class="filter-tab-btn" data-filter="REWRITE" id="filterRewrite">Rewrite</button>
+    </div>
+
+    <!-- History list -->
+    <ul class="filter-history-list" id="historyList" style="padding:0;list-style:none;margin:0;"></ul>
+
+    <!-- Empty state -->
+    <div id="emptyState" style="display:none;text-align:center;padding:3rem 1rem;">
+      <p style="font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:#2A2522;margin-bottom:0.75rem;">No verdicts yet.</p>
+      <p style="font-size:0.9rem;color:#8A7F79;margin-bottom:1.5rem;">Head to <a href="/filter" style="color:#C97B5D;font-weight:600;">/filter</a> and test one out.</p>
+      <a href="/filter" style="display:inline-block;background:#C97B5D;color:#fff;font-weight:600;padding:0.65rem 1.5rem;border-radius:6px;text-decoration:none;font-size:0.9rem;">Try the filter →</a>
+    </div>
+
+    <!-- Load error -->
+    <div id="loadError" style="display:none;text-align:center;padding:2rem 1rem;color:#C97B5D;font-size:0.9rem;">
+      Couldn't load history. Try refreshing.
+    </div>
+  </main>
+
+  <script>
+    // =========================================================
+    // Verdict History — fetches from /api/verdict/history
+    // =========================================================
+    (function () {
+      var _allEntries = [];
+      var _currentFilter = 'ALL';
+
+      // -- Relative time --
+      function relativeTime(ts) {
+        var diff = Date.now() - ts;
+        var m = Math.floor(diff / 60000);
+        var h = Math.floor(diff / 3600000);
+        var d = Math.floor(diff / 86400000);
+        if (m < 1)  return 'just now';
+        if (m < 60) return m + 'm ago';
+        if (h < 24) return h + 'h ago';
+        if (d < 7)  return d + 'd ago';
+        return new Date(ts).toLocaleDateString();
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&')
+          .replace(/</g, '<')
+          .replace(/>/g, '>')
+          .replace(/"/g, '"');
+      }
+
+      // -- Render streak from server data --
+      function renderStreak(streak) {
+        var banner = document.getElementById('streakBanner');
+        var countEl = document.getElementById('streakCount');
+        var subEl = document.getElementById('streakSubtitle');
+        var totalEl = document.getElementById('totalHolds');
+
+        if (streak.currentStreak > 0) {
+          countEl.textContent = streak.currentStreak;
+          subEl.textContent = streak.currentStreak === 1 ? 'day streak' : 'day streak';
+          totalEl.textContent = streak.totalVerdicts + ' total verdicts';
+          banner.style.display = 'block';
+        } else {
+          countEl.textContent = '0';
+          subEl.textContent = 'Start your streak — head to /filter';
+          totalEl.textContent = streak.totalVerdicts + ' total verdicts';
+          banner.style.display = 'block';
+        }
+      }
+
+      // -- Render the list from _allEntries --
+      function renderList() {
+        var list = document.getElementById('historyList');
+        list.innerHTML = '';
+
+        var filtered = _currentFilter === 'ALL'
+          ? _allEntries
+          : _allEntries.filter(function (e) { return e.verdict === _currentFilter; });
+
+        if (filtered.length === 0) {
+          document.getElementById('emptyState').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('emptyState').style.display = 'none';
+
+        filtered.forEach(function (entry) {
+          var li = document.createElement('li');
+          li.className = 'filter-history-item';
+
+          // Parse created_at (ISO string)
+          var ts = entry.created_at ? new Date(entry.created_at).getTime() : Date.now();
+          var preview = (entry.feedback_snippet || '').length > 60
+            ? entry.feedback_snippet.slice(0, 60) + '…'
+            : (entry.feedback_snippet || '');
+          var message = entry.feedback_snippet || '';
+
+          li.innerHTML =
+            '<div class="filter-history-item__header">' +
+              '<span class="filter-history-item__verdict filter-history-item__verdict--' + entry.verdict.toLowerCase() + '">' + entry.verdict + '</span>' +
+              '<span class="filter-history-item__preview">' + escapeHtml(preview) + '</span>' +
+              '<span class="filter-history-item__time">' + relativeTime(ts) + '</span>' +
+              '<span class="filter-history-item__chevron">&#9660;</span>' +
+            '</div>' +
+            '<div class="filter-history-item__body">' +
+              (message
+                ? '<div class="filter-history-item__message">“' + escapeHtml(message) + '”</div>'
+                : '') +
+              (entry.pattern_name
+                ? '<div class="filter-history-item__reframe-label">Pattern</div>' +
+                  '<div class="filter-history-item__reframe">' + escapeHtml(entry.pattern_name) + '</div>'
+                : '') +
+            '</div>';
+
+          li.querySelector('.filter-history-item__header').addEventListener('click', function () {
+            li.classList.toggle('filter-history-item--expanded');
+          });
+
+          list.appendChild(li);
+        });
+      }
+
+      // -- Filter tab handlers --
+      document.getElementById('filterAll').addEventListener('click', function () {
+        _currentFilter = 'ALL';
+        document.querySelectorAll('.filter-tab-btn').forEach(function (b) { b.classList.remove('filter-tab-btn--active'); });
+        document.getElementById('filterAll').classList.add('filter-tab-btn--active');
+        renderList();
+      });
+      document.getElementById('filterHold').addEventListener('click', function () {
+        _currentFilter = 'HOLD';
+        document.querySelectorAll('.filter-tab-btn').forEach(function (b) { b.classList.remove('filter-tab-btn--active'); });
+        document.getElementById('filterHold').classList.add('filter-tab-btn--active');
+        renderList();
+      });
+      document.getElementById('filterSend').addEventListener('click', function () {
+        _currentFilter = 'SEND';
+        document.querySelectorAll('.filter-tab-btn').forEach(function (b) { b.classList.remove('filter-tab-btn--active'); });
+        document.getElementById('filterSend').classList.add('filter-tab-btn--active');
+        renderList();
+      });
+      document.getElementById('filterRewrite').addEventListener('click', function () {
+        _currentFilter = 'REWRITE';
+        document.querySelectorAll('.filter-tab-btn').forEach(function (b) { b.classList.remove('filter-tab-btn--active'); });
+        document.getElementById('filterRewrite').classList.add('filter-tab-btn--active');
+        renderList();
+      });
+
+      // -- Init: fetch streak and history --
+      (async function () {
+        // Fetch streak and history in parallel
+        var streakResp, historyResp;
+        try {
+          [streakResp, historyResp] = await Promise.all([
+            fetch('/api/verdict/streak', { credentials: 'include' }),
+            fetch('/api/verdict/history', { credentials: 'include' }),
+          ]);
+        } catch (err) {
+          document.getElementById('loadError').style.display = 'block';
+          return;
+        }
+
+        if (!streakResp.ok || !historyResp.ok) {
+          document.getElementById('loadError').style.display = 'block';
+          return;
+        }
+
+        var streakData = await streakResp.json();
+        var historyData = await historyResp.json();
+
+        // Render streak
+        renderStreak(streakData);
+
+        // Store entries and render list
+        _allEntries = historyData.entries || [];
+        renderList();
+      })();
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', async function () {
+        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+        window.location.href = '/';
+      });
+    })();
+  </script>
+
+  <nav style="position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:.45rem 0 max(.45rem,env(safe-area-inset-bottom));z-index:200;">
+    <a href="/filter" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">🛡️</span><span>Filter</span></a>
+    <a href="/journal" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">📓</span><span>Journal</span></a>
+    <a href="/community" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">💬</span><span>Community</span></a>
+    <a href="/profile" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">👤</span><span>Profile</span></a>
+  </nav>
+</body>
+</html>

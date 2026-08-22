@@ -1,0 +1,236 @@
+<%#
+  Reusable verdict widget for SEO landing pages.
+  Embeds a lightweight inline version of the filter tool — user pastes message, gets verdict.
+  Does NOT own: paywall logic, history, streak tracking, share cards.
+  Locals (optional): prefill (string) — pre-populates the textarea
+%>
+<div class="seo-widget" id="seoWidget">
+  <div class="seo-widget__input-state" id="seoWidgetInput">
+    <h2 class="seo-widget__heading">Try it right now</h2>
+    <p class="seo-widget__sub">Paste the message you're about to send. Get an honest verdict in seconds.</p>
+    <form class="seo-widget__form" id="seoWidgetForm">
+      <textarea
+        id="seoMsgInput"
+        class="seo-widget__textarea"
+        placeholder="Type or paste the message here..."
+        rows="4"
+        maxlength="2000"
+        required
+      ></textarea>
+      <button type="submit" class="seo-widget__btn" id="seoSubmitBtn">
+        <span class="seo-widget__btn-text">Get my verdict</span>
+        <span class="seo-widget__btn-loading" style="display:none">Thinking...</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="seo-widget__result-state" id="seoWidgetResult" style="display:none">
+    <div class="seo-widget__verdict" id="seoVerdict">—</div>
+    <div class="seo-widget__pattern" id="seoPattern"></div>
+    <div class="seo-widget__reframe" id="seoReframe"></div>
+    <div class="seo-widget__rewrite-wrap" id="seoRewriteWrap" style="display:none">
+      <div class="seo-widget__rewrite-label">If you must send something</div>
+      <div class="seo-widget__rewrite" id="seoRewrite"></div>
+    </div>
+    <div class="seo-widget__actions">
+      <button class="seo-widget__try-again" id="seoTryAgain">← Try another</button>
+      <a href="/filter" class="seo-widget__go-full">Open full app →</a>
+    </div>
+  </div>
+
+  <div class="seo-widget__error" id="seoWidgetError" style="display:none">
+    <p id="seoErrorMsg">Something went wrong. Try again.</p>
+    <button class="seo-widget__try-again" id="seoErrorRetry">Try again</button>
+  </div>
+</div>
+
+<style>
+.seo-widget {
+  background: #F2EDE5;
+  border: 1px solid #E5DED4;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  max-width: 640px;
+}
+.seo-widget__heading {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #2A2522;
+}
+.seo-widget__sub {
+  font-size: 0.9rem;
+  color: #8A7F79;
+  margin-bottom: 1.25rem;
+}
+.seo-widget__textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #E5DED4;
+  border-radius: 8px;
+  padding: 0.875rem;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.95rem;
+  color: #2A2522;
+  resize: vertical;
+  outline: none;
+  display: block;
+  margin-bottom: 0.875rem;
+}
+.seo-widget__textarea:focus { border-color: #C97B5D; }
+.seo-widget__btn {
+  background: #C97B5D;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+.seo-widget__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.seo-widget__verdict {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: #C97B5D;
+}
+.seo-widget__pattern {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2A2522;
+  margin-bottom: 0.75rem;
+}
+.seo-widget__reframe {
+  font-size: 0.9rem;
+  color: #5A4F4A;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.seo-widget__rewrite-wrap {
+  background: #fff;
+  border: 1px solid #E5DED4;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.seo-widget__rewrite-label {
+  font-size: 0.75rem;
+  color: #8A7F79;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+.seo-widget__rewrite {
+  font-size: 0.9rem;
+  color: #2A2522;
+  line-height: 1.6;
+  font-style: italic;
+}
+.seo-widget__actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.seo-widget__try-again {
+  background: none;
+  border: 1px solid #E5DED4;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: #8A7F79;
+  cursor: pointer;
+}
+.seo-widget__try-again:hover { border-color: #C97B5D; color: #C97B5D; }
+.seo-widget__go-full {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #C97B5D;
+  text-decoration: none;
+}
+.seo-widget__go-full:hover { text-decoration: underline; }
+.seo-widget__error p { color: #e05; font-size: 0.9rem; margin-bottom: 0.75rem; }
+</style>
+
+<script>
+(function () {
+  var form = document.getElementById('seoWidgetForm');
+  var msgInput = document.getElementById('seoMsgInput');
+  var submitBtn = document.getElementById('seoSubmitBtn');
+  // Pre-fill textarea if prefill local was passed
+  if (typeof prefill !== 'undefined' && prefill) {
+    msgInput.value = prefill;
+  }
+  var btnText = document.querySelector('.seo-widget__btn-text');
+  var btnLoading = document.querySelector('.seo-widget__btn-loading');
+  var inputState = document.getElementById('seoWidgetInput');
+  var resultState = document.getElementById('seoWidgetResult');
+  var errorState = document.getElementById('seoWidgetError');
+
+  var verdictEl = document.getElementById('seoVerdict');
+  var patternEl = document.getElementById('seoPattern');
+  var reframeEl = document.getElementById('seoReframe');
+  var rewriteWrap = document.getElementById('seoRewriteWrap');
+  var rewriteEl = document.getElementById('seoRewrite');
+
+  function showState(name) {
+    inputState.style.display = name === 'input' ? 'block' : 'none';
+    resultState.style.display = name === 'result' ? 'block' : 'none';
+    errorState.style.display = name === 'error' ? 'block' : 'none';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = msgInput.value.trim();
+    if (!msg) return;
+
+    submitBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+
+    fetch('/api/filter/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.error || !data.verdict) throw new Error(data.error || 'No verdict');
+        verdictEl.textContent = data.verdict;
+        patternEl.textContent = data.pattern || '';
+        reframeEl.textContent = data.reframe || '';
+        if (data.rewrite) {
+          rewriteEl.textContent = data.rewrite;
+          rewriteWrap.style.display = 'block';
+        } else {
+          rewriteWrap.style.display = 'none';
+        }
+        showState('result');
+      })
+      .catch(function () {
+        showState('error');
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      });
+  });
+
+  document.getElementById('seoTryAgain').addEventListener('click', function () {
+    msgInput.value = '';
+    showState('input');
+  });
+  document.getElementById('seoErrorRetry').addEventListener('click', function () {
+    showState('input');
+  });
+})();
+</script>

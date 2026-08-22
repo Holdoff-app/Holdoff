@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HoldOff - Notifications</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0f0a1f" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(circle at 20% 10%, rgba(139, 92, 246,.20), transparent 28%), linear-gradient(135deg,#0f0a1f 0%,#1a0d2e 52%,#0d1b2a 100%);
+      color: #f4edff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+    .card {
+      width: min(560px, 100%);
+      background: rgba(15,10,31,.86);
+      border: 1px solid rgba(177,143,255,.30);
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: 0 24px 70px rgba(0,0,0,.45);
+      backdrop-filter: blur(14px);
+    }
+    .pill { display:inline-flex; gap:.45rem; align-items:center; padding:.45rem .75rem; border-radius:999px; background:rgba(139, 92, 246,.16); border:1px solid rgba(139, 92, 246,.35); color:#c9b7ff; font-size:.85rem; font-weight:700; margin-bottom:1rem; }
+    h1 { font-size: clamp(2rem, 8vw, 3.2rem); line-height:.95; letter-spacing:-.055em; margin-bottom: 1rem; background: linear-gradient(135deg,#f8f1ff,#bda7ff 48%,#89b4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    p { color: rgba(244,237,255,.78); line-height: 1.65; margin-bottom: 1rem; }
+    .status { margin: 1rem 0; padding: 1rem; border-radius: 16px; background: rgba(13,27,42,.58); border: 1px solid rgba(137,180,255,.22); color: #dfe8ff; }
+    .actions { display:grid; gap:.75rem; margin-top: 1.1rem; }
+    button, a.button { border:0; border-radius: 14px; padding: 1rem 1.1rem; font-size: 1rem; font-weight: 800; cursor:pointer; text-align:center; text-decoration:none; transition:.18s ease; }
+    .primary { background: linear-gradient(135deg,#8B5CF6,#6D28D9); color:white; box-shadow:0 12px 30px rgba(106,90,205,.28); }
+    .secondary { background: rgba(139, 92, 246,.10); border: 1px solid rgba(139, 92, 246,.35); color:#d7c8ff; }
+    button:hover, a.button:hover { transform: translateY(-1px); }
+    .tiny { font-size: .86rem; color: rgba(244,237,255,.58); margin-top: 1rem; }
+    .ok { color:#8df0b1; font-weight:800; }
+    .warn { color:#ffd36a; font-weight:800; }
+    .bad { color:#ff9da5; font-weight:800; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="pill">🔔 HoldOff alerts</div>
+    <h1>Turn on pause reminders.</h1>
+    <p>Notifications let HoldOff remind you when a Spiral Lock cooldown ends, when it is safer to come back to a message, and when the app needs your attention.</p>
+    <div id="status" class="status">Checking notification support…</div>
+    <div class="actions">
+      <button id="enableBtn" class="primary">Enable notifications</button>
+      <button id="testBtn" class="secondary">Send test notification</button>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <a class="button secondary" href="/settings">⚙️ Settings</a>
+        <a class="button secondary" href="/app">Back to HoldOff</a>
+      </div>
+    </div>
+    <p class="tiny">If your phone shows a browser popup, tap <strong>Allow</strong>. If notifications were previously blocked, open your browser/site settings for shouldiholdoff.live and change Notifications to Allow.</p>
+  </main>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const enableBtn = document.getElementById('enableBtn');
+    const testBtn = document.getElementById('testBtn');
+
+    function setStatus(html) { statusEl.innerHTML = html; }
+
+    async function registerWorker() {
+      if (!('serviceWorker' in navigator)) return null;
+      try {
+        return await navigator.serviceWorker.register('/service-worker.js');
+      } catch (err) {
+        console.warn('Service worker registration failed', err);
+        return null;
+      }
+    }
+
+    function renderPermission() {
+      if (!('Notification' in window)) {
+        setStatus('<span class="bad">Notifications are not supported in this browser.</span> Try Chrome, Samsung Internet, or installed PWA mode.');
+        enableBtn.disabled = true;
+        testBtn.disabled = true;
+        return;
+      }
+      const permission = Notification.permission;
+      if (permission === 'granted') {
+        setStatus('<span class="ok">Notifications are allowed.</span> HoldOff can show pause reminders on this device.');
+      } else if (permission === 'denied') {
+        setStatus('<span class="bad">Notifications are blocked.</span> Open browser/site settings for shouldiholdoff.live and set Notifications to Allow, then return here.');
+      } else {
+        setStatus('<span class="warn">Notifications are not enabled yet.</span> Tap the button below, then tap Allow.');
+      }
+    }
+
+    async function enableNotifications() {
+      if (!('Notification' in window)) return renderPermission();
+      await registerWorker();
+      const result = await Notification.requestPermission();
+      renderPermission();
+      if (result === 'granted') await showTestNotification();
+    }
+
+    async function showTestNotification() {
+      if (!('Notification' in window) || Notification.permission !== 'granted') {
+        renderPermission();
+        return;
+      }
+      const registration = await registerWorker();
+      const title = 'HoldOff notifications are on 💜';
+      const options = {
+        body: 'You’ll be able to get pause reminders when your Spiral Lock cools down.',
+        icon: '/icon.svg',
+        badge: '/icon.svg',
+        tag: 'holdoff-test',
+        data: { url: '/app' }
+      };
+      if (registration && registration.showNotification) {
+        await registration.showNotification(title, options);
+      } else {
+        new Notification(title, options);
+      }
+    }
+
+    enableBtn.addEventListener('click', enableNotifications);
+    testBtn.addEventListener('click', showTestNotification);
+    registerWorker().finally(renderPermission);
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

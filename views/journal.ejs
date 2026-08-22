@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>HoldOff — Journal</title>
+  <style>
+    .journal-entry {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .journal-entry:hover { background: var(--bg-card-hover); border-color: var(--border-light); }
+    .journal-date { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 6px; }
+    .journal-preview { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .journal-mood { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; margin-top: 8px; }
+    .compose-journal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+    .journal-textarea { width: 100%; min-height: 120px; background: transparent; border: none; color: var(--text); font-family: var(--font); font-size: 1rem; resize: none; line-height: 1.6; }
+    .journal-textarea:focus { outline: none; }
+    .journal-textarea::placeholder { color: var(--text-dim); }
+    .prompt-card { background: linear-gradient(135deg, rgba(91,141,239,0.1), rgba(124,92,191,0.1)); border: 1px solid rgba(91,141,239,0.2); border-radius: var(--radius); padding: 14px; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: var(--transition); }
+    .prompt-card:hover { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>📓 Journal</h1>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="search-journal" placeholder="Search..." class="form-input" style="width:140px;padding:8px 12px;font-size:0.85rem;">
+      </div>
+    </div>
+
+    <div class="screen-content">
+      <!-- Journal Prompt -->
+      <div class="prompt-card" onclick="usePrompt(this)">
+        💭 <span id="journal-prompt">What emotion are you avoiding right now?</span>
+      </div>
+
+      <!-- Write Entry -->
+      <div class="compose-journal">
+        <textarea class="journal-textarea" id="journal-text" placeholder="What's on your mind? Be honest..."></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+          <div class="mood-bar" style="flex:1;">
+            <button class="mood-pill" onclick="selectJournalMood(this, '😌')">😌</button>
+            <button class="mood-pill" onclick="selectJournalMood(this, '😰')">😰</button>
+            <button class="mood-pill" onclick="selectJournalMood(this, '😤')">😤</button>
+            <button class="mood-pill" onclick="selectJournalMood(this, '😢')">😢</button>
+            <button class="mood-pill" onclick="selectJournalMood(this, '🌀')">🌀</button>
+            <button class="mood-pill" onclick="selectJournalMood(this, '💜')">💜</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveEntry()" style="margin-left:12px;">Save</button>
+        </div>
+      </div>
+
+      <!-- Entries List -->
+      <h3 style="margin-bottom:12px;color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;">Past Entries</h3>
+      <div id="entries-list">
+        <% if (typeof entries !== 'undefined' && entries.length > 0) { %>
+          <% entries.forEach(function(entry) { %>
+            <div class="journal-entry">
+              <div class="journal-date"><%= new Date(entry.created_at).toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'}) %></div>
+              <div class="journal-preview"><%= entry.content %></div>
+              <% if (entry.mood) { %><div class="journal-mood"><%= entry.mood %></div><% } %>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="empty-state">
+            <div class="empty-icon">📝</div>
+            <div class="empty-text">Your journal is empty.<br>Start writing — it's just for you.</div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <%- include('partials/bottom_nav') %>
+  </div>
+
+  <script>
+    let journalMood = '';
+    const prompts = [
+      "What emotion are you avoiding right now?",
+      "What would you say if you knew they'd never read it?",
+      "What pattern do you keep repeating?",
+      "When did you last feel truly at peace?",
+      "What are you afraid will happen if you don't text back?",
+      "What would your future self thank you for today?",
+      "What boundary did you hold or break this week?"
+    ];
+    document.getElementById('journal-prompt').textContent = prompts[Math.floor(Math.random() * prompts.length)];
+
+    function usePrompt(el) {
+      const prompt = el.querySelector('span').textContent;
+      document.getElementById('journal-text').value = prompt + '\n\n';
+      document.getElementById('journal-text').focus();
+    }
+
+    function selectJournalMood(el, mood) {
+      document.querySelectorAll('.compose-journal .mood-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      journalMood = mood;
+    }
+
+    async function saveEntry() {
+      const content = document.getElementById('journal-text').value.trim();
+      if (!content) return;
+      try {
+        await fetch('/api/journal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, mood: journalMood })
+        });
+        location.reload();
+      } catch(e) {
+        alert('Could not save. Please try again.');
+      }
+    }
+
+    document.getElementById('search-journal').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.journal-entry').forEach(el => {
+        el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

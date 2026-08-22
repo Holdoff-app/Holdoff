@@ -1,0 +1,214 @@
+/* =========================================
+   HOLDOFF — PWA / Safe-Area / Install Prompt
+   Applied on /filter (standalone mode aware).
+   ========================================= */
+
+@keyframes slideUp {
+  from {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Nav install icon button */
+.filter-nav__install {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9A8F8A;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.filter-nav__install:hover {
+  color: #C97B5D;
+}
+
+/* Offline notice */
+.filter-sub--offline {
+  color: #9E948E;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border-left: 2px solid #C97B5D;
+  padding-left: 0.875rem;
+}
+
+/* Safe-area insets for notch + home indicator */
+.filter-nav {
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
+.filter-main {
+  /* Extra top padding absorbs notch when nav is fixed */
+  padding-bottom: max(3rem, calc(3rem + env(safe-area-inset-bottom)));
+}
+
+.filter-result-screen,
+.filter-paywall-screen {
+  padding-bottom: max(4rem, calc(4rem + env(safe-area-inset-bottom)));
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
+/* =========================================
+   iOS Install Prompt — bottom sheet
+   ========================================= */
+.pwa-install-sheet {
+  position: fixed;
+  bottom: max(1rem, calc(1rem + env(safe-area-inset-bottom)));
+  left: max(1rem, env(safe-area-inset-left));
+  right: max(1rem, env(safe-area-inset-right));
+  z-index: 9999;
+
+  background: #1A1714;
+  border: 1px solid #2E2924;
+  border-radius: 16px;
+  padding: 1.25rem 1rem 1.25rem 1.25rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+
+  /* slide-up animation */
+  transform: translateY(120%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.pwa-install-sheet--visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.pwa-install-sheet__icon img {
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.pwa-install-sheet__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #9E948E;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.pwa-install-sheet__body {
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: 0.875rem;
+  color: #F2EDE5;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.pwa-install-sheet__body strong {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.pwa-install-sheet__steps {
+  display: none; /* hidden — body text is sufficient; shows on wider breakpoints */
+}
+
+@media (min-width: 380px) {
+  .pwa-install-sheet {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem 1.25rem 1.25rem;
+  }
+
+  .pwa-install-sheet__steps {
+    display: block;
+    font-size: 0.8rem;
+    color: #9E948E;
+    margin-top: 0.25rem;
+  }
+
+  .pwa-install-sheet__share {
+    display: inline-block;
+    background: #2E2924;
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .pwa-install-sheet__icon {
+    display: none;
+  }
+}
+
+/* Standalone mode — extra bottom padding for home indicator */
+@media all and (display-mode: standalone) {
+  .filter-main {
+    padding-bottom: max(5rem, calc(5rem + env(safe-area-inset-bottom)));
+  }
+
+  .filter-result-screen,
+  .filter-paywall-screen {
+    padding-bottom: max(5rem, calc(5rem + env(safe-area-inset-bottom)));
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Android install prompt — in-result-screen affordance
+   Shown as a subtle link in the result footer after a successful verdict.
+   ───────────────────────────────────────────── */
+.pwa-install-banner {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--filter-muted);
+}
+
+.pwa-install-banner a {
+  color: var(--filter-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────
+   Cached verdict badge — shown when result is from IndexedDB
+   ───────────────────────────────────────────── */
+.verdict-offline-cached {
+  position: relative;
+}
+
+.verdict-offline-cached::before {
+  content: 'cached';
+  display: inline-block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--filter-muted);
+  background: rgba(158, 148, 142, 0.12);
+  border: 1px solid var(--filter-border);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  margin-bottom: 0.25rem;
+}
+
+.filter-verdict-wrap--cached {
+  opacity: 0.85;
+}

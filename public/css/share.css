@@ -1,0 +1,134 @@
+/**
+ * Share card page styles — viral share card for HoldOff streaks.
+ * Brand: warm terracotta (#C97B5D), cream (#FAF6F0), near-black (#2A2522).
+ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #1A1410;
+  color: #FAF6F0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Nav */
+.share-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2rem;
+}
+.share-nav__wordmark {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #C97B5D;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+.share-nav__wordmark:hover { opacity: 0.8; }
+
+/* Main */
+.share-main {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card */
+.share-card {
+  background: #2A2522;
+  border: 1px solid rgba(250, 246, 240, 0.08);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* Streak number */
+.share-streak-number {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 7rem;
+  font-weight: 700;
+  color: #C97B5D;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.share-streak-headline {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #FAF6F0;
+  margin-top: 0.25rem;
+  opacity: 0.85;
+}
+
+/* Pattern context */
+.share-pattern {
+  font-size: 0.875rem;
+  color: rgba(250, 246, 240, 0.5);
+  margin-top: 1.5rem;
+  line-height: 1.5;
+}
+
+/* Curated reframe line — anonymized insight shown on the card */
+.share-reframe {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #C97B5D;
+  opacity: 0.9;
+  margin-top: 1.25rem;
+  line-height: 1.6;
+  padding: 0 0.5rem;
+}
+
+/* Divider */
+.share-divider {
+  width: 48px;
+  height: 1px;
+  background: rgba(250, 246, 240, 0.15);
+  margin: 2rem auto;
+}
+
+/* Tagline */
+.share-tagline {
+  font-size: 0.9rem;
+  color: rgba(250, 246, 240, 0.6);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* CTA button */
+.share-cta-btn {
+  display: inline-block;
+  background: #C97B5D;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 0.875rem 2rem;
+  transition: background 0.15s;
+}
+.share-cta-btn:hover { background: #b06040; }
+
+/* Footer */
+.share-footer {
+  margin-top: 3rem;
+  font-size: 0.75rem;
+  color: rgba(250, 246, 240, 0.25);
+}

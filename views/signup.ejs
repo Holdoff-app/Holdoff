@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-client-id" content="<%= typeof googleClientId !== 'undefined' ? googleClientId : '' %>">
+  <title>HoldOff — Your Story</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a0033 0%, #2d1b4e 50%, #1a1a3e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(20, 10, 40, 0.8);
+      border: 1px solid rgba(200, 150, 255, 0.2);
+      border-radius: 12px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      color: #d4af9a;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .logo p {
+      color: rgba(200, 150, 255, 0.6);
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    /* Choice Screen Styles */
+    .choice-screen {
+      text-align: center;
+    }
+
+    .choice-screen h1 {
+      color: #e8dcc8;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .choice-screen p {
+      color: rgba(200, 150, 255, 0.7);
+      font-size: 14px;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .choice-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .choice-btn {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(100, 70, 150, 0.3) 0%, rgba(80, 50, 130, 0.3) 100%);
+      border: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 8px;
+      color: #e8dcc8;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .choice-btn:hover {
+      background: linear-gradient(135deg, rgba(120, 80, 170, 0.4) 0%, rgba(100, 60, 150, 0.4) 100%);
+      border-color: rgba(200, 150, 255, 0.5);
+      box-shadow: 0 4px 16px rgba(139, 107, 183, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .choice-btn strong {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .choice-btn span {
+      color: rgba(200, 150, 255, 0.6);
+      font-size: 0.85em;
+    }
+
+    /* Signup Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: rgba(200, 150, 255, 0.8);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(60, 40, 100, 0.4);
+      border: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 6px;
+      color: #e8dcc8;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      background: rgba(60, 40, 100, 0.6);
+      border-color: rgba(200, 150, 255, 0.6);
+      box-shadow: 0 0 12px rgba(200, 150, 255, 0.2);
+    }
+
+    input::placeholder {
+      color: rgba(200, 150, 255, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b6bb7 0%, #6b4fa8 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #9b7bc7 0%, #7b5fb8 100%);
+      box-shadow: 0 4px 16px rgba(139, 107, 183, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(60, 40, 100, 0.4);
+      color: #d4af9a;
+      border: 1px solid rgba(200, 150, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(60, 40, 100, 0.6);
+      border-color: rgba(200, 150, 255, 0.5);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8b6bb7 0%, #6b4fa8 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #9b7bc7 0%, #7b5fb8 100%);
+      box-shadow: 0 4px 16px rgba(139, 107, 183, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: rgba(200, 150, 255, 0.6);
+    }
+
+    .login-link a {
+      color: #d4af9a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: #e8dcc8;
+    }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .subtext {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(200, 150, 255, 0.5);
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: #d4af9a;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 20px;
+      padding: 0;
+      transition: color 0.3s ease;
+    }
+
+    .btn-back:hover {
+      color: #e8dcc8;
+    }
+
+    /* Hidden by default */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>HoldOff</h1>
+      <p>Pause. Understand. Respond Better.</p>
+    </div>
+
+    <!-- Choice Screen -->
+    <div class="choice-screen" id="choiceScreen">
+      <h1>What's Your Story?</h1>
+      <p>HoldOff starts with understanding your spiral. Choose your path:</p>
+      <div class="choice-buttons">
+        <button class="choice-btn" onclick="goToStory()">
+          <strong>Experience Stacy's Story</strong>
+          <span>Walk through a real moment of realization with custom names</span>
+        </button>
+        <button class="choice-btn" onclick="goToSignup()">
+          <strong>Create Account</strong>
+          <span>Sign up to access full features and save your insights</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="hidden">
+      <button type="button" class="btn-back" onclick="backToChoice()">← Back</button>
+
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="What should we call you?" required>
+        <div class="error" id="nameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        <div class="error" id="emailError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div style="position:relative;">
+          <input type="password" id="password" name="password" placeholder="••••••••" required oninput="checkPwStrength()" style="padding-right:3rem;">
+          <button type="button" onclick="togglePw()" id="togglePwBtn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(200,150,255,0.6);cursor:pointer;font-size:1.1rem;padding:0;" title="Show password">👁</button>
+        </div>
+        <div id="pwStrength" style="margin-top:6px;height:4px;border-radius:2px;background:rgba(200,150,255,0.1);overflow:hidden;"><div id="pwBar" style="height:100%;width:0;border-radius:2px;transition:all .3s;"></div></div>
+        <div id="pwLabel" style="font-size:11px;color:rgba(200,150,255,0.5);margin-top:4px;"></div>
+        <div class="error" id="passwordError"></div>
+      </div>
+
+      <button type="submit" class="submit-btn">Create Account</button>
+
+      <div class="login-link">
+        Already have an account? <a href="/login">Sign In</a>
+      </div>
+    </form>
+
+    <div class="subtext hidden" id="subtextForm">
+      By signing up, you agree to our Terms of Service and Privacy Policy.
+      <br><br>
+      <strong>New subscribers unlock the full story experience.</strong>
+    </div>
+  </div>
+
+  <script>
+    function goToStory() {
+      window.location.href = '/story-preview';
+    }
+
+    function goToSignup() {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+      document.getElementById('subtextForm').classList.remove('hidden');
+    }
+
+    function backToChoice() {
+      document.getElementById('choiceScreen').classList.remove('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('subtextForm').classList.add('hidden');
+    }
+
+    const form = document.getElementById('signupForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Clear errors
+      document.getElementById('nameError').classList.remove('show');
+      document.getElementById('emailError').classList.remove('show');
+      document.getElementById('passwordError').classList.remove('show');
+
+      let hasError = false;
+
+      if (!name) {
+        document.getElementById('nameError').textContent = 'Name is required';
+        document.getElementById('nameError').classList.add('show');
+        hasError = true;
+      }
+
+      if (!email) {
+        document.getElementById('emailError').textContent = 'Email is required';
+        document.getElementById('emailError').classList.add('show');
+        hasError = true;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailError').textContent = 'Invalid email format';
+        document.getElementById('emailError').classList.add('show');
+        hasError = true;
+      }
+
+      if (!password || password.length < 8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 8 characters with 1 uppercase letter and 1 number';
+        document.getElementById('passwordError').classList.add('show');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (data.field === 'email') {
+            document.getElementById('emailError').textContent = data.message || 'Email already in use';
+            document.getElementById('emailError').classList.add('show');
+          } else {
+            alert(data.message || 'Signup failed');
+          }
+          return;
+        }
+
+        // Signup successful — redirect to dashboard
+        window.location.href = '/dashboard';
+      } catch (error) {
+        alert('Error during signup. Please try again.');
+        console.error(error);
+      }
+    });
+
+    function togglePw() {
+      const pw = document.getElementById("password");
+      const btn = document.getElementById("togglePwBtn");
+      if (pw.type === "password") { pw.type = "text"; btn.textContent = "🙈"; btn.title = "Hide password"; }
+      else { pw.type = "password"; btn.textContent = "👁"; btn.title = "Show password"; }
+    }
+    function checkPwStrength() {
+      const pw = document.getElementById("password").value;
+      const bar = document.getElementById("pwBar");
+      const label = document.getElementById("pwLabel");
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        { w: "0%", c: "#666", t: "" },
+        { w: "20%", c: "#f87171", t: "Weak" },
+        { w: "40%", c: "#fb923c", t: "Fair" },
+        { w: "60%", c: "#facc15", t: "Good" },
+        { w: "80%", c: "#a78bfa", t: "Strong" },
+        { w: "100%", c: "#34d399", t: "Excellent" }
+      ];
+      const l = levels[score];
+      bar.style.width = l.w; bar.style.background = l.c; label.textContent = l.t; label.style.color = l.c;
+    }
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

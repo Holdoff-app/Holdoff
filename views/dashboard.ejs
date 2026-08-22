@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard — HoldOff</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0E0C0B">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/filter.css">
+  <style>
+    body{background:#0E0C0B;color:#F2EDE5;font-family:'DM Sans',sans-serif;min-height:100vh;}
+    .dnav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid #2E2924;position:sticky;top:0;background:#0E0C0B;z-index:10;}
+    .dnav a{color:#9E948E;text-decoration:none;font-size:.88rem;}
+    .dnav__title{font-family:'Fraunces',serif;font-size:1.05rem;color:#F2EDE5;}
+    .dmain{max-width:480px;margin:0 auto;padding:1.25rem 1.25rem 5.5rem;}
+    .greeting{margin-bottom:1.25rem;}
+    .greeting h1{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;line-height:1.2;}
+    .greeting p{font-size:.85rem;color:#9E948E;margin-top:.35rem;}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.1rem;}
+    .stat{background:#1A1714;border:1px solid #2E2924;border-radius:12px;padding:1.1rem;text-align:center;}
+    .stat__n{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;line-height:1;}
+    .stat__n--accent{color:#C97B5D;}
+    .stat__n--streak::after{content:'🔥';font-size:1.2rem;margin-left:3px;}
+    .stat__l{font-size:.7rem;color:#9E948E;margin-top:.3rem;text-transform:uppercase;letter-spacing:.05em;}
+    .card{background:#1A1714;border:1px solid #2E2924;border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+    .card__title{font-family:'Fraunces',serif;font-size:.95rem;margin-bottom:.85rem;color:#F2EDE5;}
+    .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;}
+    .qa-btn{display:flex;flex-direction:column;align-items:center;gap:.4rem;padding:.9rem .5rem;background:#1A1714;border:1px solid #2E2924;border-radius:12px;text-decoration:none;color:#F2EDE5;font-size:.8rem;font-weight:500;transition:.15s;text-align:center;}
+    .qa-btn:hover{border-color:#C97B5D;color:#C97B5D;}
+    .qa-btn__icon{font-size:1.5rem;line-height:1;}
+    .qa-btn--primary{border-color:#C97B5D;background:rgba(201,123,93,.08);}
+    .qa-btn--primary:hover{background:rgba(201,123,93,.15);}
+    .verdict-item{display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid #2E2924;}
+    .verdict-item:last-child{border:none;}
+    .v-badge{font-size:.65rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .55rem;border-radius:4px;flex-shrink:0;}
+    .v-badge--HOLD,.v-badge--DO_NOT_SEND,.v-badge--WAIT{background:rgba(244,67,54,.12);color:#F44336;}
+    .v-badge--SEND{background:rgba(76,175,80,.12);color:#4CAF50;}
+    .v-badge--REWRITE{background:rgba(255,152,0,.12);color:#FF9800;}
+    .v-text{font-size:.85rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9E948E;}
+    .v-time{font-size:.72rem;color:#9E948E;flex-shrink:0;}
+    .onboard-card{background:linear-gradient(135deg,rgba(201,123,93,.1),rgba(155,79,50,.05));border:1px solid rgba(201,123,93,.2);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+    .onboard-card h3{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.75rem;}
+    .onboard-step{display:flex;align-items:center;gap:.65rem;padding:.5rem 0;font-size:.85rem;}
+    .onboard-step__check{width:20px;height:20px;border-radius:50%;border:2px solid #2E2924;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.65rem;}
+    .onboard-step__check--done{background:#C97B5D;border-color:#C97B5D;color:#fff;}
+    .spinner{width:20px;height:20px;border:2px solid #2E2924;border-top-color:#C97B5D;border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .bnav{position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:.45rem 0 max(.45rem,env(safe-area-inset-bottom));}
+    .bnav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;transition:.15s;}
+    .bnav a.on{color:#C97B5D;}
+    .bnav a span:first-child{font-size:1.15rem;line-height:1;}
+  </style>
+</head>
+<body>
+  <nav class="dnav">
+    <a href="/">Home</a>
+    <span class="dnav__title">Dashboard</span>
+    <a href="/profile">Profile</a>
+  </nav>
+  <main class="dmain" id="dmain"><div class="spinner"></div></main>
+  <nav class="bnav">
+    <a href="/compose"><span>💬</span><span>Compose</span></a>
+    <a href="/filter"><span>🛡️</span><span>Filter</span></a>
+    <a href="/journal"><span>📓</span><span>Journal</span></a>
+    <a href="/community"><span>👥</span><span>Community</span></a>
+    <a href="/profile"><span>👤</span><span>Profile</span></a>
+  </nav>
+  <script>
+    function timeAgo(d){
+      const s=Math.floor((Date.now()-new Date(d))/1000);
+      if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';
+      if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';
+    }
+    async function init(){
+      const main=document.getElementById('dmain');
+      try{
+        const [mr,hr,qr]=await Promise.all([
+          fetch('/api/auth/me').then(r=>r.ok?r.json():{}).catch(()=>({})),
+          fetch('/api/verdict/history?limit=5').then(r=>r.ok?r.json():{verdicts:[]}).catch(()=>({verdicts:[]})),
+          fetch('/api/quiz/result').then(r=>r.ok?r.json():{}).catch(()=>({})),
+        ]);
+        const me=mr;const verdicts=hr.verdicts||[];const profile=qr.result||null;
+        const streak=parseInt(localStorage.getItem('holdoff_streak')||'0',10);
+        const displayName=me?.email?me.email.split('@')[0]:'there';
+        const holds=verdicts.filter(v=>['HOLD','DO_NOT_SEND','WAIT'].includes(v.verdict)).length;
+        const hour=new Date().getHours();
+        const greet=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+
+        const onboardSteps=[
+          {label:'Get a verdict',done:verdicts.length>0,href:'/filter'},
+          {label:'Take the attachment quiz',done:!!profile?.primaryStyle,href:'/quiz'},
+          {label:'Write a journal entry',done:false,href:'/journal'},
+          {label:'Try the 5-Day Detox',done:false,href:'/detox'},
+        ];
+        const allDone=onboardSteps.every(s=>s.done);
+
+        let h=`<div class="greeting"><h1>${greet}, ${displayName} 👋</h1><p>Here's how you're doing.</p></div>`;
+
+        h+=`<div class="stats-grid">
+          <div class="stat"><div class="stat__n stat__n--streak">${streak}</div><div class="stat__l">Day Streak</div></div>
+          <div class="stat"><div class="stat__n stat__n--accent">${holds}</div><div class="stat__l">Texts Held</div></div>
+          <div class="stat"><div class="stat__n">${verdicts.length}</div><div class="stat__l">Verdicts</div></div>
+          <div class="stat"><div class="stat__n">${profile?.primaryStyle?'✓':'—'}</div><div class="stat__l">Style Known</div></div>
+        </div>`;
+
+        h+=`<div class="quick-actions">
+          <a href="/compose" class="qa-btn qa-btn--primary"><span class="qa-btn__icon">💬</span>Compose Message</a>
+          <a href="/filter" class="qa-btn"><span class="qa-btn__icon">🛡️</span>Get Verdict</a>
+          <a href="/journal" class="qa-btn"><span class="qa-btn__icon">📓</span>Journal</a>
+          <a href="/quiz" class="qa-btn"><span class="qa-btn__icon">🧠</span>Quiz</a>
+          <a href="/detox" class="qa-btn"><span class="qa-btn__icon">🌿</span>Detox</a>
+          <a href="/history" class="qa-btn"><span class="qa-btn__icon">📋</span>History</a>
+        </div>`;
+
+        if(!allDone){
+          h+=`<div class="onboard-card"><h3>Getting started</h3>`;
+          onboardSteps.forEach(s=>{
+            h+=`<a href="${s.href}" class="onboard-step" style="text-decoration:none;color:inherit;">
+              <div class="onboard-step__check ${s.done?'onboard-step__check--done':''}">${s.done?'✓':''}</div>
+              <span style="${s.done?'text-decoration:line-through;color:#9E948E':''}">${s.label}</span>
+            </a>`;
+          });
+          h+='</div>';
+        }
+
+        if(verdicts.length){
+          h+=`<div class="card"><div class="card__title">Recent Verdicts</div>`;
+          verdicts.slice(0,5).forEach(v=>{
+            h+=`<div class="verdict-item">
+              <span class="v-badge v-badge--${v.verdict}">${v.verdict}</span>
+              <span class="v-text">${(v.feedback_snippet||v.message_text||'').slice(0,60)}</span>
+              <span class="v-time">${timeAgo(v.created_at||v.created_date)}</span>
+            </div>`;
+          });
+          h+=`<a href="/history" style="display:block;text-align:center;margin-top:.75rem;font-size:.82rem;color:#C97B5D;text-decoration:none;">View all →</a></div>`;
+        }
+
+        main.innerHTML=h;
+      }catch(e){
+        main.innerHTML='<div style="text-align:center;padding:3rem;color:#9E948E">Could not load dashboard. <a href="/filter" style="color:#C97B5D">Go to Filter</a></div>';
+      }
+    }
+    init();
+  </script>
+</body>
+</html>

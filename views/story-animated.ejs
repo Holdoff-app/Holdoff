@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Story - HoldOff</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0a1a 0%, #1a0f2e 50%, #0f1a2e 100%);
+            min-height: 100vh;
+            display: block;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .story-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .story-scene {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1.5s ease-out forwards;
+            padding: 40px;
+            background: rgba(30, 15, 60, 0.6);
+            border: 1px solid rgba(200, 150, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scene-1 { animation-delay: 0.5s; }
+        .scene-2 { animation-delay: 4s; }
+        .scene-3 { animation-delay: 8s; }
+        .scene-4 { animation-delay: 12s; }
+
+        .character-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .character-image {
+            height: 180px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(139, 107, 183, 0.3);
+        }
+
+        .scene-narration p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #d4c4f0;
+            margin-bottom: 16px;
+        }
+
+        .scene-narration p:last-child {
+            margin-bottom: 0;
+        }
+
+        .strong-text {
+            color: #e8dcc8;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #b8a0ff;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #8b6bb7 0%, #6b4fa8 100%);
+            color: white;
+            border: 1px solid rgba(200, 150, 255, 0.3);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #9b7bc7 0%, #7b5fb8 100%);
+            box-shadow: 0 4px 12px rgba(139, 107, 183, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .personalization-button {
+            background: linear-gradient(135deg, #9b7bc7 0%, #7b5fb8 100%);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a0033 0%, #2d1b4e 50%, #1a1a3e 100%);
+            border: 2px solid rgba(200, 150, 255, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #d0c4e8;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(60, 40, 100, 0.4);
+            border: 1px solid rgba(200, 150, 255, 0.3);
+            border-radius: 6px;
+            color: #e0d4ff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: rgba(60, 40, 100, 0.6);
+            border-color: rgba(200, 150, 255, 0.6);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(200, 150, 255, 0.4);
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-buttons button {
+            padding: 10px;
+        }
+
+        .modal-buttons .cancel-btn {
+            background: rgba(107, 94, 255, 0.2);
+            border: 1px solid rgba(200, 150, 255, 0.3);
+            color: #d0c4e8;
+        }
+
+        .modal-buttons .cancel-btn:hover {
+            background: rgba(107, 94, 255, 0.3);
+        }
+
+        .back-link {
+            color: rgba(200, 150, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            color: #d4c4f0;
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .story-scene {
+                padding: 25px;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="story-container">
+        <!-- Scene 1: Fearful-Avoidant Attachment -->
+        <div class="story-scene scene-1">
+            <div class="character-container">
+                <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
+            </div>
+            <div class="scene-narration">
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">I have fearful-avoidant attachment.</h3>
+                <p>"That means I desperately want connection—but the moment someone gets close, my nervous system screams danger. So I push them away. Then the moment they're gone, the loneliness is unbearable and I pull them back."</p>
+                <p>"It's like being hungry but terrified of food. Like drowning and being afraid of water at the same time."</p>
+            </div>
+        </div>
+
+        <!-- Scene 2: The Spiral -->
+        <div class="story-scene scene-2">
+            <div class="character-container">
+                <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
+            </div>
+            <div class="scene-narration">
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">The Spiral is Always the Same</h3>
+                <p>"A text that says 'I'm busy today'—I read it as 'They don't care. They're leaving. You're not worth their time.'"</p>
+                <p>"My body floods with cortisol and adrenaline. In that state, I send messages at 2 AM. Demand reassurance in ways that push people further away."</p>
+                <p>"The spiral is: Misinterpretation → Fear → Flooding → Reactive behavior → Damage → Shame → Isolation."</p>
+                <p>"And here's the part nobody talks about: <span class="strong-text">Once you're in it, it's almost impossible to see clearly.</span>"</p>
+            </div>
+        </div>
+
+        <!-- Scene 3: Addiction Made It Worse -->
+        <div class="story-scene scene-3">
+            <div class="character-container">
+                <img src="/assets/story-characters/stacy-cartoon-v2.png" alt="Stacy" class="character-image">
+            </div>
+            <div class="scene-narration">
+                <h3 style="color: #b8a0ff; font-size: 1.4rem; margin-bottom: 15px;">I Struggled With Addiction</h3>
+                <p>"For me, addiction was one way I coped with the push-pull prison. Using numbed the panic. It quieted the alarm in my nervous system."</p>
+                <p>"It was a Band-Aid on an attachment wound."</p>
+                <p>"When you're fearful-avoidant AND struggling with addiction, the spirals get worse. You're already dysregulated. And when you crash, you crash harder."</p>
+                <p>"I did 7 months. But here's what I learned: <span class="strong-text">Whether you're in recovery or not, the real problem is the same. It's the spiral itself.</span>"</p>
+            </div>
+        </div>
+
+        <!-- Scene 4: Why HoldOff Exists -->
+        <div class="story-scene scene-4">
+            <h3>The Moment That Changes Everything</h3>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">The spiral happens FAST. In seconds, your nervous system goes from baseline to catastrophe.</p>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">But there's a tiny window—maybe 30 seconds—where you can still choose your response.</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;"><span class="strong-text">That's what HoldOff is built for.</span></p>
+            <p style="color: #d4c4f0; margin-bottom: 15px;">You're about to send: "I can't believe you would treat me like this. You never cared about me. I'm done."</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;">Instead, you paste it into HoldOff. Sadie reads it and asks: "Is this fear talking, or truth? What actually happened? Because I'm seeing your nervous system's story, not the facts. What if you told them what you actually need instead?"</p>
+            <p style="color: #d4c4f0; margin-bottom: 25px;"><span class="strong-text">That's the pause that changes everything.</span> Not judgment. Not shame. Just clarity—at the exact moment you need it most.</p>
+            
+            <div class="button-group">
+                <button onclick="goToFilter()">Try the Verdict Filter →</button>
+                <button class="personalization-button" onclick="openPersonalization()">🧢 Make This Personal</button>
+            </div>
+            
+            <a href="/signup" class="back-link">← Back</a>
+        </div>
+    </div>
+
+    <!-- Personalization Modal -->
+    <div id="personalizationModal" class="modal">
+        <div class="modal-content">
+            <h3>Let's Make This Personal</h3>
+            <div class="form-group">
+                <label>What should we call you in this story?</label>
+                <input type="text" id="userNameInput" placeholder="Your Name">
+            </div>
+            
+            <div class="form-group">
+                <label>And who is this story about?</label>
+                <input type="text" id="poiNameInput" placeholder="Their Name (Person of Interest)">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closePersonalization()">Cancel</button>
+                <button onclick="submitPersonalization()">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goToFilter() {
+            window.location.href = '/filter';
+        }
+
+        function openPersonalization() {
+            document.getElementById('personalizationModal').classList.add('active');
+        }
+
+        function closePersonalization() {
+            document.getElementById('personalizationModal').classList.remove('active');
+        }
+
+        function submitPersonalization() {
+            const userName = document.getElementById('userNameInput').value.trim();
+            const poiName = document.getElementById('poiNameInput').value.trim();
+
+            if (!userName || !poiName) {
+                alert('Please enter both names to personalize your story');
+                return;
+            }
+
+            // Store in sessionStorage and redirect
+            sessionStorage.setItem('userName', userName);
+            sessionStorage.setItem('poiName', poiName);
+            window.location.href = '/story-experience?mode=personalized';
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.getElementById('personalizationModal').classList.contains('active')) {
+                submitPersonalization();
+            }
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePersonalization();
+            }
+        });
+    </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

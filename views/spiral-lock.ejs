@@ -1,0 +1,90 @@
+<style>
+  .spiral-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    z-index: 9999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  .spiral-overlay h2 { color: var(--accent); }
+  .spiral-timer { font-size: 3rem; font-weight: bold; margin: 1rem 0; }
+  .spiral-quiz { display: none; margin-top: 2rem; }
+</style>
+<div class="spiral-overlay" id="spiralOverlay" style="display:none;">
+  <h2>Spiral Lock Active</h2>
+  <p>You've sent 3+ messages without a reply. To protect your peace, we've paused messaging.</p>
+  <div class="spiral-timer" id="spiralTimer">05:00</div>
+  <button id="unlockQuizBtn" class="btn">Take Reappraisal Quiz to Unlock</button>
+  
+  <div class="spiral-quiz" id="spiralQuiz">
+    <p>1. Is it possible they are simply busy right now?</p>
+    <input type="text" id="q1">
+    <p>2. How will double-texting make you feel 5 minutes from now?</p>
+    <input type="text" id="q2">
+    <p>3. What is a healthier way to self-soothe right now?</p>
+    <input type="text" id="q3">
+    <button id="submitQuizBtn" class="btn">Submit & Unlock</button>
+  </div>
+</div>
+<script>
+(function () {
+  const overlay = document.getElementById('spiralOverlay');
+  const timer = document.getElementById('spiralTimer');
+  const quizBtn = document.getElementById('unlockQuizBtn');
+  const quiz = document.getElementById('spiralQuiz');
+  const submit = document.getElementById('submitQuizBtn');
+  const threadId = new URLSearchParams(window.location.search).get('thread_id') || 'default';
+
+  async function unlock(method, answers) {
+    await fetch('/api/spiral-lock/unlock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method, answers, thread_id: threadId }),
+    }).catch(function () {});
+    overlay.style.display = 'none';
+  }
+
+  function showTimerComplete() {
+    timer.textContent = '00:00';
+    quizBtn.textContent = 'Five minutes passed — choose your next step';
+    quizBtn.disabled = true;
+    const actions = document.createElement('div');
+    actions.className = 'spiral-actions';
+    actions.innerHTML = '<button class="btn" id="timerUnlockBtn">Unlock now</button> <a class="btn" href="/filter">Rewrite instead</a>';
+    quizBtn.insertAdjacentElement('afterend', actions);
+    document.getElementById('timerUnlockBtn').addEventListener('click', function () { unlock('timer_wait'); });
+  }
+
+  function startCountdown(remainingMs) {
+    let remaining = Math.max(0, Math.ceil(remainingMs / 1000));
+    const tick = setInterval(function () {
+      const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const seconds = String(remaining % 60).padStart(2, '0');
+      timer.textContent = minutes + ':' + seconds;
+      if (remaining <= 0) {
+        clearInterval(tick);
+        showTimerComplete();
+      }
+      remaining -= 1;
+    }, 1000);
+  }
+
+  quizBtn.addEventListener('click', function () { quiz.style.display = 'block'; });
+  submit.addEventListener('click', function () {
+    unlock('journal_entry', [q1.value, q2.value, q3.value]);
+  });
+
+  fetch('/api/spiral-lock/status?thread_id=' + encodeURIComponent(threadId))
+    .then(function (r) { return r.json(); })
+    .then(function (status) {
+      if (!status.locked) return;
+      overlay.style.display = 'flex';
+      startCountdown(status.remainingMs || 0);
+    })
+    .catch(function () {});
+})();
+</script>

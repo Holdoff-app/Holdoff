@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>HoldOff — Personality Profile</title>
+  <style>
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-size:0.9rem; margin-bottom:16px; }
+    .back-link:hover { color:var(--primary-light); }
+    .profile-section { margin-bottom:24px; }
+    .section-title { font-size:0.95rem; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .tag-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    .tag-option {
+      padding:8px 16px; border-radius:var(--radius-full); font-size:0.85rem; font-weight:500;
+      border:1px solid var(--border); color:var(--text-muted); cursor:pointer; transition:var(--transition);
+      background:transparent;
+    }
+    .tag-option:hover { border-color:var(--primary); color:var(--primary-light); }
+    .tag-option.selected { background:var(--primary-glow); color:var(--primary); border-color:var(--primary); }
+    .save-bar { position:sticky; bottom:70px; padding:16px 0; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>🧬 Personality Profile</h1>
+    </div>
+    <div class="screen-content">
+      <a href="/account" class="back-link">← Back to Account</a>
+
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">
+        HoldOff uses your profile to personalize AI verdicts and insights. Tap to select what fits you.
+      </p>
+
+      <div class="profile-section">
+        <div class="section-title">💔 Attachment Style</div>
+        <div class="tag-grid" data-group="attachment">
+          <button class="tag-option selected" data-val="Fearful-Avoidant">Fearful-Avoidant</button>
+          <button class="tag-option" data-val="Anxious-Preoccupied">Anxious-Preoccupied</button>
+          <button class="tag-option" data-val="Dismissive-Avoidant">Dismissive-Avoidant</button>
+          <button class="tag-option" data-val="Secure">Secure</button>
+          <button class="tag-option" data-val="Not Sure">Not Sure</button>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-title">🗣️ Communication Style</div>
+        <div class="tag-grid" data-group="communication">
+          <button class="tag-option selected" data-val="Passive">Passive</button>
+          <button class="tag-option" data-val="Aggressive">Aggressive</button>
+          <button class="tag-option" data-val="Passive-Aggressive">Passive-Aggressive</button>
+          <button class="tag-option" data-val="Assertive">Assertive</button>
+          <button class="tag-option" data-val="Confronter">Confronter</button>
+          <button class="tag-option" data-val="Avoidant">Avoidant</button>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-title">😰 Core Fears</div>
+        <div class="tag-grid" data-group="fears" data-multi="true">
+          <button class="tag-option selected" data-val="Abandonment">Abandonment</button>
+          <button class="tag-option" data-val="Rejection">Rejection</button>
+          <button class="tag-option" data-val="Engulfment">Engulfment</button>
+          <button class="tag-option" data-val="Not Being Enough">Not Being Enough</button>
+          <button class="tag-option" data-val="Vulnerability">Vulnerability</button>
+          <button class="tag-option" data-val="Losing Control">Losing Control</button>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-title">💕 Love Language</div>
+        <div class="tag-grid" data-group="love" data-multi="true">
+          <button class="tag-option selected" data-val="Words of Affirmation">Words of Affirmation</button>
+          <button class="tag-option" data-val="Acts of Service">Acts of Service</button>
+          <button class="tag-option" data-val="Quality Time">Quality Time</button>
+          <button class="tag-option" data-val="Physical Touch">Physical Touch</button>
+          <button class="tag-option" data-val="Gifts">Gifts</button>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-title">🔁 Spiral Triggers</div>
+        <div class="tag-grid" data-group="triggers" data-multi="true">
+          <button class="tag-option" data-val="Late Replies">Late Replies</button>
+          <button class="tag-option" data-val="Seen No Reply">Seen No Reply</button>
+          <button class="tag-option" data-val="Short Texts">Short Texts</button>
+          <button class="tag-option" data-val="Social Media Activity">Social Media Activity</button>
+          <button class="tag-option" data-val="Canceled Plans">Canceled Plans</button>
+          <button class="tag-option" data-val="Mixed Signals">Mixed Signals</button>
+          <button class="tag-option" data-val="Late Night Loneliness">Late Night Loneliness</button>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" style="width:100%;" onclick="saveProfile()">Save Profile</button>
+      </div>
+    </div>
+    <%- include('../partials/bottom_nav') %>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tag-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const grid = btn.closest('.tag-grid');
+        const multi = grid.dataset.multi === 'true';
+        if (!multi) {
+          grid.querySelectorAll('.tag-option').forEach(b => b.classList.remove('selected'));
+        }
+        btn.classList.toggle('selected');
+      });
+    });
+
+    function saveProfile() {
+      const profile = {};
+      document.querySelectorAll('.tag-grid').forEach(grid => {
+        const group = grid.dataset.group;
+        const selected = [...grid.querySelectorAll('.tag-option.selected')].map(b => b.dataset.val);
+        profile[group] = selected;
+      });
+      localStorage.setItem('holdoff_personality', JSON.stringify(profile));
+      alert('Profile saved! 💜');
+    }
+  </script>
+</body>
+</html>

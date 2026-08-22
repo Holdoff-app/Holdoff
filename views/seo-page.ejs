@@ -1,0 +1,193 @@
+<%#
+  Reusable SEO landing page layout.
+  Locals expected:
+    pageTitle      - <title> tag string
+    pageSlug       - URL path, e.g. "/should-i-double-text"
+    metaDesc       - <meta description>
+    ogTitle        - OG title (same as H1 usually)
+    ogDesc         - OG description
+    h1             - Verbatim H1 matching the target query
+    bodyContent    - EJS HTML body (article copy, rendered via <%- bodyContent %>)
+    faqItems       - Array of { q, a } objects for FAQPage schema
+    user           - from buildLandingContext
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <meta name="description" content="<%= metaDesc %>">
+  <link rel="canonical" href="https://shouldiholdoff.live<%= pageSlug %>">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= ogTitle %>">
+  <meta property="og:description" content="<%= ogDesc %>">
+  <meta property="og:url" content="https://shouldiholdoff.live<%= pageSlug %>">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="HoldOff">
+  <meta property="og:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= ogTitle %>">
+  <meta name="twitter:description" content="<%= ogDesc %>">
+  <meta name="twitter:image" content="https://pub-629428d185ca4960a0a73c850d32294b.r2.dev/generated-images/company_180424/8cf974dd-39c8-4bcc-a93e-463e450ce1cf.jpg">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <meta name="theme-color" content="#FAF6F0">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '878230961304067');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=878230961304067&ev=PageView&noscript=1"/></noscript>
+
+  <!-- FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": <%- JSON.stringify(faqItems.map(function(f){ return { "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } }; })) %>
+  }
+  </script>
+
+  <style>
+    .seo-page { max-width: 720px; margin: 0 auto; padding: 6rem 1.5rem 4rem; }
+    .seo-page__h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      margin-bottom: 1.25rem;
+    }
+    .seo-page__lede {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .seo-page__body h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 2rem 0 0.6rem;
+      color: var(--fg);
+    }
+    .seo-page__body p {
+      font-size: 0.97rem;
+      color: #4A3F3A;
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+    .seo-page__body ul {
+      padding-left: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .seo-page__body li {
+      font-size: 0.97rem;
+      color: #4A3F3A;
+      line-height: 1.7;
+      margin-bottom: 0.35rem;
+    }
+    .seo-page__cta-strip {
+      margin: 2.5rem 0;
+      padding: 1.75rem;
+      background: #2A2522;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .seo-page__cta-strip p {
+      color: #FAF6F0;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .seo-page__cta-strip a {
+      display: inline-block;
+      background: #C97B5D;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .seo-page__cta-strip a:hover { background: #b56a4c; }
+    .seo-page__faq { margin-top: 3rem; }
+    .seo-page__faq h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      color: var(--fg);
+    }
+    .seo-page__faq-item { margin-bottom: 1.5rem; }
+    .seo-page__faq-q { font-weight: 600; color: #2A2522; margin-bottom: 0.35rem; font-size: 0.97rem; }
+    .seo-page__faq-a { font-size: 0.92rem; color: #5A4F4A; line-height: 1.7; }
+    .seo-page__breadcrumb {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .seo-page__breadcrumb a { color: var(--muted); text-decoration: none; }
+    .seo-page__breadcrumb a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <article class="seo-page">
+    <div class="seo-page__breadcrumb">
+      <a href="/">HoldOff</a> › <a href="/spirals">Spirals</a> › <span><%= h1 %></span>
+    </div>
+
+    <h1 class="seo-page__h1"><%= h1 %></h1>
+
+    <p class="seo-page__lede"><%= lede %></p>
+
+    <%- include('partials/seo-verdict-widget', { prefill: typeof prefill !== 'undefined' ? prefill : undefined }) %>
+
+    <div class="seo-page__body">
+      <%- bodyContent %>
+    </div>
+
+    <div class="seo-page__cta-strip">
+      <p>The full app tracks your streak, rewrites the ones that shouldn't go out, and tells you what's really happening.</p>
+      <a href="/filter">Open HoldOff free →</a>
+    </div>
+
+    <div class="seo-page__faq">
+      <h2>Common questions</h2>
+      <% faqItems.forEach(function(f) { %>
+        <div class="seo-page__faq-item">
+          <div class="seo-page__faq-q"><%= f.q %></div>
+          <div class="seo-page__faq-a"><%= f.a %></div>
+        </div>
+      <% }); %>
+    </div>
+  </article>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

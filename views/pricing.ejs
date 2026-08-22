@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Pricing — Respect Yourself</title>
+  <meta name="description" content="Simple pricing. Real tools. One goal: help you stop settling.">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #e0e7ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo { font-size: 22px; font-weight: 800; color: #c4b5fd; text-decoration: none; }
+
+    nav { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+
+    nav a {
+      color: #cbd5e1; text-decoration: none; font-size: 14px; transition: color 0.2s;
+    }
+    nav a:hover { color: #a78bfa; }
+
+    .nav-user {
+      font-size: 13px; color: #94a3b8;
+      display: none; /* shown via JS */
+    }
+    .nav-user span { color: #a78bfa; font-weight: 600; }
+
+    .btn-nav {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white; border: none; border-radius: 8px;
+      cursor: pointer; font-weight: 600; font-size: 13px;
+      text-decoration: none; display: inline-block; transition: all 0.2s;
+    }
+    .btn-nav:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(139,92,246,.35); }
+    .btn-nav.outline {
+      background: transparent; border: 2px solid #8b5cf6; color: #a78bfa;
+    }
+    .btn-nav.outline:hover { background: rgba(139,92,246,.15); }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 60px 2rem 30px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 54px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #93c5fd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+    .hero p { font-size: 18px; color: #cbd5e1; }
+
+    /* ── PRICING SECTION ──────────────────────────────────── */
+    .pricing-section {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 2rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      color: #a78bfa;
+      margin-bottom: 0.75rem;
+    }
+    .section-sub {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 15px;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(139,92,246,.2);
+      border-radius: 14px;
+      padding: 2rem 1.75rem;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      border-color: rgba(139,92,246,.5);
+      background: rgba(139,92,246,.08);
+      transform: translateY(-6px);
+    }
+    .card.featured {
+      border-color: #8b5cf6;
+      background: rgba(139,92,246,.14);
+    }
+    .card.featured:hover { transform: translateY(-8px); }
+
+    .card-badge {
+      position: absolute; top: -11px; left: 18px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: #fff; padding: 3px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .card-badge.hot { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+    .card-name {
+      font-size: 17px; font-weight: 700; color: #a78bfa;
+      margin-top: 0.5rem; margin-bottom: 0.4rem;
+    }
+    .card-desc { font-size: 13px; color: #64748b; margin-bottom: 1.25rem; line-height: 1.5; }
+
+    .card-price {
+      font-size: 40px; font-weight: 800; color: #a78bfa; line-height: 1;
+    }
+    .card-period { font-size: 13px; color: #94a3b8; margin-bottom: 1.5rem; }
+    .card-note { font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 1.5rem; }
+
+    .card-features {
+      list-style: none; flex-grow: 1; margin-bottom: 1.75rem;
+    }
+    .card-features li {
+      font-size: 13px; color: #cbd5e1;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(139,92,246,.1);
+    }
+    .card-features li:last-child { border-bottom: none; }
+    .card-features li::before { content: "✓ "; color: #10b981; font-weight: 700; }
+
+    .btn-card {
+      width: 100%; padding: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white; border: none; border-radius: 8px;
+      font-weight: 600; font-size: 14px;
+      cursor: pointer; text-decoration: none;
+      text-align: center; display: block;
+      transition: all 0.2s;
+    }
+    .btn-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(139,92,246,.35); }
+    .btn-card.outline {
+      background: transparent; border: 2px solid #a78bfa; color: #a78bfa;
+    }
+    .btn-card.outline:hover { background: rgba(167,139,250,.12); }
+
+    /* ── GIFT SECTION ─────────────────────────────────────── */
+    .gift-section {
+      max-width: 860px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+    .gift-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(139,92,246,.3);
+      border-radius: 18px;
+      padding: 2.5rem 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .gift-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .gift-emoji { font-size: 40px; margin-bottom: 1rem; display: block; }
+    .gift-card h2 { font-size: 26px; color: #a78bfa; margin-bottom: 1.25rem; }
+    .gift-card blockquote {
+      font-size: 15px; color: #cbd5e1; font-style: italic;
+      line-height: 1.8; max-width: 640px; margin: 0 auto 0.75rem;
+      border-left: 3px solid rgba(139,92,246,.4);
+      padding-left: 1rem; text-align: left;
+    }
+    .gift-card cite {
+      display: block; font-size: 12px; color: #64748b;
+      text-align: right; margin-bottom: 2rem; margin-top: 0.5rem;
+      font-style: normal;
+    }
+    .btn-gift {
+      display: inline-block;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white; border: none; border-radius: 10px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-gift:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(139,92,246,.4); }
+    .gift-note { font-size: 12px; color: #64748b; margin-top: 1rem; }
+
+    /* ── ADD-ONS ──────────────────────────────────────────── */
+    .addons-section {
+      max-width: 860px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+    .addons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .addon-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(139,92,246,.15);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .addon-name { font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 0.4rem; }
+    .addon-price { font-size: 20px; font-weight: 800; color: #e0e7ff; margin-bottom: 0.4rem; }
+    .addon-desc { font-size: 12px; color: #64748b; }
+
+    /* ── FAQ ──────────────────────────────────────────────── */
+    .faq-section {
+      max-width: 760px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+    .faq-item {
+      border: 1px solid rgba(139,92,246,.15);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      background: rgba(255,255,255,.02);
+    }
+    .faq-item h3 { font-size: 15px; color: #a78bfa; margin-bottom: 0; }
+    .faq-item p { font-size: 13px; color: #94a3b8; line-height: 1.7; margin-top: 0.75rem; display: none; }
+    .faq-item.open p { display: block; }
+    .faq-item.open h3::after { content: " ▲"; font-size: 10px; }
+    .faq-item h3::after { content: " ▼"; font-size: 10px; color: #64748b; }
+
+    /* ── PROMO CODE ──────────────────────────────────────────── */
+    .promo-section {
+      max-width: 560px;
+      margin: 0 auto 60px;
+      padding: 0 2rem;
+    }
+    .promo-box {
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 20px;
+      padding: 2rem 2rem 1.75rem;
+      text-align: center;
+    }
+    .promo-icon { font-size: 32px; margin-bottom: 0.5rem; }
+    .promo-title { font-size: 22px; font-weight: 700; color: #c4b5fd; margin-bottom: 0.5rem; }
+    .promo-sub { font-size: 14px; color: #94a3b8; margin-bottom: 1.5rem; }
+    .promo-form {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .promo-input {
+      padding: 12px 18px;
+      border: 1px solid rgba(139,92,246,.4);
+      border-radius: 10px;
+      background: rgba(15,23,42,.6);
+      color: #e0e7ff;
+      font-size: 16px;
+      font-family: monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: 200px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .promo-input:focus { border-color: #8b5cf6; }
+    .promo-input::placeholder { text-transform: none; letter-spacing: normal; color: #475569; font-family: inherit; }
+    .btn-promo {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-promo:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(139,92,246,.35); }
+    .btn-promo:disabled { opacity: 0.6; cursor: default; transform: none; }
+    .promo-msg {
+      margin-top: 1rem;
+      font-size: 14px;
+      min-height: 20px;
+      font-weight: 500;
+    }
+
+    /* ── DISCLAIMER / FOOTER ──────────────────────────────── */
+    .disclaimer {
+      text-align: center; padding: 2rem 2rem 1rem;
+      color: #475569; font-size: 11px;
+      border-top: 1px solid rgba(139,92,246,.15);
+      max-width: 800px; margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center; padding: 2rem;
+      color: #475569; font-size: 12px;
+      border-top: 1px solid rgba(139,92,246,.1);
+    }
+    footer a { color: #7c3aed; text-decoration: none; margin: 0 .4rem; }
+    footer a:hover { color: #a78bfa; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════ HEADER -->
+  <header>
+    <a href="/" class="logo">HoldOff</a>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/filter">Dashboard</a>
+      <span class="nav-user" id="nav-user">Hi, <span id="nav-name">you</span></span>
+      <a href="/settings" id="nav-settings" style="display:none;">Settings</a>
+      <a href="/auth/logout" class="btn-nav outline" id="nav-signout" style="display:none;">Sign Out</a>
+      <a href="/login" class="btn-nav outline" id="nav-signin">Sign In</a>
+      <a href="/signup" class="btn-nav" id="nav-subscribe">Subscribe Now</a>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════════════════════ HERO -->
+  <section class="hero">
+    <h1>Respect Yourself</h1>
+    <p>Simple pricing. Real tools. One goal: help you stop settling.</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ PLANS -->
+  <section class="pricing-section">
+    <h2 class="section-title">Choose Your Commitment</h2>
+    <p class="section-sub">Every plan includes message analysis and AI verdicts. The difference is depth, coaching, and access.</p>
+
+    <div class="cards">
+
+      <!-- FREE TRIAL -->
+      <div class="card">
+        <div class="card-name">Free Trial</div>
+        <div class="card-desc">See what a pause actually does for you.</div>
+        <div class="card-price">Free</div>
+        <div class="card-period">7 days · no credit card</div>
+        <ul class="card-features">
+          <li>Unlimited message analysis</li>
+          <li>AI Verdict feedback</li>
+          <li>Basic pattern tracking</li>
+          <li>7-day message history</li>
+        </ul>
+        <a href="/signup" class="btn-card outline">Start Free</a>
+      </div>
+
+      <!-- FOUNDING MEMBER -->
+      <div class="card featured">
+        <div class="card-badge hot">🔥 50 Spots Only</div>
+        <div class="card-name">Founding Member</div>
+        <div class="card-desc">Lock in our lowest rate forever. First 50 people only.</div>
+        <div class="card-price">$3</div>
+        <div class="card-period">per month, billed monthly</div>
+        <div class="card-note">Founding rate locked in for life.</div>
+        <ul class="card-features">
+          <li>Full AI verdicts + coaching</li>
+          <li>Pattern tracking + trends</li>
+          <li>90-day message archive</li>
+          <li>Priority support</li>
+          <li>Founding Member badge</li>
+          <li>Beta feature access</li>
+        </ul>
+        <a href="https://buy.stripe.com/7sYfZa3Aeaau80a8bx0Jq02" target="_blank" class="btn-card" onclick="trackCheckout('founding_member')">Claim Your Spot</a>
+      </div>
+
+      <!-- MONTHLY -->
+      <div class="card">
+        <div class="card-badge">Most Popular</div>
+        <div class="card-name">HoldOff Monthly</div>
+        <div class="card-desc">Full access. No long commitment.</div>
+        <div class="card-price">$9.99</div>
+        <div class="card-period">per month</div>
+        <ul class="card-features">
+          <li>Everything in Free Trial</li>
+          <li>Full AI coaching responses</li>
+          <li>Advanced pattern insights</li>
+          <li>30-day message archive</li>
+          <li>Priority support</li>
+          <li>Ad-free experience</li>
+        </ul>
+        <a href="https://buy.stripe.com/28EbJ23gl2HDgiIeCz2sM07" target="_blank" class="btn-card" onclick="trackCheckout('online_monthly')">Subscribe Now</a>
+      </div>
+
+      <!-- LIFETIME -->
+      <div class="card">
+        <div class="card-name">Lifetime Access</div>
+        <div class="card-desc">Pay once. Own it forever. Never think about billing again.</div>
+        <div class="card-price">$299</div>
+        <div class="card-period">one-time payment</div>
+        <ul class="card-features">
+          <li>Everything in Monthly</li>
+          <li>Unlimited message archive</li>
+          <li>Advanced AI coaching</li>
+          <li>Custom condition profiles</li>
+          <li>Direct founder support</li>
+          <li>Every future feature, free</li>
+        </ul>
+        <a href="https://buy.stripe.com/4gMfZi6sx4PLc2s9if2sM0b" target="_blank" class="btn-card" onclick="trackCheckout('lifetime')">Go Lifetime</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ GIFT -->
+  <section class="gift-section">
+    <div class="gift-card">
+      <span class="gift-emoji">💜</span>
+      <h2>Give the Gift of a Pause</h2>
+
+      <blockquote>
+        "I made it because I needed it — and honestly, because I was driving him absolutely crazy.
+        If you've got someone in your life who needs to hear 'put the phone down' before they send
+        that text, this is a gentler way to say it. I made the app. He was the reason."
+      </blockquote>
+      <cite>— the muse behind HoldOff</cite>
+
+      <a href="https://buy.stripe.com/28EbJ23gl2HDgiIeCz2sM07" target="_blank" class="btn-gift" onclick="trackCheckout('gift_monthly')">
+        🎁 Gift HoldOff — $9.99/mo
+      </a>
+      <div class="gift-note">You'll be taken to a secure Stripe page. Enter the recipient's email at checkout.</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ ADD-ONS -->
+  <section class="addons-section">
+    <h2 class="section-title">One-Time Add-Ons</h2>
+    <p class="section-sub">Enhance any plan with focused tools. Purchase once, keep forever.</p>
+
+    <div class="addons-grid">
+      <div class="addon-card">
+        <div class="addon-name">Beta Access (2 Weeks)</div>
+        <div class="addon-price">$3</div>
+        <div class="addon-desc">Early preview of new features</div>
+      </div>
+      <div class="addon-card">
+        <div class="addon-name">Weekly Web Plan</div>
+        <div class="addon-price">–</div>
+        <div class="addon-desc">Short-term access, no monthly lock-in</div>
+      </div>
+      <div class="addon-card">
+        <div class="addon-name">App + Web Bundle</div>
+        <div class="addon-price">$14.99<span style="font-size:12px">/mo</span></div>
+        <div class="addon-desc">Site + Android app, one subscription</div>
+      </div>
+      <div class="addon-card">
+        <div class="addon-name">Annual Plan</div>
+        <div class="addon-price">–</div>
+        <div class="addon-desc">Save ~25% vs monthly, billed yearly</div>
+      </div>
+    </div>
+    <p style="text-align:center; font-size:13px; color:#64748b; margin-top:1.5rem;">
+      More add-ons launching soon. <a href="/suggest" style="color:#a78bfa;">Suggest one →</a>
+    </p>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ PROMO CODE -->
+  <section class="promo-section">
+    <div class="promo-box">
+      <div class="promo-icon">🎁</div>
+      <h2 class="promo-title">Have a promo code?</h2>
+      <p class="promo-sub">Enter it below for free or discounted access — no card required.</p>
+      <div class="promo-form" id="promoForm">
+        <input
+          type="text"
+          id="promoInput"
+          class="promo-input"
+          placeholder="Enter code"
+          maxlength="32"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn-promo" onclick="applyPromo()">Apply</button>
+      </div>
+      <p class="promo-msg" id="promoMsg"></p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ FAQ -->
+  <section class="faq-section">
+    <h2 class="section-title">Questions?</h2>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>Can I upgrade or cancel anytime?</h3>
+      <p>Yes. Cancel anytime through Settings or email us — no penalties, no runaround. If you upgrade to Lifetime, you only pay the difference from what you've already paid.</p>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>What if it doesn't work for me?</h3>
+      <p>We offer a 7-day money-back guarantee. If HoldOff doesn't help you pause better, we'll refund you, no questions asked.</p>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>Is my data private?</h3>
+      <p>Yes. Your messages stay yours. We never sell your data, never share it with third parties. Read our <a href="/privacy" style="color:#a78bfa;">Privacy Policy</a> for the full picture.</p>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>What exactly is the Founding Member rate?</h3>
+      <p>$3/month, locked in for as long as you stay subscribed — no price hikes, no "introductory period" bait-and-switch. It's our thank-you for joining early. Limited to the first 50 subscribers.</p>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>How does gifting work?</h3>
+      <p>Click the gift button and complete the Stripe checkout. On the payment page, enter the recipient's email address and we'll send them access. They can redeem it at <a href="/redeem" style="color:#a78bfa;">/redeem</a>.</p>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <h3>What's included in AI Coaching?</h3>
+      <p>Beyond the Verdict (safe/risky), paid plans include personalized coaching: why you want to send this message, what emotional pattern it's coming from, and what the version of you who respects yourself would do right now.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════ DISCLAIMER -->
+  <div class="disclaimer">
+    <strong>Important:</strong> HoldOff is a decision-support tool. It is not therapy, not a diagnosis, and not a substitute for professional mental health care. If you're struggling with depression, anxiety, suicidal thoughts, or emotional crisis, please reach out to a licensed professional or a crisis line like 988 (Suicide &amp; Crisis Lifeline).
+  </div>
+
+  <!-- ══════════════════════════════════════════════ FOOTER -->
+  <footer>
+    <p style="margin-bottom:.75rem;">&copy; 2026 HoldOff. Made for people who deserve better.</p>
+    <p>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/affiliate">Affiliates</a>
+      <a href="/partnerships">Partners</a>
+      <a href="/suggest">Suggest a Feature</a>
+      <a href="/redeem">Redeem a Gift</a>
+    </p>
+  </footer>
+
+  <script src="/js/floating-companions.js" defer></script>
+
+  <script>
+    // ── Auth header state ─────────────────────────────────────
+    (function() {
+      const cookies = document.cookie.split(';').reduce((a, c) => {
+        const [k, v] = c.trim().split('=');
+        a[k] = decodeURIComponent(v || '');
+        return a;
+      }, {});
+
+      const loggedIn = !!(cookies.auth_token || cookies.holdoff_session);
+      const name = cookies.holdoff_name || cookies.display_name || '';
+
+      if (loggedIn) {
+        document.getElementById('nav-signin').style.display = 'none';
+        document.getElementById('nav-subscribe').style.display = 'none';
+        document.getElementById('nav-signout').style.display = 'inline-block';
+        document.getElementById('nav-settings').style.display = 'inline-block';
+        const userEl = document.getElementById('nav-user');
+        if (name) {
+          document.getElementById('nav-name').textContent = name;
+          userEl.style.display = 'inline';
+        }
+      }
+    })();
+
+    // ── FAQ toggle ────────────────────────────────────────────
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+    }
+
+    // ── Promo code redemption ─────────────────────────────────
+    async function applyPromo() {
+      const input = document.getElementById('promoInput');
+      const msg   = document.getElementById('promoMsg');
+      const code  = (input.value || '').trim();
+      if (!code) { showPromoMsg('Please enter a promo code.', false); return; }
+
+      const btn = document.querySelector('.btn-promo');
+      btn.disabled = true;
+      btn.textContent = 'Applying…';
+      msg.textContent = '';
+
+      try {
+        const res  = await fetch('/api/redeem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showPromoMsg('✨ Code accepted! You now have free access. Welcome to HoldOff.', true);
+          document.getElementById('promoForm').style.opacity = '0.5';
+          document.getElementById('promoForm').style.pointerEvents = 'none';
+        } else if (res.status === 401) {
+          showPromoMsg('Sign in or create a free account first, then come back and enter your code.', false);
+        } else {
+          showPromoMsg(data.error || 'That code didn\'t work. Double-check it and try again.', false);
+        }
+      } catch(e) {
+        showPromoMsg('Something went wrong. Please try again in a moment.', false);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Apply';
+    }
+
+    function showPromoMsg(text, success) {
+      const msg = document.getElementById('promoMsg');
+      msg.textContent = text;
+      msg.style.color = success ? '#86efac' : '#fca5a5';
+    }
+
+    document.getElementById('promoInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') applyPromo();
+    });
+
+    // ── Checkout event tracking (lightweight) ─────────────────
+    function trackCheckout(tier) {
+      try {
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: 'checkout_click', tier }),
+        }).catch(() => {});
+      } catch(e) {}
+    }
+  </script>
+
+</body>
+</html>

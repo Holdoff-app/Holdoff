@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Affiliate Program — Earn & Grow Together</title>
+  <meta name="description" content="Join the HoldOff affiliate program and earn commission for every user you refer.">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #e0e7ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo { font-size: 24px; font-weight: 700; color: #c4b5fd; }
+
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin: 0 1.5rem;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    nav a:hover { color: #a78bfa; }
+
+    .hero {
+      text-align: center;
+      padding: 60px 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #a78bfa, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btn {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin: 0.5rem;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    .features {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .features { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+    }
+
+    .feature-item h3 {
+      color: #a78bfa;
+      margin-bottom: 1rem;
+      font-size: 18px;
+    }
+
+    .feature-item p {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 2rem;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #a78bfa;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 6px;
+      color: #e0e7ff;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: 4rem;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    footer a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">HoldOff</div>
+    <nav>
+      <a href="https://shouldiholdoff.live">Home</a>
+      <a href="https://shouldiholdoff.live/pricing">Pricing</a>
+      <a href="https://shouldiholdoff.live/contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Earn With Us</h1>
+    <p>Join our affiliate program and earn generous commissions for every user you refer. Help people respect themselves while building your own income stream.</p>
+    <button class="cta-btn" onclick="document.querySelector('.form-container').scrollIntoView({behavior: 'smooth'})">Apply Now</button>
+  </section>
+
+  <section class="features">
+    <div class="feature-item">
+      <h3>💰 Competitive Commissions</h3>
+      <p>Earn 20% recurring commission on every Plus or Premium subscription you refer, plus 10% on Lifetime purchases. Commissions paid monthly.</p>
+    </div>
+    <div class="feature-item">
+      <h3>🎯 Marketing Support</h3>
+      <p>We provide you with banners, landing pages, tracking links, and copy to help you promote HoldOff. Everything you need to succeed.</p>
+    </div>
+    <div class="feature-item">
+      <h3>📊 Real-Time Dashboard</h3>
+      <p>Track your clicks, conversions, and earnings in real time. See exactly how many users signed up from your referrals.</p>
+    </div>
+    <div class="feature-item">
+      <h3>👥 Dedicated Support</h3>
+      <p>Our affiliate team is here to help you succeed. Questions? We respond within 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="form-container">
+    <h2 style="text-align: center; margin-bottom: 2rem; color: #a78bfa;">Apply to Become an Affiliate</h2>
+    <form method="POST" action="/api/affiliate-apply" id="affiliateForm">
+      <div class="form-group">
+        <label for="name">Your Name *</label>
+        <input type="text" id="name" name="name" required placeholder="John Doe">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+      </div>
+
+      <div class="form-group">
+        <label for="platform">Where will you promote HoldOff? *</label>
+        <input type="text" id="platform" name="platform" required placeholder="e.g., Instagram, YouTube, TikTok, Blog, Email List, etc.">
+      </div>
+
+      <div class="form-group">
+        <label for="followers">Estimated Audience Size *</label>
+        <input type="text" id="followers" name="followers" required placeholder="e.g., 50k followers, 10k subscribers">
+      </div>
+
+      <div class="form-group">
+        <label for="about">Tell us about your audience *</label>
+        <textarea id="about" name="about" required placeholder="Who are your followers? What topics do you cover? Why would they love HoldOff?"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Application</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 HoldOff. Made for people who deserve better.</p>
+    <p>
+      <a href="/privacy">Privacy</a> &nbsp;|&nbsp;
+      <a href="/terms">Terms</a> &nbsp;|&nbsp;
+      <a href="/affiliate-terms">Affiliate Terms</a>
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('affiliateForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/api/affiliate-apply', {
+          method: 'POST',
+          body: formData
+        });
+        if (response.ok) {
+          alert('Thanks for applying! We\'ll review your application and get back to you within 24 hours.');
+          this.reset();
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error submitting application.');
+      }
+    });
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

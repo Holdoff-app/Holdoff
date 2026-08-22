@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>HoldOff — AI Portrait</title>
+  <style>
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-size:0.9rem; margin-bottom:16px; }
+    .back-link:hover { color:var(--primary-light); }
+    .portrait-container { text-align:center; padding:20px 0; }
+    .portrait-frame {
+      width:220px; height:220px; margin:0 auto 20px; border-radius:50%;
+      background:linear-gradient(135deg, var(--primary), var(--rose), var(--primary-light));
+      padding:4px; position:relative;
+    }
+    .portrait-inner {
+      width:100%; height:100%; border-radius:50%; background:var(--bg);
+      display:flex; align-items:center; justify-content:center;
+      font-size:5rem; overflow:hidden;
+    }
+    .portrait-inner img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .portrait-title { font-size:1.2rem; font-weight:700; margin-bottom:4px; }
+    .portrait-subtitle { color:var(--text-muted); font-size:0.9rem; margin-bottom:24px; }
+    .portrait-traits {
+      display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:24px;
+    }
+    .trait-badge {
+      padding:6px 14px; border-radius:var(--radius-full); font-size:0.8rem;
+      background:var(--primary-glow); color:var(--primary-light); border:1px solid var(--primary);
+      font-weight:500;
+    }
+    .portrait-desc {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:18px; text-align:left; margin-bottom:20px;
+    }
+    .portrait-desc p { font-size:0.9rem; color:var(--text-muted); line-height:1.6; }
+    .generate-section { margin-top:20px; }
+    .style-options { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+    .style-opt {
+      padding:10px 18px; border-radius:var(--radius-full); border:1px solid var(--border);
+      background:transparent; color:var(--text-muted); cursor:pointer; font-size:0.85rem; transition:var(--transition);
+    }
+    .style-opt:hover, .style-opt.selected { background:var(--primary-glow); color:var(--primary); border-color:var(--primary); }
+    .premium-badge { display:inline-block; padding:3px 10px; border-radius:var(--radius-full); font-size:0.7rem; font-weight:600; background:linear-gradient(135deg, var(--primary), var(--rose)); color:white; margin-left:8px; vertical-align:middle; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>🎨 AI Portrait</h1>
+    </div>
+    <div class="screen-content">
+      <a href="/account" class="back-link">← Back to Account</a>
+
+      <div class="portrait-container">
+        <div class="portrait-frame">
+          <div class="portrait-inner" id="portrait-display">
+            🎨
+          </div>
+        </div>
+        <div class="portrait-title"><%= typeof user !== 'undefined' ? user.name || 'Your' : 'Your' %>'s Emotional Portrait</div>
+        <div class="portrait-subtitle">AI-generated based on your personality profile</div>
+
+        <div class="portrait-traits" id="trait-badges">
+          <span class="trait-badge">Fearful-Avoidant</span>
+          <span class="trait-badge">Passionate</span>
+          <span class="trait-badge">Deep Feeler</span>
+          <span class="trait-badge">Night Owl</span>
+        </div>
+      </div>
+
+      <div class="portrait-desc">
+        <p>Your emotional portrait reflects someone who feels deeply but guards those feelings fiercely. You carry a romantic intensity that draws people in — but your fear of vulnerability creates walls that confuse them. You're the person who writes the most beautiful text at 2am and then deletes it.</p>
+        <p style="margin-top:10px;">Your strength? <strong>When you finally let someone in, your love is transformative.</strong> 💜</p>
+      </div>
+
+      <div class="generate-section">
+        <h3 style="text-align:center;margin-bottom:12px;">Generate AI Portrait <span class="premium-badge">Premium</span></h3>
+        <div class="style-options">
+          <button class="style-opt selected" onclick="selectStyle(this)">Watercolor</button>
+          <button class="style-opt" onclick="selectStyle(this)">Abstract</button>
+          <button class="style-opt" onclick="selectStyle(this)">Dreamy</button>
+          <button class="style-opt" onclick="selectStyle(this)">Galaxy</button>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="generatePortrait()">
+          Generate My Portrait ✨
+        </button>
+        <p style="text-align:center;font-size:0.8rem;color:var(--text-dim);margin-top:8px;">Uses your personality profile to create a unique visual representation</p>
+      </div>
+    </div>
+    <%- include('../partials/bottom_nav') %>
+  </div>
+
+  <script>
+    function selectStyle(el) {
+      document.querySelectorAll('.style-opt').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function generatePortrait() {
+      alert('AI Portrait generation is a Premium feature! Upgrade to unlock. 💜');
+    }
+    // Load personality traits from localStorage
+    try {
+      const profile = JSON.parse(localStorage.getItem('holdoff_personality') || '{}');
+      if (profile.attachment && profile.attachment.length) {
+        const badges = document.getElementById('trait-badges');
+        const traits = [
+          ...(profile.attachment || []),
+          ...(profile.communication || []),
+          ...(profile.fears || []).slice(0,2)
+        ];
+        if (traits.length) {
+          badges.innerHTML = traits.map(t => `<span class="trait-badge">${t}</span>`).join('');
+        }
+      }
+    } catch(e) {}
+  </script>
+</body>
+</html>

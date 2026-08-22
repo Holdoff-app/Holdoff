@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  HoldOff Auto-Intercept Demo — Animated SVG
+  Shows: phone frame → user typing → HoldOff verdict overlay slides up
+  Loop: 12s total with 3s pause on verdict reveal
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 390 760"
+     width="390" height="760"
+     role="img"
+     aria-label="HoldOff auto-intercept demo: typing a text message triggers HoldOff verdict overlay">
+
+  <defs>
+    <!-- Phone body gradient -->
+    <linearGradient id="phoneBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C1C1E"/>
+      <stop offset="100%" style="stop-color:#111113"/>
+    </linearGradient>
+    <!-- Overlay gradient -->
+    <linearGradient id="overlayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2A1A0E;stop-opacity:0.97"/>
+      <stop offset="100%" style="stop-color:#1A0E07;stop-opacity:0.98"/>
+    </linearGradient>
+    <!-- Clip for phone screen -->
+    <clipPath id="screenClip">
+      <rect x="15" y="40" width="360" height="680" rx="20"/>
+    </clipPath>
+    <!-- Clip for typing text box -->
+    <clipPath id="inputClip">
+      <rect x="56" y="666" width="250" height="44"/>
+    </clipPath>
+    <!-- Clip for overlay panel -->
+    <clipPath id="overlayClip">
+      <rect x="15" y="320" width="360" height="400" rx="0"/>
+    </clipPath>
+    <!-- Shadow for phone -->
+    <filter id="phoneShadow" x="-10%" y="-5%" width="120%" height="115%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <!-- Glow for HOLD badge -->
+    <filter id="holdGlow" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="390" height="760" fill="#0D0D0F"/>
+
+  <!-- ── Phone frame ── -->
+  <rect x="0" y="20" width="390" height="720" rx="42" fill="url(#phoneBg)" filter="url(#phoneShadow)"/>
+  <!-- Screen bezel -->
+  <rect x="10" y="32" width="370" height="696" rx="32" fill="#0A0A0C"/>
+  <!-- Screen area -->
+  <rect x="15" y="40" width="360" height="680" rx="26" fill="#131315"/>
+
+  <!-- Phone notch / dynamic island -->
+  <rect x="148" y="48" width="94" height="24" rx="12" fill="#0A0A0C"/>
+
+  <!-- ── Status bar ── -->
+  <text x="32" y="67" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#FFFAF5" opacity="0.9">9:41</text>
+  <!-- Signal dots -->
+  <circle cx="322" cy="63" r="3" fill="#FFFAF5" opacity="0.7"/>
+  <circle cx="332" cy="63" r="3" fill="#FFFAF5" opacity="0.7"/>
+  <circle cx="342" cy="63" r="3" fill="#FFFAF5" opacity="0.7"/>
+  <!-- Battery -->
+  <rect x="349" y="57" width="22" height="12" rx="3" fill="none" stroke="#FFFAF5" stroke-width="1.5" opacity="0.7"/>
+  <rect x="371" y="60" width="3" height="6" rx="1" fill="#FFFAF5" opacity="0.5"/>
+  <rect x="351" y="59" width="16" height="8" rx="2" fill="#34C759"/>
+
+  <!-- ── Conversation header ── -->
+  <rect x="15" y="80" width="360" height="60" rx="0" fill="#1C1C1E"/>
+  <!-- Back arrow -->
+  <path d="M38 113 L30 108 L38 103" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Avatar circle -->
+  <circle cx="195" cy="110" r="18" fill="#3A3A3C"/>
+  <text x="195" y="115" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="600" fill="#FFFAF5">J</text>
+  <!-- Contact name -->
+  <text x="195" y="134" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#8E8E93">Jordan</text>
+  <!-- Video call icon -->
+  <path d="M348 104 L362 98 L362 118 L348 112 Z" fill="#007AFF"/>
+  <rect x="337" y="100" width="14" height="16" rx="3" fill="#007AFF"/>
+
+  <!-- ── Message bubbles (static chat history) ── -->
+  <!-- Received bubble -->
+  <rect x="24" y="162" width="160" height="38" rx="18" fill="#2C2C2E"/>
+  <text x="104" y="183" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#FFFAF5">hey you ok?</text>
+  <text x="192" y="205" text-anchor="end" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#636366">11:03 PM</text>
+
+  <!-- Sent bubble -->
+  <rect x="230" y="218" width="136" height="38" rx="18" fill="#007AFF"/>
+  <text x="298" y="239" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#FFF">yeah why</text>
+  <text x="370" y="261" text-anchor="end" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#636366">11:04 PM</text>
+
+  <!-- Received read receipt dot -->
+  <circle cx="370" cy="239" r="8" fill="#2C2C2E"/>
+  <text x="370" y="243" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" fill="#8E8E93">✓</text>
+
+  <!-- "Typing..." indicator (received) -->
+  <rect x="24" y="270" width="64" height="32" rx="16" fill="#2C2C2E">
+    <animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite" begin="0s"/>
+  </rect>
+  <circle cx="41" cy="286" r="4" fill="#8E8E93">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0s"/>
+  </circle>
+  <circle cx="54" cy="286" r="4" fill="#8E8E93">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0.2s"/>
+  </circle>
+  <circle cx="67" cy="286" r="4" fill="#8E8E93">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="0.4s"/>
+  </circle>
+
+  <!-- ── Keyboard (static, visible while typing) ── -->
+  <rect x="15" y="530" width="360" height="190" rx="0" fill="#1C1C1E" opacity="0.95"/>
+  <!-- Keyboard rows (simplified visual keys) -->
+  <!-- Row 1 -->
+  <rect x="22" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="38" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">q</text>
+  <rect x="58" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="74" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">w</text>
+  <rect x="94" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="110" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">e</text>
+  <rect x="130" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="146" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">r</text>
+  <rect x="166" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="182" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">t</text>
+  <rect x="202" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="218" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">y</text>
+  <rect x="238" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="254" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">u</text>
+  <rect x="274" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="290" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">i</text>
+  <rect x="310" y="540" width="32" height="36" rx="5" fill="#303033"/><text x="326" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">o</text>
+  <rect x="346" y="540" width="30" height="36" rx="5" fill="#303033"/><text x="361" y="563" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">p</text>
+  <!-- Row 2 -->
+  <rect x="38" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="54" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">a</text>
+  <rect x="74" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="90" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">s</text>
+  <rect x="110" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="126" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">d</text>
+  <rect x="146" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="162" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">f</text>
+  <rect x="182" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="198" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">g</text>
+  <rect x="218" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="234" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">h</text>
+  <rect x="254" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="270" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">j</text>
+  <rect x="290" y="582" width="32" height="36" rx="5" fill="#303033"/><text x="306" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">k</text>
+  <rect x="326" y="582" width="36" height="36" rx="5" fill="#303033"/><text x="344" y="605" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">l</text>
+  <!-- Row 3 -->
+  <rect x="22" y="624" width="44" height="36" rx="5" fill="#1E1E21"/><text x="44" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" fill="#FFF">⇧</text>
+  <rect x="70" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="86" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">z</text>
+  <rect x="106" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="122" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">x</text>
+  <rect x="142" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="158" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">c</text>
+  <rect x="178" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="194" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">v</text>
+  <rect x="214" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="230" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">b</text>
+  <rect x="250" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="266" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">n</text>
+  <rect x="286" y="624" width="32" height="36" rx="5" fill="#303033"/><text x="302" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#FFF">m</text>
+  <rect x="322" y="624" width="46" height="36" rx="5" fill="#1E1E21"/><text x="345" y="647" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" fill="#FFF">⌫</text>
+  <!-- Spacebar row -->
+  <rect x="22" y="666" width="44" height="38" rx="5" fill="#1E1E21"/><text x="44" y="690" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#AAA">123</text>
+  <rect x="70" y="666" width="44" height="38" rx="5" fill="#1E1E21"/><text x="92" y="690" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" fill="#AAA">🌐</text>
+  <rect x="118" y="666" width="188" height="38" rx="5" fill="#303033"/>
+  <rect x="310" y="666" width="36" height="38" rx="5" fill="#1E1E21"/><text x="328" y="690" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#AAA">ret.</text>
+  <rect x="350" y="666" width="26" height="38" rx="5" fill="#007AFF"/>
+  <path d="M358 685 L370 685" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M363 680 L370 685 L363 690" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- ── Input bar ── -->
+  <rect x="15" y="490" width="360" height="40" rx="0" fill="#1C1C1E"/>
+  <!-- Input field pill -->
+  <rect x="24" y="496" width="300" height="28" rx="14" fill="#2C2C2E" stroke="#3A3A3C" stroke-width="1"/>
+  <!-- Send button -->
+  <circle cx="354" cy="510" r="14" fill="#007AFF"/>
+  <path d="M348 510 L360 510" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M355 504 L361 510 L355 516" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- ── Animated typing text in input field ── -->
+  <!-- This uses SMIL to reveal text progressively using clip-path width animation -->
+  <g clip-path="url(#inputClip)">
+    <!-- Full message text, clipped to reveal progressively -->
+    <text x="36" y="514" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#FFFAF5" id="typingText">
+      are you mad at me?? you've been weird
+      <animate attributeName="opacity" values="0;0;1;1;1;1;1;0;0" keyTimes="0;0.04;0.08;0.55;0.62;0.90;0.93;0.96;1" dur="14s" repeatCount="indefinite"/>
+    </text>
+
+    <!-- Animated clip rect that grows to reveal text left-to-right -->
+    <clipPath id="typingClip">
+      <rect x="28" y="496" height="28" rx="14">
+        <animate attributeName="width"
+          values="0;0;0;6;12;18;26;34;42;50;58;66;76;86;96;106;116;126;136;148;160;172;186;200;214;228;242;256;270;284;298;298;298;298;298;0;0"
+          keyTimes="0;0.04;0.07;0.10;0.13;0.16;0.19;0.22;0.25;0.27;0.29;0.31;0.33;0.35;0.37;0.39;0.41;0.43;0.45;0.47;0.49;0.51;0.53;0.55;0.57;0.58;0.59;0.60;0.61;0.62;0.63;0.70;0.88;0.91;0.95;1"
+          dur="14s"
+          repeatCount="indefinite"/>
+      </rect>
+    </clipPath>
+    <text x="36" y="514" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#FFFAF5" clip-path="url(#typingClip)">are you mad at me?? you've been weird</text>
+  </g>
+
+  <!-- Cursor blink in input field -->
+  <rect x="36" y="500" width="2" height="16" rx="1" fill="#007AFF">
+    <animate attributeName="opacity" values="1;1;0;0;1;1;0;0;0;0;0;0;0;0;0" keyTimes="0;0.03;0.06;0.09;0.12;0.15;0.18;0.90;0.92;0.93;0.94;0.95;0.96;0.97;1" dur="14s" repeatCount="indefinite"/>
+    <animate attributeName="x"
+      values="36;36;42;42;50;50;58;58;68;68;78;78;88;88;98;98;108;108;120;120;132;132;144;144;156;156;168;168;180;180;192;192;204;204;218;218;232;232;246;246;260;260;274;274;288;288;300;300;300;300;300;36;36"
+      keyTimes="0;0.04;0.07;0.10;0.13;0.16;0.19;0.22;0.25;0.27;0.29;0.31;0.33;0.35;0.37;0.39;0.41;0.43;0.45;0.47;0.49;0.51;0.53;0.55;0.57;0.58;0.59;0.60;0.61;0.62;0.63;0.65;0.67;0.69;0.71;0.73;0.75;0.77;0.79;0.81;0.83;0.85;0.87;0.89;0.91;0.93;0.95;0.97;0.98;0.99;1.0;0"
+      dur="14s"
+      repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ── HoldOff Verdict Overlay ── -->
+  <!-- Overlay slides up from bottom, stays visible, then slides away at loop reset -->
+  <g id="verdictOverlay">
+    <!-- Full dark backdrop scrim -->
+    <rect x="15" y="140" width="360" height="580" rx="0" fill="#000" opacity="0">
+      <animate attributeName="opacity"
+        values="0;0;0;0;0;0;0;0.55;0.55;0.55;0.55;0.55;0.55;0.55;0"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.62;0.65;0.70;0.75;0.80;0.85;0.88;0.91;0.96"
+        dur="14s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Overlay panel — slides up from bottom -->
+    <rect x="15" y="760" width="360" height="440" rx="24" fill="url(#overlayGrad)">
+      <!-- Slide up: stays at 760 until ~62%, then slides to 350, holds until 91%, then exits to 760 -->
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;350;350;350;350;350;350;350;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s"
+        calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Drag handle -->
+    <rect x="182" y="760" width="26" height="4" rx="2" fill="#5A5A5C">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;362;362;362;362;362;362;362;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s"
+        calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+
+    <!-- HOLD badge -->
+    <rect x="155" y="760" width="80" height="32" rx="16" fill="#C0392B">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;380;380;380;380;380;380;380;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s"
+        calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+      <animate attributeName="filter"
+        values="none;none;none;none;none;none;none;none;url(#holdGlow);url(#holdGlow);url(#holdGlow);url(#holdGlow);url(#holdGlow);url(#holdGlow);url(#holdGlow);none"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" repeatCount="indefinite"/>
+    </rect>
+    <text x="195" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700" fill="#FFF" letter-spacing="0.1em">
+      HOLD
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;401;401;401;401;401;401;401;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s"
+        calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- HoldOff branding pill -->
+    <rect x="155" y="760" width="80" height="20" rx="10" fill="none" stroke="#C97B5D" stroke-width="1">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;420;420;420;420;420;420;420;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+    <text x="195" y="760" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#C97B5D">
+      HoldOff
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;434;434;434;434;434;434;434;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- Pattern name label -->
+    <text x="195" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#C97B5D" letter-spacing="0.08em">
+      PROTEST BEHAVIOR
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;460;460;460;460;460;460;460;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- Main reframe text — line 1 -->
+    <text x="195" y="760" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="400" fill="#FAF6F0" font-style="italic">
+      Jordan didn't get distant.
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;486;486;486;486;486;486;486;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- Main reframe text — line 2 -->
+    <text x="195" y="760" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="400" fill="#FAF6F0" font-style="italic">
+      You got scared. Those are different.
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;508;508;508;508;508;508;508;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- Divider line -->
+    <line x1="50" y1="760" x2="340" y2="760" stroke="#3A2E26" stroke-width="1">
+      <animate attributeName="y1"
+        values="760;760;760;760;760;760;760;760;526;526;526;526;526;526;526;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+      <animate attributeName="y2"
+        values="760;760;760;760;760;760;760;760;526;526;526;526;526;526;526;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </line>
+
+    <!-- Action buttons row -->
+    <!-- HOLD button (primary) -->
+    <rect x="30" y="760" width="100" height="40" rx="20" fill="#C0392B">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;540;540;540;540;540;540;540;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+    <text x="80" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="700" fill="#FFF" letter-spacing="0.05em">
+      HOLD
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;565;565;565;565;565;565;565;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- REWRITE button -->
+    <rect x="145" y="760" width="100" height="40" rx="20" fill="none" stroke="#C97B5D" stroke-width="1.5">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;540;540;540;540;540;540;540;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+    <text x="195" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#C97B5D">
+      REWRITE
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;565;565;565;565;565;565;565;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- SEND anyway button -->
+    <rect x="260" y="760" width="100" height="40" rx="20" fill="none" stroke="#3A3A3C" stroke-width="1">
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;540;540;540;540;540;540;540;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </rect>
+    <text x="310" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#636366">
+      send anyway
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;565;565;565;565;565;565;565;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+
+    <!-- Tap to dismiss hint -->
+    <text x="195" y="760" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4A4A4C">
+      tap outside to dismiss
+      <animate attributeName="y"
+        values="760;760;760;760;760;760;760;760;600;600;600;600;600;600;600;760"
+        keyTimes="0;0.05;0.10;0.20;0.30;0.40;0.55;0.62;0.66;0.70;0.75;0.80;0.85;0.88;0.91;0.97"
+        dur="14s" calcMode="spline"
+        keySplines="0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.2 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0 0 1 1;0.3 0 0.5 1"
+        repeatCount="indefinite"/>
+    </text>
+  </g>
+
+  <!-- ── Phone home indicator ── -->
+  <rect x="160" y="738" width="70" height="4" rx="2" fill="#4A4A4C"/>
+</svg>

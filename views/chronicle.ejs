@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>HoldOff — Chronicle</title>
+  <style>
+    .chronicle-header {
+      text-align: center;
+      padding: 24px 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+    .chronicle-header h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .chronicle-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .tip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: slideUp 0.4s ease;
+    }
+    .tip-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .tip-card.priority-urgent {
+      border-left: 4px solid var(--danger);
+      background: linear-gradient(to right, rgba(220, 38, 38, 0.05), var(--bg-card));
+    }
+    .tip-card.priority-high {
+      border-left: 4px solid var(--primary);
+    }
+    .tip-card.priority-medium {
+      border-left: 4px solid var(--accent);
+    }
+    .tip-card.priority-low {
+      border-left: 4px solid var(--border);
+    }
+
+    .tip-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .tip-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .tip-title {
+      flex: 1;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .tip-badge {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tip-badge.urgent { background: var(--danger-glow); color: var(--danger); }
+    .tip-badge.high { background: var(--primary-glow); color: var(--primary); }
+    .tip-badge.medium { background: var(--accent-glow); color: var(--accent); }
+    .tip-badge.low { background: var(--border); color: var(--text-muted); }
+
+    .tip-message {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .tip-action {
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: inline-block;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .loading-state .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    .empty-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="chronicle-header">
+      <h1>📜 Chronicle</h1>
+      <p>Personalized tips based on your journey</p>
+    </div>
+
+    <div class="screen-content">
+      <!-- Loading state -->
+      <div id="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Analyzing your patterns...</p>
+      </div>
+
+      <!-- Tips container -->
+      <div id="tips-container" style="display:none;">
+        <!-- Tips will be inserted here -->
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty" style="display:none;" class="empty-state">
+        <div class="empty-icon">🌱</div>
+        <div class="empty-text">
+          Start your journey by submitting your first verdict.<br>
+          Tips will appear as you build your history.
+        </div>
+        <a href="/filter" class="btn btn-primary" style="margin-top:20px;">Get Your First Verdict</a>
+      </div>
+    </div>
+
+    <%- include('partials/bottom_nav') %>
+  </div>
+
+  <script>
+    // Fetch tips on page load
+    async function loadTips() {
+      try {
+        const response = await fetch('/api/chronicle/tips');
+        const data = await response.json();
+
+        document.getElementById('loading').style.display = 'none';
+
+        if (!data.tips || data.tips.length === 0) {
+          document.getElementById('empty').style.display = 'block';
+          return;
+        }
+
+        const container = document.getElementById('tips-container');
+        container.style.display = 'block';
+
+        data.tips.forEach((tip, index) => {
+          const card = document.createElement('div');
+          const safePriority = ['high', 'medium', 'low'].includes(tip.priority) ? tip.priority : 'medium';
+          card.className = `tip-card priority-${safePriority}`;
+          card.style.animationDelay = `${index * 0.1}s`;
+
+          const header = document.createElement('div');
+          header.className = 'tip-header';
+
+          const iconEl = document.createElement('div');
+          iconEl.className = 'tip-icon';
+          iconEl.textContent = tip.icon || '';
+
+          const titleEl = document.createElement('div');
+          titleEl.className = 'tip-title';
+          titleEl.textContent = tip.title || '';
+
+          const badgeEl = document.createElement('div');
+          badgeEl.className = `tip-badge ${safePriority}`;
+          badgeEl.textContent = tip.priority || '';
+
+          header.appendChild(iconEl);
+          header.appendChild(titleEl);
+          header.appendChild(badgeEl);
+
+          const msgEl = document.createElement('div');
+          msgEl.className = 'tip-message';
+          msgEl.textContent = tip.message || '';
+
+          const actionEl = document.createElement('div');
+          actionEl.className = 'tip-action';
+          actionEl.textContent = '💡 ' + (tip.action || '');
+
+          card.appendChild(header);
+          card.appendChild(msgEl);
+          card.appendChild(actionEl);
+
+          container.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error('Failed to load tips:', err);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('empty').style.display = 'block';
+        document.getElementById('empty').innerHTML = `
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-text">
+            Couldn't load tips right now.<br>
+            Try refreshing the page.
+          </div>
+        `;
+      }
+    }
+
+    // Load tips on page load
+    loadTips();
+  </script>
+</body>
+</html>

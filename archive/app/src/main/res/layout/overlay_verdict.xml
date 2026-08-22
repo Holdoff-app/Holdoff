@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#F0180A3A"
+    android:padding="20dp"
+    android:elevation="16dp">
+
+    <!-- Close button -->
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="end"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:tint="#AAAAAA"
+        android:contentDescription="Close"
+        android:padding="4dp" />
+
+    <!-- Verdict badge -->
+    <TextView
+        android:id="@+id/tv_verdict"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/verdict_badge_bg"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="12dp"
+        android:text="HOLD" />
+
+    <!-- Original message preview -->
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#B0B0D0"
+        android:textSize="13sp"
+        android:fontFamily="sans-serif"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:layout_marginBottom="8dp"
+        android:background="#20FFFFFF"
+        android:padding="10dp" />
+
+    <!-- Reframe / grounded voice -->
+    <TextView
+        android:id="@+id/tv_reframe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E0D0FF"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingMultiplier="1.3"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp" />
+
+    <!-- Action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_hold"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Hold Off"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/btn_hold_bg"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_send_anyway"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Send Anyway"
+            android:textColor="#B0B0D0"
+            android:background="@drawable/btn_send_anyway_bg"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

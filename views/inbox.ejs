@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HoldOff Inbox</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background: #0f0a1d; color: #d0d0e0; font-family: sans-serif; }
+    .nav-tabs { display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid #332b50; }
+    .nav-tabs a { color: #8e85b0; text-decoration: none; font-weight: bold; }
+    .nav-tabs a.active { color: #fff; border-bottom: 2px solid #6b5cd8; }
+    .content { padding: 20px; }
+  </style>
+</head>
+<body>
+  <div class="nav-tabs">
+    <a href="/inbox" class="active">Threads</a>
+    <a href="/contacts">Contacts</a>
+    <a href="/insights">Insights</a>
+    <a href="/suggest">Suggest</a>
+  </div>
+  <div class="content">
+    <h1>Your Messages</h1>
+    <div id="thread-list">Loading threads...</div>
+  </div>
+  <script>
+    fetch('/api/messaging/threads')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('thread-list');
+        if (data.threads && data.threads.length > 0) {
+          list.innerHTML = data.threads.map(t => `<div class="thread-item"><a href="/thread/${t.id}">${t.contact_name}</a></div>`).join('');
+        } else {
+          list.innerHTML = '<p>No threads found.</p>';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('thread-list').innerHTML = '<p>Failed to load threads.</p>';
+      });
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

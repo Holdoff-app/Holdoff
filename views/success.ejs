@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HoldOff — You're in</title>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="theme-color" content="#0E0C0B">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <meta name="description" content="HoldOff Pro — your filter is active.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <style>
+    body {
+      background: #0E0C0B;
+      color: #FAF6F0;
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .success-wrap { max-width: 520px; width: 100%; }
+    .success-card {
+      background: #1a1614;
+      border: 1px solid #2e2926;
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .success-card__icon {
+      width: 56px; height: 56px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .success-card__icon svg {
+      width: 28px; height: 28px;
+      fill: none; stroke: #FAF6F0; stroke-width: 2.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .success-card__eyebrow {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem;
+    }
+    .success-card__headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700; letter-spacing: -0.03em;
+      color: #FAF6F0; margin-bottom: 1rem; line-height: 1.15;
+    }
+    .success-card__sub {
+      font-size: 1rem; color: rgba(250,246,240,0.6);
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+    .success-card__tier {
+      display: inline-block;
+      background: rgba(201,123,93,0.15);
+      color: var(--accent);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.3rem 0.8rem; border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+    .success-card__cta {
+      display: inline-block; background: var(--accent);
+      color: #fff; font-size: 1rem; font-weight: 600;
+      padding: 0.85rem 2rem; border-radius: 8px;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .success-card__cta:hover { background: var(--accent-deep); }
+    .success-card__footer {
+      margin-top: 1.5rem; font-size: 0.8rem;
+      color: rgba(250,246,240,0.35);
+    }
+    .success-card__footer a { color: rgba(250,246,240,0.5); text-decoration: underline; }
+
+    /* Promo code box */
+    .promo-box {
+      background: #1a1614;
+      border: 1px solid #2e2926;
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .promo-box h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem; color: #FAF6F0;
+      margin-bottom: 0.5rem;
+    }
+    .promo-box p { font-size: 0.9rem; color: rgba(250,246,240,0.55); margin-bottom: 1rem; }
+    .promo-code {
+      display: inline-block;
+      background: rgba(201,123,93,0.12);
+      border: 2px dashed var(--accent);
+      color: var(--accent);
+      font-size: 1.6rem; font-weight: 800;
+      letter-spacing: 0.15em;
+      padding: 0.6rem 1.5rem;
+      border-radius: 10px; margin-bottom: 0.5rem;
+    }
+    .promo-copy-btn {
+      display: block; background: none;
+      border: 1px solid rgba(201,123,93,0.4);
+      color: rgba(250,246,240,0.5);
+      font-size: 0.75rem; padding: 0.4rem 1rem;
+      border-radius: 6px; cursor: pointer;
+      margin: 0 auto 0.5rem; transition: all 0.15s;
+    }
+    .promo-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .promo-box small { font-size: 0.75rem; color: rgba(250,246,240,0.3); }
+
+    /* Invite friends form */
+    .invite-card {
+      background: #1a1614;
+      border: 1px solid #2e2926;
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .invite-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem; color: #FAF6F0;
+      margin-bottom: 0.4rem;
+    }
+    .invite-card p { font-size: 0.88rem; color: rgba(250,246,240,0.55); margin-bottom: 1.2rem; line-height: 1.5; }
+    .friend-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .friend-row input {
+      flex: 1; background: #0E0C0B;
+      border: 1px solid #2e2926; border-radius: 8px;
+      color: #FAF6F0; font-size: 0.9rem;
+      padding: 0.65rem 0.9rem;
+      outline: none; transition: border 0.15s;
+    }
+    .friend-row input::placeholder { color: rgba(250,246,240,0.25); }
+    .friend-row input:focus { border-color: var(--accent); }
+    .invite-send-btn {
+      width: 100%; background: var(--accent);
+      color: #fff; font-size: 0.95rem; font-weight: 600;
+      padding: 0.8rem; border-radius: 8px;
+      border: none; cursor: pointer;
+      margin-top: 0.5rem; transition: background 0.15s;
+    }
+    .invite-send-btn:hover { background: var(--accent-deep); }
+    .invite-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .invite-skip { display: block; text-align: center; margin-top: 0.75rem; font-size: 0.8rem; color: rgba(250,246,240,0.3); cursor: pointer; text-decoration: underline; }
+    .invite-success { text-align: center; padding: 1rem; color: var(--accent); font-weight: 600; display: none; }
+
+    /* Loading spinner */
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(201,123,93,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 3rem auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="success-wrap">
+
+    <!-- Main success card -->
+    <div class="success-card" id="successCard" style="display:none;">
+      <div class="success-card__icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="success-card__eyebrow">HoldOff</div>
+      <h1 class="success-card__headline">You're in.</h1>
+      <p class="success-card__sub" id="tierSub">Your filter is active. Open HoldOff and start using it.</p>
+      <span class="success-card__tier" id="tierBadge"></span>
+      <br><br>
+      <a href="/filter" class="success-card__cta">Head to /filter →</a>
+      <p class="success-card__footer" id="billingFooter"></p>
+    </div>
+
+    <!-- Your personal referral code -->
+    <div class="promo-box" id="promoBox" style="display:none;">
+      <h3>🎁 Your personal referral code</h3>
+      <p>Share this with friends — they get <strong>$2 off</strong> their first month.<br>Get <strong>10 friends to sign up</strong> at regular price → you get <strong>2 years free</strong> 🎉</p>
+      <div class="promo-code" id="promoCodeDisplay">—</div><br>
+      <button class="promo-copy-btn" onclick="copyPromo()">Copy code</button>
+      <small id="promoGoal">0 / 10 friends referred</small>
+    </div>
+
+    <!-- Invite 2 friends right now -->
+    <div class="invite-card" id="inviteCard" style="display:none;">
+      <h3>📲 Invite 2 friends right now</h3>
+      <p>We'll send them a personal email from you — letting them know you're using HoldOff and they should join. Takes 10 seconds.</p>
+
+      <div class="friend-row">
+        <input type="text" id="f1name" placeholder="Friend 1 name" />
+        <input type="email" id="f1email" placeholder="Friend 1 email" />
+      </div>
+      <div class="friend-row">
+        <input type="text" id="f2name" placeholder="Friend 2 name" />
+        <input type="email" id="f2email" placeholder="Friend 2 email" />
+      </div>
+
+      <button class="invite-send-btn" id="inviteBtn" onclick="sendInvites()">Send invites 💜</button>
+      <span class="invite-skip" onclick="skipInvite()">Skip for now</span>
+
+      <div class="invite-success" id="inviteSuccess">
+        ✅ Invites sent! They'll get an email with your promo code.
+      </div>
+    </div>
+
+  </div>
+
+  <div id="loadingState">
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    let currentUserName = '';
+    let currentUserEmail = '';
+    let currentPromoCode = '';
+
+    async function verifyAndShow() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      if (!sessionId) { showError(); return; }
+
+      try {
+        const res = await fetch(`/api/checkout/verify-session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+
+        if (!res.ok || !data.verified) { showError(); return; }
+
+        const tier = data.tier || 'Pro';
+        const tierDisplay = tier.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+        currentUserName = data.customer_name || '';
+        currentUserEmail = data.customer_email || '';
+        currentPromoCode = data.promo_code || '';
+
+        document.getElementById('tierBadge').textContent = tierDisplay;
+        document.getElementById('tierSub').textContent =
+          'Your HoldOff ' + tierDisplay + ' is active. Open HoldOff and start using it.';
+        document.getElementById('billingFooter').innerHTML =
+          'Your receipt: <a href="/api/checkout/portal">View in Stripe billing portal →</a>';
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('successCard').style.display = 'block';
+
+        // Show referral code box
+        if (currentPromoCode) {
+          document.getElementById('promoCodeDisplay').textContent = currentPromoCode;
+          document.getElementById('promoBox').style.display = 'block';
+        }
+
+        // Always show invite card
+        document.getElementById('inviteCard').style.display = 'block';
+
+      } catch { showError(); }
+    }
+
+    function copyPromo() {
+      navigator.clipboard.writeText(currentPromoCode).then(() => {
+        document.querySelector('.promo-copy-btn').textContent = 'Copied! ✓';
+        setTimeout(() => document.querySelector('.promo-copy-btn').textContent = 'Copy code', 2000);
+      });
+    }
+
+    async function sendInvites() {
+      const friends = [];
+      const f1n = document.getElementById('f1name').value.trim();
+      const f1e = document.getElementById('f1email').value.trim();
+      const f2n = document.getElementById('f2name').value.trim();
+      const f2e = document.getElementById('f2email').value.trim();
+
+      if (f1e) friends.push({ name: f1n, email: f1e });
+      if (f2e) friends.push({ name: f2n, email: f2e });
+
+      if (friends.length === 0) {
+        alert('Add at least one friend email to send an invite!');
+        return;
+      }
+
+      const btn = document.getElementById('inviteBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        const res = await fetch('https://superagent-33a2ff6d.base44.app/functions/betaInviteFriends', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            inviterName: currentUserName || 'A friend',
+            inviterEmail: currentUserEmail,
+            inviterPromoCode: currentPromoCode,
+            friends
+          })
+        });
+
+        const data = await res.json();
+        document.getElementById('inviteSuccess').style.display = 'block';
+        btn.style.display = 'none';
+        document.querySelector('.invite-skip').style.display = 'none';
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Send invites 💜';
+        alert('Something went wrong — try again!');
+      }
+    }
+
+    function skipInvite() {
+      document.getElementById('inviteCard').style.display = 'none';
+    }
+
+    function showError() {
+      document.getElementById('loadingState').innerHTML =
+        '<div style="text-align:center;color:rgba(250,246,240,0.5);font-size:1rem;margin-top:3rem;">' +
+        'Could not verify payment. <a href="/filter" style="color:var(--accent);">Go to filter</a>' +
+        '</div>';
+    }
+
+    verifyAndShow();
+  </script>
+
+</body>
+</html>

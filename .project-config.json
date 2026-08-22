@@ -1,0 +1,43 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [
+    "server",
+    "db",
+    "user"
+  ],
+  "dev_command": "pnpm run dev",
+  "env_vars": {
+    "DATABASE_URL": "mysql://33h5QaxUY32Am4v.root:UteY73We67UC9n3UgpMz@gateway03.us-east-1.prod.aws.tidbcloud.com:4000/AobewUgCay4BWggx2vFtNm?ssl={\"rejectUnauthorized\":true}"
+  },
+  "experiments": [
+    "no_db_push",
+    "references_readme"
+  ],
+  "git_remote": {
+    "repo_url": "https://7f0548f6b28a1758d9bf7be630d36cb4.artifacts.cloudflare.net/git/prod/AobewUgCay4BWggx2vFtNm.git",
+    "expiration": "2026-06-29T02:17:39.690Z",
+    "token": "art_v1_3197f61a7402da6cf43f75e2841e76caf521cdb0?expires=1782699459",
+    "backend": "GIT_BACKEND_ARTIFACTS"
+  },
+  "name": "holdoff-app",
+  "path": "/home/ubuntu/holdoff-app",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "daUTYckXE9f9MrKReExxhe",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "JWT_SECRET": "gRfjfpARB9QyF5Gf4tEF5J",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "Stacy Martin",
+    "OWNER_OPEN_ID": "eyr7rnxMXf2dUZ8krm7rgT",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "efecca74-74d0-41ef-98b8-9e43bd5d1614",
+    "VITE_APP_ID": "AobewUgCay4BWggx2vFtNm",
+    "VITE_APP_LOGO": "",
+    "VITE_APP_TITLE": "HoldOff — Build Your Pause",
+    "VITE_FRONTEND_FORGE_API_KEY": "bsfLhxUDEzWBuCKR6rimnM",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im"
+  },
+  "template_id": "web-db-user",
+  "test_command": "pnpm test"
+}

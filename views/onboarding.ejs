@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HoldOff Onboarding — Personalize Your Experience</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 50%, #1a0d2e 100%);
+      color: #e0d5f0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .onboarding-container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(45, 27, 78, 0.8);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    .onboarding-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .onboarding-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .onboarding-header p {
+      font-size: 16px;
+      color: #A78BFA;
+      line-height: 1.6;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(139, 92, 246, 0.2);
+      border-radius: 2px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8B5CF6 0%, #6D28D9 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #A78BFA;
+    }
+
+    .step-description {
+      font-size: 14px;
+      color: #a598c8;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .checkbox-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-item:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: #8B5CF6;
+    }
+
+    .checkbox-label {
+      flex: 1;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .checkbox-sublabel {
+      display: block;
+      font-size: 12px;
+      color: #8578b0;
+      margin-top: 3px;
+      font-weight: normal;
+    }
+
+    .radio-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .radio-item:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .radio-item input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: #8B5CF6;
+    }
+
+    .radio-label {
+      flex: 1;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: rgba(139, 92, 246, 0.1);
+      color: #A78BFA;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    .btn-skip {
+      background: transparent;
+      color: #8578b0;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .btn-skip:hover {
+      color: #A78BFA;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.4);
+      color: #81c784;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="onboarding-container">
+    <div class="onboarding-header">
+      <h1>Welcome to HoldOff</h1>
+      <p>Let's personalize your experience to match your unique needs</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Step 1: Mental Health Conditions -->
+    <div class="step active" data-step="1">
+      <div class="step-title">📋 Mental Health Conditions</div>
+      <div class="step-description">
+        Select any conditions that apply to you. HoldOff will tailor its insights to help you communicate more safely.
+      </div>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="rsd">
+          <div class="checkbox-label">
+            RSD (Rejection Sensitive Dysphoria)
+            <span class="checkbox-sublabel">Heightened sensitivity to perceived rejection</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="anxiety">
+          <div class="checkbox-label">
+            Anxiety Disorders
+            <span class="checkbox-sublabel">Chronic worry, panic, or social anxiety</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="depression">
+          <div class="checkbox-label">
+            Depression
+            <span class="checkbox-sublabel">Low mood, hopelessness, or loss of interest</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="addiction">
+          <div class="checkbox-label">
+            Addiction / Substance Use
+            <span class="checkbox-sublabel">Recovery or management of substance dependencies</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="autism">
+          <div class="checkbox-label">
+            Autism Spectrum Disorder
+            <span class="checkbox-sublabel">Sensory, social, or communication differences</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="adhd">
+          <div class="checkbox-label">
+            ADHD
+            <span class="checkbox-sublabel">Attention, impulse, or executive function challenges</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Step 2: Attachment Style -->
+    <div class="step" data-step="2">
+      <div class="step-title">💕 Attachment Style</div>
+      <div class="step-description">
+        Understanding your attachment style helps HoldOff provide better relationship insights and communication guidance.
+      </div>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="attachment_style" value="secure">
+          <div class="radio-label">
+            Secure
+            <span class="checkbox-sublabel">Comfortable with intimacy and independence; trusting in relationships</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="attachment_style" value="anxious">
+          <div class="radio-label">
+            Anxious
+            <span class="checkbox-sublabel">Crave closeness; worry about abandonment; sensitive to rejection</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="attachment_style" value="avoidant">
+          <div class="radio-label">
+            Avoidant
+            <span class="checkbox-sublabel">Value independence; uncomfortable with emotional intimacy; may withdraw</span>
+          </div>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="attachment_style" value="fearful-avoidant">
+          <div class="radio-label">
+            Fearful-Avoidant
+            <span class="checkbox-sublabel">Conflicted desire for closeness balanced with fear of rejection</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Step 3: Trauma History -->
+    <div class="step" data-step="3">
+      <div class="step-title">🛡️ Trauma & Recovery</div>
+      <div class="step-description">
+        Have you experienced trauma? HoldOff can provide trauma-informed guidance.
+      </div>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="condition" value="trauma">
+          <div class="checkbox-label">
+            Trauma History
+            <span class="checkbox-sublabel">PTSD, complex trauma, or significant past experiences</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Step 4: Confirmation -->
+    <div class="step" data-step="4">
+      <div class="step-title">✨ You're All Set!</div>
+      <div class="step-description">
+        Your profile is ready. HoldOff is now personalized to help you communicate safely and authentically.
+      </div>
+      <div class="success-message" id="confirmationMessage" style="display: none;">
+        ✓ Your conditions have been saved
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="button-group">
+      <button class="btn-secondary" id="prevBtn" style="display: none;">← Back</button>
+      <button class="btn-primary" id="nextBtn">Next →</button>
+      <button class="btn-skip" id="skipBtn">Skip for now</button>
+    </div>
+  </div>
+
+  <script>
+    const totalSteps = 4;
+    let currentStep = 1;
+    let conditions = [];
+    let attachmentStyle = null;
+
+    function updateProgress() {
+      const progress = (currentStep / totalSteps) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function showStep(step) {
+      // Hide all steps
+      document.querySelectorAll('.step').forEach(el => {
+        el.classList.remove('active');
+      });
+      // Show current step
+      document.querySelector(`[data-step="${step}"]`).classList.add('active');
+      updateProgress();
+
+      // Update button visibility
+      document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
+      document.getElementById('skipBtn').style.display = step === totalSteps ? 'none' : 'block';
+
+      if (step === totalSteps) {
+        document.getElementById('nextBtn').textContent = 'Complete Setup';
+        document.getElementById('confirmationMessage').style.display = 'block';
+      } else {
+        document.getElementById('nextBtn').textContent = 'Next →';
+        document.getElementById('confirmationMessage').style.display = 'none';
+      }
+    }
+
+    function collectData() {
+      // Collect selected conditions
+      conditions = Array.from(document.querySelectorAll('input[name="condition"]:checked'))
+        .map(el => el.value);
+
+      // Collect attachment style
+      const attachmentEl = document.querySelector('input[name="attachment_style"]:checked');
+      attachmentStyle = attachmentEl ? attachmentEl.value : null;
+    }
+
+    async function submitQuestionnaire() {
+      collectData();
+
+      const userId = localStorage.getItem('user_id');
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        window.location.href = '/login';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/questionnaire/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            conditions,
+            attachment_style: attachmentStyle
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          // Mark onboarding complete
+          await fetch('/api/auth/complete-onboarding', { method: 'POST' }).catch(() => {});
+          // Redirect to messaging app
+          window.location.href = '/thread';
+        } else {
+          alert('Failed to save conditions. Please try again.');
+        }
+      } catch (err) {
+        console.error('Questionnaire submission error:', err);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (currentStep === totalSteps) {
+        submitQuestionnaire();
+      } else {
+        collectData();
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    });
+
+    document.getElementById('skipBtn').addEventListener('click', () => {
+      if (confirm('Skip personalization? You can complete this later in Settings.')) {
+        fetch('/api/auth/complete-onboarding', { method: 'POST' }).catch(() => {});
+        window.location.href = '/filter';
+      }
+    });
+
+    // Initialize
+    showStep(1);
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+      alert('User session not found. Redirecting to login.');
+      window.location.href = '/login';
+    }
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

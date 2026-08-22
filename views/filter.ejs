@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HoldOff — Should you send it?</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <!-- iOS PWA meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HoldOff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0E0C0B">
+
+  <!-- App icons -->
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+
+  <!-- iOS splash screens (portrait) -->
+  <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1179x2556.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1284x2778.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="/icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="/icons/splash-750x1334.png">
+  <meta name="description" content="Paste the message you're about to send. Get an honest verdict before you hit send.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/filter.css">
+  <link rel="stylesheet" href="/css/pwa.css">
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '878230961304067');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=878230961304067&ev=PageView&noscript=1"/>
+  </noscript>
+  <style>
+    body { padding-bottom: 0 !important; }
+    .filter-main, main, .filter-content { padding-bottom: 5rem !important; }
+  </style>
+</head>
+<body class="filter-body">
+
+  <nav class="filter-nav" style="display:flex;align-items:center;justify-content:space-between;">
+    <a href="/" class="filter-nav__wordmark">HoldOff</a>
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <% if (user) { %>
+        <span style="font-size:0.8rem;color:#9A8F8A;"><%= user.email %></span>
+        <button id="logoutBtn" style="background:none;border:none;color:#9A8F8A;cursor:pointer;font-size:0.8rem;font-family:inherit;">Log out</button>
+      <% } else { %>
+        <a href="#" id="openLoginBtn" style="font-size:0.8rem;color:#9A8F8A;text-decoration:none;">Log in</a>
+        <a href="#" id="openSignupBtn" style="font-size:0.8rem;color:#C97B5D;text-decoration:none;font-weight:600;">Sign up free</a>
+      <% } %>
+      <button class="filter-nav__history" id="navHistoryBtn">History</button>
+      <% if (user) { %>
+        <a href="/referrals" style="font-size:0.8rem;color:#C97B5D;text-decoration:none;font-weight:600;">Referrals</a>
+        <button id="pushSettingsBtn" title="Notification settings" style="background:none;border:none;cursor:pointer;color:#9A8F8A;font-size:1.1rem;padding:0 0.25rem;" aria-label="Notification settings">⚙</button>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- iOS Install Prompt — bottom sheet -->
+  <div class="pwa-install-sheet" id="iosInstallSheet" role="dialog" aria-label="Install HoldOff">
+    <button class="pwa-install-sheet__close" id="iosInstallClose" aria-label="Dismiss">✕</button>
+    <div class="pwa-install-sheet__icon">
+      <img src="/icons/icon-192.png" alt="HoldOff icon" width="48" height="48">
+    </div>
+    <div class="pwa-install-sheet__body">
+      <strong>Install HoldOff on your home screen</strong>
+      One tap, works like an app — no more copy-pasting.
+      <div class="pwa-install-sheet__steps">
+        Tap <span class="pwa-install-sheet__share">⊞</span> → Add to Home Screen → Add
+      </div>
+    </div>
+  </div>
+
+  <!-- Input screen -->
+  <main class="filter-main" id="inputScreen">
+    <div class="filter-container">
+      <!-- Streak counter — shown when count > 0 -->
+      <div class="filter-streak filter-streak--hidden" id="streakBlock">
+        <div class="filter-streak__count" id="streakCount">0</div>
+        <div class="filter-streak__label">texts not sent</div>
+        <div class="filter-streak__subtitle" id="streakSubtitle"></div>
+      </div>
+
+      <h1 class="filter-headline">What are you about to send?</h1>
+      <p class="filter-sub">Paste it. Be honest. No one's watching.</p>
+
+      <!-- Tab switcher -->
+      <div class="filter-tabs">
+        <button class="filter-tab-btn filter-tab-btn--active" data-tab="send" id="sendTabBtn" aria-pressed="true" aria-label="Send tab: get verdict on a message you want to send">Send</button>
+        <button class="filter-tab-btn" data-tab="interpret" id="interpretTabBtn" aria-pressed="false" aria-label="Interpret tab: decode what an incoming message means">Interpret</button>
+      </div>
+
+      <!-- Send tab -->
+      <div id="sendTab">
+      <form id="filterForm" class="filter-form">
+        <div class="filter-field">
+          <label class="filter-label" for="messageInput">The message</label>
+          <textarea
+            id="messageInput"
+            class="filter-textarea"
+            placeholder="Type or paste the message here..."
+            rows="5"
+            maxlength="2000"
+            required
+            autofocus
+          ></textarea>
+          <div class="filter-char-count"><span id="charCount">0</span> / 2000</div>
+        </div>
+
+        <div class="filter-field filter-field--optional">
+          <label class="filter-label" for="contextInput">
+            What's going on?
+            <span class="filter-label-optional">(optional but helps)</span>
+          </label>
+          <textarea
+            id="contextInput"
+            class="filter-textarea filter-textarea--sm"
+            placeholder="Their last message, how long they've been quiet, what you're feeling..."
+            rows="3"
+            maxlength="500"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="filter-btn" id="submitBtn">
+          <span class="filter-btn__text">Get my verdict</span>
+          <span class="filter-btn__loading" aria-hidden="true" style="display:none">Thinking...</span>
+        </button>
+        <div id="filterError" role="alert" style="display:none;color:#f44336;font-size:0.9rem;margin-top:-0.5rem;"></div>
+      </form>
+      </div><!-- /sendTab -->
+
+      <!-- Interpret tab -->
+      <div id="interpretTab" style="display:none;">
+        <form id="interpretForm" class="filter-form">
+          <div class="filter-field">
+            <label class="filter-label" for="partnerMsgInput">Their message</label>
+            <textarea
+              id="partnerMsgInput"
+              class="filter-textarea"
+              placeholder="Paste a message your partner sent you..."
+              rows="5"
+              maxlength="2000"
+              required
+            ></textarea>
+            <div class="filter-char-count"><span id="partnerCharCount">0</span> / 2000</div>
+          </div>
+
+          <details class="filter-details">
+            <summary class="filter-details__summary">Know their attachment style?</summary>
+            <div class="filter-field">
+              <label class="filter-label" for="styleSelect">
+                Their attachment style
+                <span class="filter-label-optional">(optional)</span>
+              </label>
+              <select id="styleSelect" class="filter-select">
+                <option value="">Not sure — figure it out</option>
+                <option value="Anxious">Anxious</option>
+                <option value="Avoidant">Avoidant</option>
+                <option value="Dismissive-Avoidant">Dismissive-Avoidant</option>
+                <option value="Fearful-Avoidant">Fearful-Avoidant</option>
+              </select>
+            </div>
+          </details>
+
+          <button type="submit" class="filter-btn" id="interpretBtn">
+            <span class="filter-btn__text">Decode this message</span>
+            <span class="filter-btn__loading" aria-hidden="true" style="display:none">Thinking...</span>
+          </button>
+          <div id="interpretError" role="alert" style="display:none;color:#f44336;font-size:0.9rem;margin-top:-0.5rem;"></div>
+        </form>
+      </div><!-- /interpretTab -->
+    </div>
+  </main>
+
+  <!-- Result screen -->
+  <div class="filter-result-screen" id="resultScreen" style="display:none">
+    <nav class="filter-nav filter-nav--result">
+      <a href="/" class="filter-nav__wordmark">HoldOff</a>
+    </nav>
+
+    <div class="filter-result-container" id="resultContainer">
+
+      <!-- Verdict badge -->
+      <div class="filter-verdict-wrap">
+        <div class="filter-verdict" id="verdictBadge">—</div>
+        <div class="filter-verdict-status" id="verdictStatus" role="status" aria-live="polite" style="display:none;"></div>
+      </div>
+
+      <!-- Pattern name -->
+      <div class="filter-pattern-label">What's happening</div>
+      <div class="filter-pattern" id="patternText">—</div>
+
+      <!-- What's actually happening -->
+      <div class="filter-section">
+        <div class="filter-section-label">The honest read</div>
+        <div class="filter-section-body" id="whatsHappeningText">—</div>
+      </div>
+
+      <!-- Grounded voice -->
+      <div class="filter-section filter-section--grounded">
+        <div class="filter-section-label">The grounded version of you says</div>
+        <div class="filter-section-body filter-section-body--grounded" id="groundedVoiceText">—</div>
+      </div>
+
+      <!-- Rewrite / send nothing -->
+      <div class="filter-section filter-section--rewrite" id="rewriteSection">
+        <div class="filter-section-label" id="rewriteLabel">If you must send something</div>
+        <div class="filter-section-body filter-section-body--rewrite" id="rewriteText">—</div>
+        <button class="filter-copy-btn" id="copyBtn" title="Copy to clipboard">Copy</button>
+      </div>
+
+      <!-- Try another -->
+      <button class="filter-another-btn" id="tryAnotherBtn">
+        Try another message →
+      </button>
+
+      <!-- Share streak — shown only after HOLD or REWRITE verdict -->
+      <div id="shareBlock" style="display:none;text-align:center;margin-top:0.5rem;">
+        <!-- Primary trigger -->
+        <button class="filter-share-btn" id="shareBtn">
+          Share this save
+        </button>
+        <p class="filter-share-privacy">Only your streak is shared. Never your message.</p>
+
+        <!-- Expanded share panel — revealed after share card is created -->
+        <div id="sharePanel" style="display:none;margin-top:1rem;">
+          <!-- Reframe preview (loaded from API) -->
+          <div id="shareReframePreview" style="font-family:'Fraunces',Georgia,serif;font-style:italic;color:#C97B5D;font-size:0.9rem;margin-bottom:0.75rem;line-height:1.5;padding:0 0.5rem;"></div>
+
+          <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+            <!-- Native share (mobile) — hidden on desktop -->
+            <button id="shareNativeBtn" style="display:none;width:100%;max-width:280px;padding:0.6rem 1.25rem;background:#C97B5D;color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;">
+              Share →
+            </button>
+
+            <!-- Twitter / X -->
+            <a id="shareTwitterLink" href="#" target="_blank" rel="noopener"
+               style="width:100%;max-width:280px;display:inline-block;padding:0.6rem 1.25rem;background:#1DA1F2;color:#fff;border-radius:7px;font-family:inherit;font-size:0.875rem;font-weight:600;text-decoration:none;text-align:center;">
+              Post on Twitter / X
+            </a>
+
+            <!-- Copy link -->
+            <button id="shareCopyLinkBtn" style="width:100%;max-width:280px;padding:0.6rem 1.25rem;background:transparent;color:#C97B5D;border:1px solid #C97B5D;border-radius:7px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;">
+              Copy link
+            </button>
+          </div>
+        </div>
+
+        <div id="shareToast" style="display:none;font-size:0.8rem;color:#9A8F8A;margin-top:0.4rem;"></div>
+      </div>
+
+      <!-- Auto-intercept CTA — shown after every verdict -->
+      <div id="interceptCtaBanner" style="display:none;margin:1.5rem 0 0;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:1rem 1.25rem;">
+        <div style="font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.35rem;">Coming to Android</div>
+        <div style="font-size:0.9rem;color:var(--fg);margin-bottom:0.75rem;line-height:1.5;">
+          Tired of copy-pasting? Auto-intercept ships soon. HoldOff watches the draft — no paste required.
+        </div>
+        <div id="interceptCtaForm" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <input type="email" id="interceptCtaEmail" placeholder="your@email.com" autocomplete="email"
+            style="flex:1;min-width:160px;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:0.875rem;background:var(--bg);color:var(--fg);" />
+          <button id="interceptCtaBtn"
+            style="padding:0.55rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:5px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Get notified →
+          </button>
+        </div>
+        <p id="interceptCtaDone" style="display:none;font-size:0.8rem;color:var(--muted);margin-top:0.5rem;">
+          You're on the list. One email when it ships.
+        </p>
+        <a href="https://app.base44.com/apps/6a2a90559f878225e8a7a50f" style="display:block;margin-top:0.5rem;font-size:0.75rem;color:var(--muted);text-decoration:none;">Learn more →</a>
+      </div>
+
+      <!-- Referral CTA — shown after HOLD or REWRITE verdict -->
+      <div id="referralCtaBanner" style="display:none;margin:1rem 0 0;text-align:center;">
+        <p style="font-size:0.8rem;color:var(--muted);margin:0 0 0.4rem;">Know someone who needs this?</p>
+        <button id="referralCtaBtn" style="background:none;border:none;padding:0;font-family:inherit;font-size:0.85rem;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">
+          Send it to them →
+        </button>
+      </div>
+
+      <!-- History shortcut -->
+      <button class="filter-history-btn" id="resultHistoryBtn">
+        View past verdicts
+      </button>
+
+      <!-- Log pattern to journal -->
+      <div id="journalCtaBanner" style="display:none;margin:0.75rem 0 0;text-align:center;">
+        <a href="#" id="logPatternBtn" style="font-size:0.82rem;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2h9v9H2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 5h5M4 7h5M4 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Log this pattern to journal
+        </a>
+      </div>
+
+      <!-- Android install affordance — shown when beforeinstallprompt is available -->
+      <div id="pwaInstallBanner" class="pwa-install-banner" style="display:none;margin:1rem 0 0;">
+        <a href="#" id="pwaInstallBannerBtn">Add to home screen →</a>
+        <span id="pwaInstallStreak" style="display:none;font-size:0.75rem;margin-left:0.5rem;opacity:0.75;"></span>
+      </div>
+
+    </div>
+
+    <!-- Interpret result (shown within result screen for interpret tab) -->
+    <div id="interpretResultContainer" style="display:none;">
+      <div style="margin-bottom:2rem;">
+        <div class="filter-section-label">Detected style</div>
+        <div class="filter-section-body filter-section-body--style" id="interpretStyle">—</div>
+      </div>
+      <div class="filter-section" style="border-top:1px solid var(--filter-border);padding-top:1.5rem;">
+        <div class="filter-section-label">What this message actually means</div>
+        <div class="filter-section-body" id="interpretMeans">—</div>
+      </div>
+      <div class="filter-section filter-section--grounded">
+        <div class="filter-section-label">How you might be misreading it</div>
+        <div class="filter-section-body filter-section-body--grounded" id="interpretMisread">—</div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-section-label">What they need from you</div>
+        <div class="filter-section-body" id="interpretNeed">—</div>
+      </div>
+      <button class="filter-another-btn" id="interpretTryAgainBtn">
+        Decode another message →
+      </button>
+    </div>
+  </div>
+
+  <!-- Paywall screen -->
+  <div class="filter-paywall-screen" id="paywallScreen" style="display:none">
+    <nav class="filter-nav filter-nav--result">
+      <a href="/" class="filter-nav__wordmark">HoldOff</a>
+    </nav>
+
+    <div class="filter-paywall-container">
+      <div class="filter-paywall-badge">3 verdicts in.</div>
+      <h2 class="filter-paywall-headline">The pattern isn't going anywhere.</h2>
+      <p class="filter-paywall-body">
+        It's 11 PM. You're spiraling. Your free verdicts are gone — but the spiral
+        doesn't care about free tiers.<br><br>
+        Pick a plan. Unlimited intercepts from here.
+      </p>
+
+      <!-- 4-tier pricing selector -->
+      <div class="pricing-tiers" id="pricingTiers">
+        <label class="pricing-tier" data-tier="weekly">
+          <input type="radio" name="tier" value="weekly" />
+          <div class="pricing-tier__inner">
+            <div class="pricing-tier__name">Weekly</div>
+            <div class="pricing-tier__price">$4.99<span>/week</span></div>
+            <div class="pricing-tier__sub">Pay week to week</div>
+          </div>
+        </label>
+
+        <label class="pricing-tier pricing-tier--recommended" data-tier="monthly">
+          <input type="radio" name="tier" value="monthly" checked />
+          <div class="pricing-tier__badge">Most popular</div>
+          <div class="pricing-tier__inner">
+            <div class="pricing-tier__name">Monthly</div>
+            <div class="pricing-tier__price">$9.99<span>/mo</span></div>
+            <div class="pricing-tier__sub">Cancel anytime</div>
+          </div>
+        </label>
+
+        <label class="pricing-tier" data-tier="annual">
+          <input type="radio" name="tier" value="annual" />
+          <div class="pricing-tier__inner">
+            <div class="pricing-tier__name">Annual</div>
+            <div class="pricing-tier__price">$99<span>/yr</span></div>
+            <div class="pricing-tier__sub">Save ~17% vs monthly</div>
+          </div>
+        </label>
+
+        <label class="pricing-tier pricing-tier--lifetime" data-tier="lifetime">
+          <input type="radio" name="tier" value="lifetime" />
+          <div class="pricing-tier__badge">Best value</div>
+          <div class="pricing-tier__inner">
+            <div class="pricing-tier__name">Lifetime</div>
+            <div class="pricing-tier__price">$299<span> one-time</span></div>
+            <div class="pricing-tier__sub">Pay once, use forever</div>
+          </div>
+        </label>
+      </div>
+
+      <button class="filter-btn filter-btn--paywall" id="paywallCheckoutBtn">
+        <span class="filter-btn__text" id="paywallCtaText">Continue — Monthly · $9.99/mo</span>
+        <span class="filter-btn__loading" aria-hidden="true" style="display:none">One sec...</span>
+      </button>
+
+      <p style="font-size:0.75rem;color:#9A8F8A;margin-top:0.75rem;text-align:center;">
+        Secure checkout via Stripe · CashApp accepted
+      </p>
+
+      <div class="filter-paywall-restore">
+        <span>Already paid?</span>
+        <button class="filter-paywall-restore-link" id="restoreAccessBtn">Restore access</button>
+      </div>
+
+      <!-- Tier cards -->
+      <div class="paywall-tiers">
+        <!-- Online tier -->
+        <div class="paywall-tier" id="tierOnline">
+          <div class="paywall-tier__header">
+            <div class="paywall-tier__name">HoldOff Online</div>
+            <div class="paywall-tier__price" id="onlinePrice">$9.99<span>/mo</span></div>
+            <div class="paywall-tier__savings" id="onlineSavings" style="display:none">Save ~17% vs monthly</div>
+          </div>
+          <ul class="paywall-tier__features">
+            <li>Unlimited web verdicts</li>
+            <li>All future web features</li>
+            <li>Email support</li>
+          </ul>
+          <button class="paywall-tier__btn" id="onlineSelectBtn" onclick="selectTier('online')">Select Online</button>
+        </div>
+
+        <!-- App tier -->
+        <div class="paywall-tier paywall-tier--featured" id="tierApp">
+          <div class="paywall-tier__badge">Most popular</div>
+          <div class="paywall-tier__header">
+            <div class="paywall-tier__name">HoldOff App</div>
+            <div class="paywall-tier__price" id="appPrice">$14.99<span>/mo</span></div>
+            <div class="paywall-tier__savings" id="appSavings" style="display:none">Save ~17% vs monthly</div>
+          </div>
+          <ul class="paywall-tier__features">
+            <li>Everything in Online</li>
+            <li>Android SMS auto-intercept</li>
+            <li>App-exclusive features</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="paywall-tier__btn paywall-tier__btn--primary" id="appSelectBtn" onclick="selectTier('app')">Select App</button>
+        </div>
+      </div>
+
+      <!-- Lifetime option -->
+      <div class="paywall-lifetime">
+        <div class="paywall-lifetime__inner">
+          <div class="paywall-lifetime__left">
+            <div class="paywall-lifetime__name">HoldOff Lifetime</div>
+            <div class="paywall-lifetime__price">$299 <span>once</span></div>
+          </div>
+          <ul class="paywall-lifetime__features">
+            <li>Everything in App</li>
+            <li>One-time payment — no recurring</li>
+            <li>Lifetime access, all future features free</li>
+          </ul>
+          <button class="paywall-lifetime__btn" id="lifetimeSelectBtn" onclick="selectTier('lifetime')">Get Lifetime →</button>
+        </div>
+      </div>
+
+      <!-- CashApp note -->
+      <div class="paywall-cashapp-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z" fill="#8A7F79"/></svg>
+        CashApp accepted. Refunds handled automatically within 1–5 business days.
+      </div>
+
+      <!-- Restore access -->
+      <div class="paywall-restore">
+        <span>Already paid?</span>
+        <button class="paywall-restore-link" id="restoreAccessBtn">Restore access</button>
+      </div>
+
+      <!-- Restore form -->
+      <div class="paywall-restore-form" id="restoreForm" style="display:none">
+        <input type="email" id="restoreEmail" class="paywall-restore-input" placeholder="your@email.com" autocomplete="email" />
+        <button class="paywall-restore-btn" id="restoreSubmitBtn">Send my link</button>
+        <div class="paywall-restore-msg" id="restoreMsg" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/analyzer.js"></script>
+  <script>
+    (function () {
+      const inputScreen = document.getElementById('inputScreen');
+      const resultScreen = document.getElementById('resultScreen');
+      const paywallScreen = document.getElementById('paywallScreen');
+      const form = document.getElementById('filterForm');
+      const msgInput = document.getElementById('messageInput');
+      const ctxInput = document.getElementById('contextInput');
+      const submitBtn = document.getElementById('submitBtn');
+      const charCount = document.getElementById('charCount');
+      const tryAnotherBtn = document.getElementById('tryAnotherBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const shareBlock = document.getElementById('shareBlock');
+      const shareBtn = document.getElementById('shareBtn');
+      const shareToast = document.getElementById('shareToast');
+      const paywallCheckoutBtn = document.getElementById('paywallCheckoutBtn');
+      const restoreAccessBtn = document.getElementById('restoreAccessBtn');
+      const restoreForm = document.getElementById('restoreForm');
+      const restoreEmail = document.getElementById('restoreEmail');
+      const restoreSubmitBtn = document.getElementById('restoreSubmitBtn');
+      const restoreMsg = document.getElementById('restoreMsg');
+      const paywallCtaText = document.getElementById('paywallCtaText');
+      const pricingTiers = document.getElementById('pricingTiers');
+
+      // ---- beforeinstallprompt — Android Chrome PWA install ----
+      window.__hf_install_prompt = null;
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.__hf_install_prompt = e;
+      });
+
+      // ---- iOS install prompt — bottom sheet shown on first visit ----
+      (function () {
+        var sheet = document.getElementById('iosInstallSheet');
+        var closeBtn = document.getElementById('iosInstallClose');
+        if (!sheet || !closeBtn) return;
+        var dismissed = localStorage.getItem('hf_ios_install_dismissed');
+        if (dismissed) return;
+        // Show the sheet with slide-up animation
+        requestAnimationFrame(function () {
+          sheet.classList.add('pwa-install-sheet--visible');
+          sheet.style.animation = 'slideUp 0.35s ease forwards';
+        });
+        closeBtn.addEventListener('click', function () {
+          localStorage.setItem('hf_ios_install_dismissed', '1');
+          sheet.classList.remove('pwa-install-sheet--visible');
+          sheet.addEventListener('transitionend', function () {
+            sheet.style.display = 'none';
+          }, { once: true });
+        });
+      })();
+
+      // ---- Update CTA text when tier changes ----
+      const TIER_LABELS = {
+        weekly:  'Continue — Weekly · $4.99/wk',
+        monthly: 'Continue — Monthly · $9.99/mo',
+        annual:  'Continue — Annual · $99/yr',
+        lifetime:'Continue — Lifetime · $299 one-time',
+      };
+      // Price data for tier cards keyed by billing period
+      const TIER_CARD_PRICES = {
+        weekly:  { online: '$4.99<span>/wk</span>', app: '$7.49<span>/wk</span>', onlineSave: '', appSave: '' },
+        monthly: { online: '$9.99<span>/mo</span>', app: '$14.99<span>/mo</span>', onlineSave: '', appSave: '' },
+        annual:  { online: '$99<span>/yr</span>', app: '$149<span>/yr</span>', onlineSave: 'Save ~17% vs monthly', appSave: 'Save ~17% vs monthly' },
+      };
+      if (pricingTiers) {
+        pricingTiers.addEventListener('change', function () {
+          const selected = pricingTiers.querySelector('input[name="tier"]:checked');
+          if (selected && paywallCtaText) {
+            paywallCtaText.textContent = TIER_LABELS[selected.value] || TIER_LABELS.monthly;
+          }
+          // Update tier card prices
+          var billing = selected ? selected.value : 'monthly';
+          var prices = TIER_CARD_PRICES[billing];
+          if (prices) {
+            var op = document.getElementById('onlinePrice');
+            var ap = document.getElementById('appPrice');
+            var os = document.getElementById('onlineSavings');
+            var as2 = document.getElementById('appSavings');
+            if (op) op.innerHTML = prices.online;
+            if (ap) ap.innerHTML = prices.app;
+            if (os) { os.textContent = prices.onlineSave; os.style.display = prices.onlineSave ? 'block' : 'none'; }
+            if (as2) { as2.textContent = prices.appSave; as2.style.display = prices.appSave ? 'block' : 'none'; }
+          }
+        });
+      }
+
+      // ---- Prefill from ?prefill= query param (deep-link from /examples) ----
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const pre = params.get('prefill');
+        if (pre) {
+          msgInput.value = decodeURIComponent(pre);
+          charCount.textContent = msgInput.value.length;
+          msgInput.focus();
+        }
+      })();
+
+      // ---- Restore draft from sessionStorage after quiz redirect ----
+      (function () {
+        try {
+          const draft = sessionStorage.getItem('holdoff_draft');
+          if (draft) {
+            msgInput.value = draft;
+            charCount.textContent = draft.length;
+            sessionStorage.removeItem('holdoff_draft');
+          }
+        } catch (_) {}
+      })();
+
+      // ---- Emergency backup recovery — restores text after any submission crash ----
+      (function () {
+        try {
+          const backup = sessionStorage.getItem('holdoff_emergency_backup');
+          if (backup && !msgInput.value) {
+            msgInput.value = backup;
+            charCount.textContent = backup.length;
+            sessionStorage.removeItem('holdoff_emergency_backup');
+          }
+        } catch (_) {}
+      })();
+
+      // ---- Screen helpers ----
+      function showScreen(id) {
+        [inputScreen, resultScreen, paywallScreen].forEach(function (el) {
+          el.style.display = el.id === id ? 'block' : 'none';
+        });
+        window.scrollTo(0, 0);
+      }
+
+      // ---- Verdict zone status — loading + error text in the verdict area ----
+      function showVerdictStatus(msg, isError) {
+        const el = document.getElementById('verdictStatus');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.display = msg ? 'block' : 'none';
+        el.className = 'filter-verdict-status' + (isError ? ' filter-verdict-status--error' : '');
+      }
+
+      // ---- Offline state — brand-consistent, no browser error ----
+      function showOfflineState(message) {
+        showScreen('inputScreen');
+        // Remove any existing offline notice
+        const existing = document.getElementById('offlineNotice');
+        if (existing) existing.remove();
+        const notice = document.createElement('p');
+        notice.id = 'offlineNotice';
+        notice.className = 'filter-sub filter-sub--offline';
+        notice.textContent = message || "You\u2019re offline. Take three breaths. The text can wait.";
+        document.querySelector('.filter-container').insertBefore(notice, document.getElementById('filterForm'));
+      }
+
+      // ---- On-load: handle Stripe success redirect or explicit paywall param ----
+      (function handleUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const proPurchased = params.get('pro_purchased');
+        const showPaywall = params.get('paywall');
+        const proRestored = params.get('pro_restored');
+        const restoreError = params.get('restore_error');
+
+        // Clean URL
+        if (proPurchased || showPaywall || proRestored || restoreError) {
+          history.replaceState({}, '', '/filter');
+        }
+
+        if (proPurchased) {
+          // Post-purchase: ask for the email they used at checkout to activate Pro
+          showScreen('inputScreen');
+          var activateDiv = document.createElement('div');
+          activateDiv.className = 'filter-activate-pro';
+          activateDiv.innerHTML =
+            '<p class="filter-sub filter-sub--pro" style="margin-bottom:12px">Payment received. Enter the email you used at checkout to activate Pro.</p>' +
+            '<input type="email" id="activateEmail" placeholder="your@email.com" style="width:100%;padding:12px;border-radius:8px;border:1px solid #C97B5D;background:#1A1410;color:#FAF6F0;font-size:16px;margin-bottom:8px" />' +
+            '<button id="activateBtn" style="width:100%;padding:12px;border-radius:8px;border:none;background:#C97B5D;color:#FAF6F0;font-size:16px;font-weight:600;cursor:pointer">Activate Pro →</button>' +
+            '<p id="activateMsg" style="display:none;margin-top:8px;font-size:14px"></p>';
+          document.querySelector('.filter-container').insertBefore(activateDiv, document.getElementById('filterForm'));
+
+          document.getElementById('activateBtn').addEventListener('click', async function () {
+            var emailVal = document.getElementById('activateEmail').value.trim();
+            var msgEl = document.getElementById('activateMsg');
+            if (!emailVal || !emailVal.includes('@')) {
+              msgEl.textContent = 'Enter the email you used at checkout.';
+              msgEl.style.color = '#e05';
+              msgEl.style.display = 'block';
+              return;
+            }
+            document.getElementById('activateBtn').disabled = true;
+            document.getElementById('activateBtn').textContent = 'Activating...';
+            // Retrieve tier from sessionStorage (set during checkout button click)
+            var selectedTier = 'monthly';
+            try { selectedTier = sessionStorage.getItem('holdoff_tier') || 'monthly'; } catch (_) {}
+            try {
+              var resp = await fetch('/api/checkout/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailVal, tier: selectedTier }),
+              });
+              var data = await resp.json();
+              if (data.ok) {
+                activateDiv.innerHTML = '<p class="filter-sub filter-sub--pro">HoldOff Pro activated. Unlimited verdicts from here.</p>';
+              } else {
+                msgEl.textContent = data.error || 'Something went wrong. Try again.';
+                msgEl.style.color = '#e05';
+                msgEl.style.display = 'block';
+                document.getElementById('activateBtn').disabled = false;
+                document.getElementById('activateBtn').textContent = 'Activate Pro →';
+              }
+            } catch (err) {
+              msgEl.textContent = 'Network error. Try again.';
+              msgEl.style.color = '#e05';
+              msgEl.style.display = 'block';
+              document.getElementById('activateBtn').disabled = false;
+              document.getElementById('activateBtn').textContent = 'Activate Pro →';
+            }
+          });
+          return;
+        }
+
+        if (proRestored) {
+          showScreen('inputScreen');
+          var sub = document.createElement('p');
+          sub.className = 'filter-sub filter-sub--pro';
+          sub.textContent = 'Access restored. Welcome back.';
+          document.querySelector('.filter-container').insertBefore(sub, document.getElementById('filterForm'));
+          return;
+        }
+
+        if (showPaywall) {
+          showScreen('paywallScreen');
+          if (restoreError) {
+            restoreMsg.textContent = 'That link has expired or already been used. Try again.';
+            restoreMsg.style.display = 'block';
+            restoreMsg.style.color = '#e05';
+            restoreForm.style.display = 'block';
+          }
+        }
+      })();
+
+      // ---- Char counter ----
+      msgInput.addEventListener('input', function () {
+        charCount.textContent = this.value.length;
+      });
+
+      // ---- Interpret tab switcher ----
+      var sendTabBtn = document.getElementById('sendTabBtn');
+      var interpretTabBtn = document.getElementById('interpretTabBtn');
+      var sendTab = document.getElementById('sendTab');
+      var interpretTab = document.getElementById('interpretTab');
+
+      function switchToSendTab() {
+        sendTabBtn.classList.add('filter-tab-btn--active');
+        interpretTabBtn.classList.remove('filter-tab-btn--active');
+        sendTab.style.display = 'block';
+        interpretTab.style.display = 'none';
+        // Reset interpret result
+        document.getElementById('interpretResultContainer').style.display = 'none';
+        // Show send result if available
+        document.getElementById('resultContainer').style.display = 'block';
+      }
+
+      function switchToInterpretTab() {
+        interpretTabBtn.classList.add('filter-tab-btn--active');
+        sendTabBtn.classList.remove('filter-tab-btn--active');
+        sendTab.style.display = 'none';
+        interpretTab.style.display = 'block';
+        // Show interpret result if available, hide send result
+        document.getElementById('resultContainer').style.display = 'none';
+        document.getElementById('interpretResultContainer').style.display = 'block';
+        // Reset interpret form
+        document.getElementById('partnerMsgInput').value = '';
+        document.getElementById('partnerCharCount').textContent = '0';
+        document.getElementById('styleSelect').value = '';
+      }
+
+      if (sendTabBtn) sendTabBtn.addEventListener('click', switchToSendTab);
+      if (interpretTabBtn) interpretTabBtn.addEventListener('click', switchToInterpretTab);
+
+      // ---- Interpret char counter ----
+      var partnerMsgInput = document.getElementById('partnerMsgInput');
+      var partnerCharCount = document.getElementById('partnerCharCount');
+      if (partnerMsgInput) {
+        partnerMsgInput.addEventListener('input', function () {
+          partnerCharCount.textContent = this.value.length;
+        });
+      }
+
+      // ---- Interpret form submit ----
+      var interpretForm = document.getElementById('interpretForm');
+      var interpretBtn = document.getElementById('interpretBtn');
+
+      if (interpretForm && interpretBtn) {
+        interpretForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var message = partnerMsgInput.value.trim();
+          var style = document.getElementById('styleSelect').value;
+          if (!message) return;
+
+          interpretBtn.querySelector('.filter-btn__text').style.display = 'none';
+          interpretBtn.querySelector('.filter-btn__loading').style.display = 'inline';
+          interpretBtn.disabled = true;
+
+          try {
+            var resp = await fetch('/api/filter/interpret', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: message, style: style }),
+            });
+
+            if (resp.status === 402) {
+              showScreen('paywallScreen');
+              return;
+            }
+
+            if (!resp.ok) {
+              var err = await resp.json().catch(() => ({}));
+              throw new Error(err.error || 'Something went wrong.');
+            }
+
+            var data = await resp.json();
+            renderInterpretResult(data);
+          } catch (err) {
+            const errEl = document.getElementById('interpretError');
+            if (errEl) {
+              errEl.textContent = err.message || 'Interpretation failed. Try again.';
+              errEl.style.display = 'block';
+            }
+          } finally {
+            interpretBtn.querySelector('.filter-btn__text').style.display = 'inline';
+            interpretBtn.querySelector('.filter-btn__loading').style.display = 'none';
+            interpretBtn.disabled = false;
+          }
+        });
+      }
+
+      // ---- Render interpret result ----
+      function renderInterpretResult(data) {
+        document.getElementById('interpretStyle').textContent = data.detected_style || '—';
+        document.getElementById('interpretMeans').textContent = data.what_it_means || '—';
+        document.getElementById('interpretMisread').textContent = data.how_you_misread_it || '—';
+        document.getElementById('interpretNeed').textContent = data.what_they_need || '—';
+
+        // Switch to result screen showing interpret result
+        showScreen('resultScreen');
+        // Hide send result container, show interpret result container
+        var resultContainer = document.getElementById('resultContainer');
+        var interpretResultContainer = document.getElementById('interpretResultContainer');
+        if (resultContainer) resultContainer.style.display = 'none';
+        if (interpretResultContainer) interpretResultContainer.style.display = 'block';
+        // Hide paywall elements on interpret result
+        var shareBlock = document.getElementById('shareBlock');
+        if (shareBlock) shareBlock.style.display = 'none';
+        var interceptCtaBanner = document.getElementById('interceptCtaBanner');
+        if (interceptCtaBanner) interceptCtaBanner.style.display = 'none';
+        var referralCtaBanner = document.getElementById('referralCtaBanner');
+        if (referralCtaBanner) referralCtaBanner.style.display = 'none';
+        var journalCtaBanner = document.getElementById('journalCtaBanner');
+        if (journalCtaBanner) journalCtaBanner.style.display = 'none';
+      }
+
+      // ---- Interpret try again ----
+      var interpretTryAgainBtn = document.getElementById('interpretTryAgainBtn');
+      if (interpretTryAgainBtn) {
+        interpretTryAgainBtn.addEventListener('click', function () {
+          document.getElementById('interpretResultContainer').style.display = 'none';
+          partnerMsgInput.value = '';
+          partnerCharCount.textContent = '0';
+          document.getElementById('styleSelect').value = '';
+          showScreen('inputScreen');
+          switchToSendTab();
+        });
+      }
+
+      // ---- Submit ----
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const message = msgInput.value.trim();
+        const context = ctxInput.value.trim();
+        if (!message) return;
+
+        // Emergency backup — keeps text safe if backend throws 500 / type error / unhandled exception
+        try { sessionStorage.setItem('holdoff_emergency_backup', message); } catch (_) {}
+
+        // Hide any previous inline error
+        const filterErrEl = document.getElementById('filterError');
+        if (filterErrEl) filterErrEl.style.display = 'none';
+        showVerdictStatus(''); // clear previous verdict/status area
+
+        submitBtn.querySelector('.filter-btn__text').style.display = 'none';
+        submitBtn.querySelector('.filter-btn__loading').style.display = 'inline';
+        submitBtn.disabled = true;
+        showVerdictStatus('Reading it...'); // visible feedback in verdict zone
+
+        const ac = new AbortController();
+        const timeoutId = setTimeout(() => {
+          ac.abort();
+          showVerdictStatus("This is taking longer than expected. Check your connection and try again.", true);
+          submitBtn.querySelector('.filter-btn__text').style.display = 'inline';
+          submitBtn.querySelector('.filter-btn__loading').style.display = 'none';
+          submitBtn.disabled = false;
+        }, 7000);
+
+        try {
+          const resp = await fetch('/api/filter/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, context }),
+            signal: ac.signal,
+          });
+
+          if (resp.status === 402) {
+            clearTimeout(timeoutId);
+            // Free limit reached
+            showScreen('paywallScreen');
+            return;
+          }
+
+          if (resp.status === 403) {
+            clearTimeout(timeoutId);
+            const err = await resp.json().catch(() => ({}));
+            if (err.quiz_required) {
+              // Cache the draft so it survives the redirect
+              try { sessionStorage.setItem('holdoff_draft', message); } catch (_) {}
+              // Explicitly restore button before redirect — prevents silent freeze
+              submitBtn.disabled = false;
+              submitBtn.querySelector('.filter-btn__text').style.display = 'inline';
+              submitBtn.querySelector('.filter-btn__loading').style.display = 'none';
+              showVerdictStatus('Completing the quiz first…', false);
+              window.location.href = '/quiz?redirect=/filter';
+              return;
+            }
+          }
+
+          if (resp.status === 503) {
+            clearTimeout(timeoutId);
+            const err = await resp.json().catch(() => ({}));
+            if (err.error === 'offline') {
+              // Offline — show branded message
+              showOfflineState(err.message || "You're offline. Take three breaths. The text can wait.");
+              return;
+            }
+          }
+
+          if (!resp.ok) {
+            clearTimeout(timeoutId);
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.error || 'Something went wrong.');
+          }
+
+          clearTimeout(timeoutId);
+          const data = await resp.json();
+
+          // Show paywall after last free verdict
+          if (data.verdicts_remaining === 0) {
+            renderResult(data, message);
+            // After showing result, offer upgrade quietly in try-another area
+            tryAnotherBtn.textContent = 'Unlock unlimited →';
+            tryAnotherBtn.dataset.paywallMode = '1';
+          } else {
+            renderResult(data, message);
+          }
+
+          // Clean up emergency backup on success
+          try { sessionStorage.removeItem('holdoff_emergency_backup'); } catch (_) {}
+        } catch (err) {
+          clearTimeout(timeoutId);
+          // fetch() throws TypeError on network failure — show branded offline notice
+          if (err.name === 'TypeError') {
+            showOfflineState("You're offline. Take three breaths. The text can wait.");
+          } else {
+            // Show error in verdict zone — prominent, never alert()
+            showVerdictStatus(err.message || 'Could not complete. Your text is saved — try again.', true);
+          }
+        } finally {
+          submitBtn.querySelector('.filter-btn__text').style.display = 'inline';
+          submitBtn.querySelector('.filter-btn__loading').style.display = 'none';
+          submitBtn.disabled = false;
+        }
+      });
+      // ---- Render result ----
+      function renderResult(data, originalMessage) {
+        showVerdictStatus(''); // clear "Reading it..." / error before rendering verdict
+        const badge = document.getElementById('verdictBadge');
+        badge.textContent = data.verdict;
+        badge.className = 'filter-verdict filter-verdict--' + data.verdict.toLowerCase();
+
+        document.getElementById('patternText').textContent = data.pattern;
+        document.getElementById('whatsHappeningText').textContent = data.whats_happening;
+        document.getElementById('groundedVoiceText').textContent = data.grounded_voice;
+
+        const rewriteLabel = document.getElementById('rewriteLabel');
+        const rewriteText = document.getElementById('rewriteText');
+
+        if (data.rewrite === 'send nothing tonight' || data.verdict === 'HOLD') {
+          rewriteLabel.textContent = 'Tonight\'s call';
+          rewriteText.textContent = 'Send nothing tonight.';
+          rewriteText.classList.add('filter-section-body--hold');
+          copyBtn.style.display = 'none';
+        } else {
+          rewriteLabel.textContent = data.verdict === 'SEND' ? 'Your message' : 'If you must send something';
+          rewriteText.textContent = data.rewrite;
+          rewriteText.classList.remove('filter-section-body--hold');
+          copyBtn.style.display = 'inline-block';
+        }
+
+        showScreen('resultScreen');
+
+        // Show send result, hide interpret result
+        var resultContainer = document.getElementById('resultContainer');
+        var interpretResultContainer = document.getElementById('interpretResultContainer');
+        if (resultContainer) resultContainer.style.display = 'block';
+        if (interpretResultContainer) interpretResultContainer.style.display = 'none';
+
+        // Show auto-intercept CTA after every verdict
+        var interceptBanner = document.getElementById('interceptCtaBanner');
+        if (interceptBanner) interceptBanner.style.display = 'block';
+
+        // Show share button only for HOLD or REWRITE verdicts
+        var v = (data.verdict || '').toUpperCase();
+        if (v === 'HOLD' || v === 'REWRITE') {
+          shareBlock.style.display = 'block';
+          shareBtn.dataset.verdictType = v;
+          shareBtn.dataset.patternName = data.pattern || '';
+          shareToast.style.display = 'none';
+          shareToast.textContent = '';
+          // Reset share panel so each verdict gets a fresh link
+          _shareUrl = null;
+          _shareText = null;
+          var sharePanel2 = document.getElementById('sharePanel');
+          if (sharePanel2) sharePanel2.style.display = 'none';
+          shareBtn.style.display = 'inline-block';
+          shareBtn.disabled = false;
+          shareBtn.textContent = 'Share this save';
+          var nativeBtnR = document.getElementById('shareNativeBtn');
+          if (nativeBtnR) nativeBtnR.style.display = 'none';
+          var copyBtnR = document.getElementById('shareCopyLinkBtn');
+          if (copyBtnR) copyBtnR.textContent = 'Copy link';
+        } else {
+          shareBlock.style.display = 'none';
+        }
+
+        // Fire custom event so the history/streak module can record this verdict
+        window.dispatchEvent(new CustomEvent('hf:verdict', {
+          detail: Object.assign({}, data, { message: originalMessage || '' })
+        }));
+
+        // Show journal "Log this pattern" CTA for logged-in users after HOLD/REWRITE
+        var journalBanner = document.getElementById('journalCtaBanner');
+        var logPatternBtn = document.getElementById('logPatternBtn');
+        var v2 = (data.verdict || '').toUpperCase();
+        var isLoggedIn = window.__hf_user_email && window.__hf_user_email.length > 0;
+        if (journalBanner && logPatternBtn && (v2 === 'HOLD' || v2 === 'REWRITE') && isLoggedIn) {
+          journalBanner.style.display = 'block';
+          var params = new URLSearchParams({
+            pattern: data.pattern || '',
+            reframe: data.grounded_voice || '',
+            verdict: data.verdict || '',
+            message: originalMessage || '',
+            source: 'verdict',
+          });
+          logPatternBtn.href = '/journal?' + params.toString();
+        } else if (journalBanner) {
+          journalBanner.style.display = 'none';
+        }
+
+        // Update Android home screen widget with latest verdict
+        if (typeof Android !== 'undefined' && typeof Android.updateWidget === 'function') {
+          Android.updateWidget(data.verdict);
+        }
+
+        // Sync streak to Android widget
+        if (typeof Android !== 'undefined' && typeof Android.updateStreak === 'function') {
+          var streak = parseInt(localStorage.getItem('hf_streak') || '0', 10);
+          localStorage.setItem('hf_streak', String(streak));
+          Android.updateStreak(streak);
+        }
+
+        // Send verdict to SW for offline caching
+        if (window.__hf_sw_ready && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'hf:verdict',
+            payload: Object.assign({}, data, { message: originalMessage || '' }),
+          });
+        }
+
+        // Show Android "Add to home screen" affordance if install prompt is available
+        if (window.__hf_install_prompt) {
+          var installBanner = document.getElementById('pwaInstallBanner');
+          if (installBanner) {
+            installBanner.style.display = 'block';
+            installBanner.querySelector('a').addEventListener('click', function (e) {
+              e.preventDefault();
+              window.__hf_install_prompt.prompt();
+              window.__hf_install_prompt = null;
+              installBanner.style.display = 'none';
+            });
+            // Show streak in banner after verdict
+            var streak = parseInt(localStorage.getItem('hf_streak') || '0', 10);
+            if (streak > 0) {
+              var streakEl = document.getElementById('pwaInstallStreak');
+              if (streakEl) {
+                streakEl.textContent = streak + ' texts held off';
+                streakEl.style.display = 'inline';
+              }
+            }
+          }
+        }
+      }
+
+      // ---- Auto-intercept CTA form ----
+      var interceptCtaBtn = document.getElementById('interceptCtaBtn');
+      if (interceptCtaBtn) {
+        interceptCtaBtn.addEventListener('click', function () {
+          var email = document.getElementById('interceptCtaEmail').value.trim();
+          if (!email || !email.includes('@')) return;
+          interceptCtaBtn.disabled = true;
+          interceptCtaBtn.textContent = 'Saving...';
+          fetch('/api/waitlist/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, source: 'auto_intercept' }),
+          }).then(function () {
+            document.getElementById('interceptCtaForm').style.display = 'none';
+            document.getElementById('interceptCtaDone').style.display = 'block';
+            if (typeof fbq !== 'undefined') fbq('track', 'Lead', { content_name: 'auto_intercept_waitlist' });
+          }).catch(function () {
+            interceptCtaBtn.disabled = false;
+            interceptCtaBtn.textContent = 'Get notified →';
+          });
+        });
+      }
+
+      // ---- Copy rewrite ----
+      copyBtn.addEventListener('click', function () {
+        const text = document.getElementById('rewriteText').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          copyBtn.textContent = 'Copied';
+          setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+        });
+      });
+
+      // ---- Share streak ----
+      var _shareUrl = null; // cached after first create call
+      var _shareText = null;
+
+      shareBtn.addEventListener('click', async function () {
+        var verdictType = shareBtn.dataset.verdictType || 'HOLD';
+        var patternName = shareBtn.dataset.patternName || '';
+        var streakCount = parseInt(localStorage.getItem('hf_streak') || '0', 10) || 0;
+
+        // Analytics: share_clicked
+        console.log(JSON.stringify({ event: 'share_clicked', verdict_type: verdictType }));
+
+        shareBtn.disabled = true;
+        shareBtn.textContent = 'Creating link...';
+        shareToast.style.display = 'none';
+
+        try {
+          var resp = await fetch('/api/share/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ streak_count: streakCount, verdict_type: verdictType, pattern_name: patternName }),
+          });
+          var result = await resp.json();
+          if (!resp.ok || !result.url) throw new Error(result.error || 'Could not create share link.');
+
+          _shareUrl = result.url;
+          _shareText = streakCount > 0
+            ? 'HoldOff just stopped me from sending the text. Three seconds saved the relationship. shouldiholdoff.live'
+            : 'I just held off. \u2014 HoldOff just stopped me. shouldiholdoff.live';
+
+          // Populate share panel
+          var sharePanel = document.getElementById('sharePanel');
+          var reframePreview = document.getElementById('shareReframePreview');
+          if (reframePreview && result.reframeLine) {
+            reframePreview.textContent = '\u201c' + result.reframeLine + '\u201d';
+          }
+
+          // Wire Twitter link
+          var twitterLink = document.getElementById('shareTwitterLink');
+          if (twitterLink) {
+            twitterLink.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(_shareText) + '&url=' + encodeURIComponent(_shareUrl);
+          }
+
+          // Wire copy button
+          var copyLinkBtn = document.getElementById('shareCopyLinkBtn');
+          if (copyLinkBtn) {
+            copyLinkBtn.onclick = async function () {
+              try {
+                await navigator.clipboard.writeText(_shareUrl);
+                copyLinkBtn.textContent = 'Copied!';
+                setTimeout(function () { copyLinkBtn.textContent = 'Copy link'; }, 2000);
+                console.log(JSON.stringify({ event: 'share_completed', method: 'copy_link' }));
+              } catch (_) {}
+            };
+          }
+
+          // Native share button — show only when Web Share API is available
+          var nativeBtn = document.getElementById('shareNativeBtn');
+          if (nativeBtn && navigator.share) {
+            nativeBtn.style.display = 'block';
+            nativeBtn.onclick = async function () {
+              try {
+                await navigator.share({ title: 'HoldOff', text: _shareText, url: _shareUrl });
+                console.log(JSON.stringify({ event: 'share_completed', method: 'native_share' }));
+              } catch (e) {
+                if (e && e.name !== 'AbortError') {
+                  shareToast.textContent = 'Share cancelled.';
+                  shareToast.style.display = 'block';
+                  setTimeout(function () { shareToast.style.display = 'none'; }, 2000);
+                }
+              }
+            };
+          }
+
+          // Show the expanded panel, hide the primary button
+          shareBtn.style.display = 'none';
+          if (sharePanel) sharePanel.style.display = 'block';
+
+        } catch (err) {
+          if (err && err.name !== 'AbortError') {
+            shareToast.textContent = 'Couldn\u2019t create share link. Try again.';
+            shareToast.style.display = 'block';
+          }
+          shareBtn.disabled = false;
+          shareBtn.textContent = 'Share this save';
+        }
+      });
+
+      // ---- Try another / upgrade ----
+      tryAnotherBtn.addEventListener('click', function () {
+        if (this.dataset.paywallMode) {
+          showScreen('paywallScreen');
+          return;
+        }
+        showScreen('inputScreen');
+        msgInput.value = '';
+        ctxInput.value = '';
+        charCount.textContent = '0';
+        // Reset to send tab
+        switchToSendTab();
+        // Reset intercept CTA for next verdict
+        var b = document.getElementById('interceptCtaBanner');
+        if (b) b.style.display = 'none';
+        var f = document.getElementById('interceptCtaForm');
+        if (f) f.style.display = 'flex';
+        var d = document.getElementById('interceptCtaDone');
+        if (d) d.style.display = 'none';
+        var ctaEmail = document.getElementById('interceptCtaEmail');
+        if (ctaEmail) ctaEmail.value = '';
+        var ctaBtn2 = document.getElementById('interceptCtaBtn');
+        if (ctaBtn2) { ctaBtn2.disabled = false; ctaBtn2.textContent = 'Get notified →'; }
+        // Show result history button again
+        var resultHistoryBtn = document.getElementById('resultHistoryBtn');
+        if (resultHistoryBtn) resultHistoryBtn.style.display = 'block';
+        // Reset share panel state for the next verdict
+        _shareUrl = null;
+        _shareText = null;
+        var sharePanel = document.getElementById('sharePanel');
+        if (sharePanel) sharePanel.style.display = 'none';
+        if (shareBtn) { shareBtn.style.display = 'inline-block'; shareBtn.disabled = false; shareBtn.textContent = 'Share this save'; }
+        var nativeBtn = document.getElementById('shareNativeBtn');
+        if (nativeBtn) nativeBtn.style.display = 'none';
+        var copyLinkBtn = document.getElementById('shareCopyLinkBtn');
+        if (copyLinkBtn) { copyLinkBtn.textContent = 'Copy link'; }
+      });
+
+      // ---- Paywall: build full tier key from billing period + product type ----
+      function getFullTierKey(product, billing) {
+        if (product === 'lifetime') return 'lifetime';
+        return product + '_' + billing;
+      }
+
+      // ---- Paywall: start checkout (main CTA button — uses online by default) ----
+      paywallCheckoutBtn.addEventListener('click', async function () {
+        const billing = (document.querySelector('input[name="tier"]:checked') || { value: 'monthly' }).value;
+        if (billing === 'lifetime') {
+          await doCheckout('lifetime');
+        } else {
+          await doCheckout('online_' + billing);
+        }
+      });
+
+      // ---- Paywall: tier card buttons (Select Online / Select App / Get Lifetime) ----
+      window.selectTier = async function(product) {
+        if (product === 'lifetime') {
+          await doCheckout('lifetime');
+        } else {
+          const billing = (document.querySelector('input[name="tier"]:checked') || { value: 'monthly' }).value;
+          const key = (billing === 'lifetime') ? product + '_monthly' : product + '_' + billing;
+          await doCheckout(key);
+        }
+      };
+
+      async function doCheckout(tierKey) {
+        const ctaTextEl = document.getElementById('paywallCtaText');
+        if (ctaTextEl) ctaTextEl.style.display = 'none';
+        paywallCheckoutBtn.querySelector('.filter-btn__loading').style.display = 'inline';
+        paywallCheckoutBtn.disabled = true;
+        try { sessionStorage.setItem('holdoff_tier', tierKey); } catch (_) {}
+
+        try {
+          var checkoutEmail = (localStorage.getItem('holdoff_checkout_email') || '').trim();
+          if (!checkoutEmail) checkoutEmail = (prompt('What email should HoldOff use to activate your subscription?') || '').trim();
+          if (!checkoutEmail) throw new Error('Enter your email to continue to checkout.');
+          localStorage.setItem('holdoff_checkout_email', checkoutEmail.toLowerCase());
+          var resp = await fetch('/api/checkout/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tier: tierKey, email: checkoutEmail }),
+          });
+          var data = await resp.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            throw new Error(data.error || 'Could not start checkout.');
+          }
+        } catch (err) {
+          alert(err.message || 'Checkout failed. Try again.');
+          if (ctaTextEl) ctaTextEl.style.display = 'inline';
+          paywallCheckoutBtn.querySelector('.filter-btn__loading').style.display = 'none';
+          paywallCheckoutBtn.disabled = false;
+        }
+      }
+
+      // ---- Paywall: restore access ----
+      restoreAccessBtn.addEventListener('click', function () {
+        restoreForm.style.display = restoreForm.style.display === 'none' ? 'block' : 'none';
+      });
+
+      restoreSubmitBtn.addEventListener('click', async function () {
+        var email = restoreEmail.value.trim();
+        if (!email || !email.includes('@')) {
+          restoreMsg.textContent = 'Enter a valid email.';
+          restoreMsg.style.color = '#e05';
+          restoreMsg.style.display = 'block';
+          return;
+        }
+        restoreSubmitBtn.disabled = true;
+        restoreSubmitBtn.textContent = 'Sending...';
+        try {
+          var resp = await fetch('/api/checkout/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+          var data = await resp.json();
+          restoreMsg.textContent = 'If that email has a subscription, a magic link is on its way. Check your inbox.';
+          restoreMsg.style.color = '#666';
+          restoreMsg.style.display = 'block';
+          restoreEmail.disabled = true;
+          restoreSubmitBtn.style.display = 'none';
+        } catch (err) {
+          restoreMsg.textContent = 'Something went wrong. Try again.';
+          restoreMsg.style.color = '#e05';
+          restoreMsg.style.display = 'block';
+          restoreSubmitBtn.disabled = false;
+          restoreSubmitBtn.textContent = 'Send my link';
+        }
+      });
+
+      // ---- Post-purchase activation (redirected from Stripe) ----
+      (function handlePostPurchase() {
+        var params = new URLSearchParams(window.location.search);
+        var purchasedTier = params.get('purchased');
+        var sessionId = params.get('session_id');
+
+        if (purchasedTier && sessionId) {
+          history.replaceState({}, '', '/filter');
+          var activateDiv = document.createElement('div');
+          activateDiv.innerHTML =
+            '<p class="filter-sub filter-sub--pro" style="margin-bottom:12px">Payment confirmed. Enter the email you used at checkout to activate your HoldOff.</p>' +
+            '<input type="email" id="postPurchaseEmail" placeholder="your@email.com" style="width:100%;padding:12px;border-radius:8px;border:1px solid #C97B5D;background:#1A1410;color:#FAF6F0;font-size:16px;margin-bottom:8px" />' +
+            '<button id="postPurchaseActivate" style="width:100%;padding:12px;border-radius:8px;border:none;background:#C97B5D;color:#FAF6F0;font-size:16px;font-weight:600;cursor:pointer">Activate HoldOff →</button>' +
+            '<p id="postPurchaseMsg" style="display:none;margin-top:8px;font-size:14px"></p>';
+          document.querySelector('.filter-container').insertBefore(activateDiv, document.getElementById('filterForm'));
+
+          document.getElementById('postPurchaseActivate').addEventListener('click', async function() {
+            var emailVal = document.getElementById('postPurchaseEmail').value.trim();
+            var msgEl = document.getElementById('postPurchaseMsg');
+            if (!emailVal || !emailVal.includes('@')) {
+              msgEl.textContent = 'Enter the email you used at checkout.';
+              msgEl.style.color = '#e05';
+              msgEl.style.display = 'block';
+              return;
+            }
+            document.getElementById('postPurchaseActivate').disabled = true;
+            document.getElementById('postPurchaseActivate').textContent = 'Activating...';
+            try {
+              var resp = await fetch('/api/checkout/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailVal, tier: purchasedTier, sessionId: sessionId }),
+              });
+              var data = await resp.json();
+              if (data.ok) {
+                activateDiv.innerHTML = '<p class="filter-sub filter-sub--pro">HoldOff ' + data.membership.charAt(0).toUpperCase() + data.membership.slice(1) + ' activated. Unlimited verdicts from here.</p>';
+              } else {
+                msgEl.textContent = data.error || 'Something went wrong. Try again.';
+                msgEl.style.color = '#e05';
+                msgEl.style.display = 'block';
+                document.getElementById('postPurchaseActivate').disabled = false;
+              }
+            } catch (err) {
+              msgEl.textContent = 'Network error. Try again.';
+              msgEl.style.color = '#e05';
+              msgEl.style.display = 'block';
+              document.getElementById('postPurchaseActivate').disabled = false;
+            }
+          });
+        }
+      })();
+  </script>
+
+  <!-- History Panel -->
+  <div class="filter-history-overlay" id="historyOverlay"></div>
+  <div class="filter-history-panel" id="historyPanel" aria-label="Verdict history" role="dialog">
+    <div class="filter-history-panel__drag"></div>
+    <div class="filter-history-panel__header">
+      <h2 class="filter-history-panel__title">Verdict history</h2>
+      <button class="filter-history-panel__close" id="historyCloseBtn" aria-label="Close">✕</button>
+    </div>
+    <button class="filter-history-clear" id="historyClearBtn">Clear all</button>
+    <ul class="filter-history-list" id="historyList"></ul>
+  </div>
+
+  <%- analyticsSnippet %>
+
+  <!-- Auth Modals -->
+  <div id="authModal" style="display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;background:rgba(14,12,11,0.6);">
+    <div style="background:#FAF6F0;border-radius:12px;padding:2rem;max-width:400px;width:90%;position:relative;">
+      <button id="authModalClose" style="position:absolute;top:0.75rem;right:0.75rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:#8A7F79;">✕</button>
+      <h2 id="authModalTitle" style="font-family:'Fraunces',Georgia,serif;font-size:1.5rem;margin-bottom:1.5rem;color:#2A2522;"></h2>
+      <form id="authForm" novalidate>
+        <div id="authFormFields"></div>
+        <div id="authFormError" style="color:#C97B5D;font-size:0.875rem;margin-top:0.5rem;display:none;"></div>
+        <button type="submit" id="authSubmitBtn" style="width:100%;margin-top:1rem;padding:0.75rem;background:#C97B5D;color:#fff;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;font-size:1rem;"></button>
+      </form>
+      <p id="authTogglePrompt" style="text-align:center;margin-top:1rem;font-size:0.875rem;color:#8A7F79;"></p>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // Current user membership type (null = not logged in / free user)
+    // =========================================================
+    var _holdoffUserTier = '<%= userTier %>';
+    var _holdoffIsPro = _holdoffUserTier === 'online' || _holdoffUserTier === 'app' || _holdoffUserTier === 'lifetime';
+    // Expose email so other IIFEs can detect login state without re-parsing cookies
+    window.__hf_user_email = '<%= user ? user.email : "" %>';
+
+    // Restore draft text after returning from quiz redirect
+    (function () {
+      var draft = sessionStorage.getItem('holdoff_draft');
+      var msgInput = document.getElementById('messageInput') || document.getElementById('msgInput');
+      if (draft && msgInput && !msgInput.value) {
+        msgInput.value = draft;
+        var charCount = document.getElementById('charCount');
+        if (charCount) charCount.textContent = draft.length;
+      }
+      // Also restore emergency backup as fallback
+      var emergency = sessionStorage.getItem('holdoff_emergency_backup');
+      if (emergency && msgInput && !msgInput.value) {
+        msgInput.value = emergency;
+      }
+    })();
+
+    // =========================================================
+    // Auth modal — sign-up / log in / log out
+    // =========================================================
+    (function () {
+      var modal = document.getElementById('authModal');
+      var modalTitle = document.getElementById('authModalTitle');
+      var formFields = document.getElementById('authFormFields');
+      var formError = document.getElementById('authFormError');
+      var submitBtn = document.getElementById('authSubmitBtn');
+      var togglePrompt = document.getElementById('authTogglePrompt');
+      var authForm = document.getElementById('authForm');
+
+      var currentMode = 'login'; // 'login' or 'signup'
+
+      function openModal(mode) {
+        currentMode = mode;
+        formError.style.display = 'none';
+        formError.textContent = '';
+        if (mode === 'login') {
+          modalTitle.textContent = 'Log in to HoldOff';
+          formFields.innerHTML =
+            '<div style="margin-bottom:0.75rem;">' +
+              '<label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.25rem;">Email</label>' +
+              '<input type="email" id="authEmail" required autocomplete="email" style="width:100%;padding:0.6rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:1rem;box-sizing:border-box;">' +
+            '</div>' +
+            '<div style="margin-bottom:0.75rem;">' +
+              '<label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.25rem;">Password</label>' +
+              '<input type="password" id="authPassword" required autocomplete="current-password" style="width:100%;padding:0.6rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:1rem;box-sizing:border-box;">' +
+            '</div>' +
+            '<div style="margin-bottom:0.5rem;">' +
+              '<label style="display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:#8A7F79;cursor:pointer;">' +
+                '<input type="checkbox" id="authRemember" style="cursor:pointer;">' +
+                'Remember me for 90 days' +
+              '</label>' +
+            '</div>';
+          submitBtn.textContent = 'Log in';
+          togglePrompt.innerHTML = 'No account? <a href="#" id="authSwitchSignup" style="color:#C97B5D;font-weight:600;">Sign up free</a>';
+        } else {
+          modalTitle.textContent = 'Create your account';
+          formFields.innerHTML =
+            '<div style="margin-bottom:0.75rem;">' +
+              '<label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.25rem;">Your name (optional)</label>' +
+              '<input type="text" id="authName" autocomplete="name" style="width:100%;padding:0.6rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:1rem;box-sizing:border-box;">' +
+            '</div>' +
+            '<div style="margin-bottom:0.75rem;">' +
+              '<label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.25rem;">Email</label>' +
+              '<input type="email" id="authEmail" required autocomplete="email" style="width:100%;padding:0.6rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:1rem;box-sizing:border-box;">' +
+            '</div>' +
+            '<div style="margin-bottom:0.5rem;">' +
+              '<label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.25rem;">Password (min 8 characters)</label>' +
+              '<input type="password" id="authPassword" required minlength="8" autocomplete="new-password" style="width:100%;padding:0.6rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:1rem;box-sizing:border-box;">' +
+            '</div>';
+          submitBtn.textContent = 'Create account';
+          togglePrompt.innerHTML = 'Have an account? <a href="#" id="authSwitchLogin" style="color:#C97B5D;font-weight:600;">Log in</a>';
+        }
+        modal.style.display = 'flex';
+      }
+
+      function closeModal() {
+        modal.style.display = 'none';
+        formFields.innerHTML = '';
+        formError.style.display = 'none';
+      }
+
+      function showError(msg) {
+        formError.textContent = msg;
+        formError.style.display = 'block';
+      }
+
+      document.getElementById('authModalClose').addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+      // Open triggers in nav
+      var openSignupBtn = document.getElementById('openSignupBtn');
+      var openLoginBtn = document.getElementById('openLoginBtn');
+      if (openSignupBtn) openSignupBtn.addEventListener('click', function (e) { e.preventDefault(); openModal('signup'); });
+      if (openLoginBtn) openLoginBtn.addEventListener('click', function (e) { e.preventDefault(); openModal('login'); });
+
+      // Toggle between modes
+      document.addEventListener('click', function (e) {
+        if (e.target.id === 'authSwitchSignup') { e.preventDefault(); openModal('signup'); }
+        if (e.target.id === 'authSwitchLogin')   { e.preventDefault(); openModal('login'); }
+      });
+
+      // Submit handler
+      authForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = document.getElementById('authEmail').value.trim();
+        var password = document.getElementById('authPassword').value;
+        var remember = document.getElementById('authRemember') && document.getElementById('authRemember').checked;
+        var name = document.getElementById('authName') ? document.getElementById('authName').value.trim() : '';
+
+        if (!email || !email.includes('@')) { showError('Enter a valid email.'); return; }
+        if (!password) { showError('Enter your password.'); return; }
+        if (currentMode === 'signup' && password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = currentMode === 'signup' ? 'Creating account...' : 'Logging in...';
+
+        var endpoint = currentMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+        var body = { email, password };
+        if (currentMode === 'signup') body.name = name;
+        if (currentMode === 'login') body.remember = remember;
+
+        try {
+          var resp = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          var data = await resp.json();
+
+          if (!resp.ok) {
+            showError(data.error || 'Something went wrong.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = currentMode === 'signup' ? 'Create account' : 'Log in';
+            return;
+          }
+
+          // Success — reload to pick up new JWT cookie and show logged-in state
+          closeModal();
+          window.location.reload();
+        } catch (err) {
+          showError('Something went wrong. Check your connection.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = currentMode === 'signup' ? 'Create account' : 'Log in';
+        }
+      });
+
+      // Logout
+      var logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function () {
+          try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+          } catch (_) {}
+          window.location.reload();
+        });
+      }
+
+      // Open modal on ?signup=1 query param (from landing page CTA)
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('signup') === '1') openModal('signup');
+
+      // Show email verification success banner if present
+      if (params.get('verify_success') === '1') {
+        var banner = document.createElement('div');
+        banner.style.cssText = 'background:#D4EDDA;color:#155724;padding:0.75rem 1.5rem;text-align:center;font-size:0.9rem;';
+        banner.textContent = 'Email confirmed — you\u2019re all set.';
+        document.querySelector('.filter-main').insertBefore(banner, document.querySelector('.filter-main').firstChild);
+      }
+      if (params.get('verify_error') === 'invalid') {
+        var banner2 = document.createElement('div');
+        banner2.style.cssText = 'background:#F8D7DA;color:#721C24;padding:0.75rem 1.5rem;text-align:center;font-size:0.9rem;';
+        banner2.textContent = 'Verification link invalid or expired. Try logging in.';
+      }
+
+      // Open modal on paywall if anonymous
+      if (params.get('paywall') === '1') {
+        var isLoggedIn = document.getElementById('openSignupBtn') === null; // hide nav means logged in
+      }
+    })();
+  </script>
+
+  <!-- Referral modal — send HoldOff link to a friend -->
+  <div id="referralModal" style="display:none;position:fixed;inset:0;z-index:300;align-items:center;justify-content:center;background:rgba(14,12,11,0.7);">
+    <div style="background:#FAF6F0;border-radius:12px;padding:1.75rem;max-width:420px;width:92%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+      <button id="referralModalClose" style="position:absolute;top:0.75rem;right:0.75rem;background:none;border:none;font-size:1.1rem;cursor:pointer;color:#8A7F79;" aria-label="Close">✕</button>
+      <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.25rem;color:#2A2522;margin:0 0 0.25rem;">Send it to a friend.</h2>
+      <p style="font-size:0.85rem;color:#8A7F79;margin:0 0 1.25rem;line-height:1.4;">They get a link. You stay anonymous. Your message is never included.</p>
+
+      <div style="margin-bottom:0.85rem;">
+        <label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.3rem;">Their email</label>
+        <input type="email" id="referralRecipientEmail" autocomplete="off"
+          placeholder="friend@email.com"
+          style="width:100%;padding:0.6rem 0.75rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:0.95rem;background:#fff;color:#2A2522;box-sizing:border-box;" />
+      </div>
+
+      <div style="margin-bottom:1.1rem;">
+        <label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.3rem;">Your note <span style="color:#B0A9A3;">(optional)</span></label>
+        <input type="text" id="referralNote" maxlength="200"
+          placeholder="This pasted my last 4 texts back at me and made me put my phone down. Try it."
+          style="width:100%;padding:0.6rem 0.75rem;border:1px solid #E5DED4;border-radius:6px;font-family:inherit;font-size:0.875rem;background:#fff;color:#2A2522;box-sizing:border-box;" />
+      </div>
+
+      <button id="referralSendBtn"
+        style="width:100%;padding:0.7rem;background:#C97B5D;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:0.95rem;font-weight:600;cursor:pointer;">
+        Send it →
+      </button>
+      <p id="referralMsg" style="display:none;margin-top:0.6rem;font-size:0.85rem;text-align:center;"></p>
+    </div>
+  </div>
+
+  <!-- iOS PWA install prompt — shown once to Safari mobile users who haven't installed -->
+  <div class="pwa-install-sheet" id="pwaInstallSheet" role="complementary" aria-label="Install HoldOff" style="display:none">
+    <button class="pwa-install-sheet__close" id="pwaInstallClose" aria-label="Dismiss">✕</button>
+    <div class="pwa-install-sheet__icon">
+      <img src="/icons/icon-120.png" alt="HoldOff icon" width="48" height="48">
+    </div>
+    <div class="pwa-install-sheet__body">
+      <strong>Install HoldOff.</strong>
+      Home screen, one tap, three seconds.
+    </div>
+    <div class="pwa-install-sheet__steps">
+      Tap <span class="pwa-install-sheet__share">⬆</span> then <strong>Add to Home Screen</strong>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // Verdict history + streak — 100% localStorage, no backend
+    // =========================================================
+    (function () {
+      var HISTORY_KEY = 'hf_history';
+      var STREAK_KEY  = 'hf_streak';
+
+      // -- Storage helpers --
+      function loadHistory() {
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e) { return []; }
+      }
+      function saveHistory(arr) {
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr)); } catch(e) {}
+      }
+      function loadStreak() {
+        return parseInt(localStorage.getItem(STREAK_KEY) || '0', 10) || 0;
+      }
+      function saveStreak(n) {
+        try { localStorage.setItem(STREAK_KEY, String(n)); } catch(e) {}
+      }
+
+      // -- Streak subtitles --
+      var subtitles = [
+        "That\u2019s {n} fires you didn\u2019t start.",
+        "Every one of those was the right call.",
+        "{n} moments you chose yourself.",
+        "Silence can be the loudest answer.",
+        "You\u2019re better at this than you think.",
+        "The spiral didn\u2019t win this time.",
+        "{n} texts that didn\u2019t need sending.",
+      ];
+      function getSubtitle(n) {
+        var s = subtitles[Math.min(n - 1, subtitles.length - 1)];
+        return s.replace('{n}', n);
+      }
+
+      // -- Render streak on input screen --
+      function renderStreak() {
+        var n = loadStreak();
+        var block = document.getElementById('streakBlock');
+        var countEl = document.getElementById('streakCount');
+        var subEl = document.getElementById('streakSubtitle');
+        if (n > 0) {
+          countEl.textContent = n;
+          subEl.textContent = getSubtitle(n);
+          block.classList.remove('filter-streak--hidden');
+        } else {
+          block.classList.add('filter-streak--hidden');
+        }
+      }
+
+      // -- Relative time --
+      function relativeTime(ts) {
+        var diff = Date.now() - ts;
+        var m = Math.floor(diff / 60000);
+        var h = Math.floor(diff / 3600000);
+        var d = Math.floor(diff / 86400000);
+        if (m < 1)  return 'just now';
+        if (m < 60) return m + 'm ago';
+        if (h < 24) return h + 'h ago';
+        if (d < 7)  return d + 'd ago';
+        return new Date(ts).toLocaleDateString();
+      }
+
+      // -- Render history panel --
+      function renderHistory() {
+        var list = document.getElementById('historyList');
+        var history = loadHistory();
+        list.innerHTML = '';
+
+        if (history.length === 0) {
+          var empty = document.createElement('li');
+          empty.className = 'filter-history-empty';
+          empty.innerHTML = 'No verdicts yet.<br>The first one\u2019s the hardest.';
+          list.appendChild(empty);
+          return;
+        }
+
+        history.forEach(function (entry, i) {
+          var li = document.createElement('li');
+          li.className = 'filter-history-item';
+
+          var vClass = 'filter-history-item__verdict--' + entry.verdict.toLowerCase();
+          var preview = entry.message.length > 60
+            ? entry.message.slice(0, 60) + '\u2026'
+            : entry.message;
+
+          li.innerHTML =
+            '<div class="filter-history-item__header">' +
+              '<span class="filter-history-item__verdict ' + vClass + '">' + entry.verdict + '</span>' +
+              '<span class="filter-history-item__preview">' + escapeHtml(preview) + '</span>' +
+              '<span class="filter-history-item__time">' + relativeTime(entry.ts) + '</span>' +
+              '<span class="filter-history-item__chevron">&#9660;</span>' +
+            '</div>' +
+            '<div class="filter-history-item__body">' +
+              '<div class="filter-history-item__message">\u201c' + escapeHtml(entry.message) + '\u201d</div>' +
+              (entry.reframe
+                ? '<div class="filter-history-item__reframe-label">The honest read</div>' +
+                  '<div class="filter-history-item__reframe">' + escapeHtml(entry.reframe) + '</div>'
+                : '') +
+            '</div>';
+
+          li.querySelector('.filter-history-item__header').addEventListener('click', function () {
+            li.classList.toggle('filter-history-item--expanded');
+          });
+
+          list.appendChild(li);
+        });
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // -- Open / close panel --
+      var overlay = document.getElementById('historyOverlay');
+      var panel   = document.getElementById('historyPanel');
+
+      function openHistory() {
+        // Pro paywall: logged-in free users see upsell; anonymous users get auth modal
+        if (_holdoffUserTier !== '' && !_holdoffIsPro) {
+          overlay.classList.add('filter-history-overlay--open');
+          panel.classList.add('filter-history-panel--open');
+          document.body.style.overflow = 'hidden';
+          showHistoryPaywall();
+          return;
+        }
+        renderHistory();
+        overlay.classList.add('filter-history-overlay--open');
+        panel.classList.add('filter-history-panel--open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function showHistoryPaywall() {
+        var historyList = document.getElementById('historyList');
+        var historyClearBtn = document.getElementById('historyClearBtn');
+        if (historyClearBtn) historyClearBtn.style.display = 'none';
+        if (historyList) {
+          historyList.innerHTML =
+            '<li style="padding:2rem 1.5rem;text-align:center;">' +
+            '<p style="font-family:\'Fraunces\',serif;font-size:1.2rem;font-weight:700;margin-bottom:0.75rem;color:#2A2522;">Verdict history is a Pro feature.</p>' +
+            '<p style="font-size:0.9rem;color:#8A7F79;margin-bottom:1.5rem;line-height:1.6;">Upgrade to unlock your full history, streak tracking, and all future Pro features.</p>' +
+            '<a href="/upgrade" style="display:inline-block;background:#C97B5D;color:#fff;font-weight:600;padding:0.65rem 1.5rem;border-radius:6px;text-decoration:none;font-size:0.9rem;">Upgrade to Pro →</a>' +
+            '</li>';
+        }
+      }
+      function closeHistory() {
+        overlay.classList.remove('filter-history-overlay--open');
+        panel.classList.remove('filter-history-panel--open');
+        document.body.style.overflow = '';
+      }
+
+      overlay.addEventListener('click', closeHistory);
+      document.getElementById('historyCloseBtn').addEventListener('click', closeHistory);
+      document.getElementById('navHistoryBtn').addEventListener('click', openHistory);
+      document.getElementById('resultHistoryBtn').addEventListener('click', openHistory);
+
+      // -- Clear with confirmation --
+      document.getElementById('historyClearBtn').addEventListener('click', function () {
+        if (!confirm('Clear all verdict history? This can\u2019t be undone.')) return;
+        saveHistory([]);
+        renderHistory();
+        // Don't reset streak — that's opt-in only
+      });
+
+      // -- Hook into the existing renderResult to save history + update streak --
+      // We monkey-patch after the page script runs by listening on a custom event.
+      // The main script fires window.dispatchEvent(new CustomEvent('hf:verdict', { detail: data }))
+      window.addEventListener('hf:verdict', function (e) {
+        var data = e.detail;
+        // Save to history
+        var history = loadHistory();
+        history.unshift({
+          ts:      Date.now(),
+          message: data.message || '',
+          verdict: data.verdict || '',
+          reframe: data.whats_happening || '',
+          pattern: data.pattern || '',
+        });
+        // Keep last 100 entries
+        if (history.length > 100) history = history.slice(0, 100);
+        saveHistory(history);
+
+        // Update streak on HOLD or DO NOT SEND
+        var v = (data.verdict || '').toUpperCase();
+        if (v === 'HOLD' || v === 'DO NOT SEND' || v === 'REWRITE') {
+          // "Not sent" = HOLD or REWRITE (user was persuaded to wait or rewrite)
+          // Task says WAIT or DO NOT SEND — HOLD maps to WAIT here
+          var n = loadStreak() + 1;
+          saveStreak(n);
+          renderStreak();
+          // Sync streak to Android widget
+          if (typeof Android !== 'undefined' && typeof Android.updateStreak === 'function') {
+            Android.updateStreak(n);
+          }
+        }
+      });
+
+      // -- Init streak on load --
+      renderStreak();
+    })();
+  </script>
+
+  <script>
+    // =========================================================
+    // Referral modal — send HoldOff link to a friend
+    // =========================================================
+    (function () {
+      var referralModal = document.getElementById('referralModal');
+      var referralCtaBanner = document.getElementById('referralCtaBanner');
+      var referralCtaBtn = document.getElementById('referralCtaBtn');
+      var referralModalClose = document.getElementById('referralModalClose');
+      var referralSendBtn = document.getElementById('referralSendBtn');
+      var referralMsg = document.getElementById('referralMsg');
+
+      function openReferralModal() {
+        referralModal.style.display = 'flex';
+        document.getElementById('referralRecipientEmail').value = '';
+        document.getElementById('referralNote').value = '';
+        referralMsg.style.display = 'none';
+        referralSendBtn.disabled = false;
+        referralSendBtn.textContent = 'Send it \u2192';
+        setTimeout(function () { document.getElementById('referralRecipientEmail').focus(); }, 100);
+      }
+
+      function closeReferralModal() {
+        referralModal.style.display = 'none';
+      }
+
+      if (referralCtaBtn) referralCtaBtn.addEventListener('click', openReferralModal);
+      if (referralModalClose) referralModalClose.addEventListener('click', closeReferralModal);
+      referralModal.addEventListener('click', function (e) { if (e.target === referralModal) closeReferralModal(); });
+
+      if (referralSendBtn) {
+        referralSendBtn.addEventListener('click', async function () {
+          var email = document.getElementById('referralRecipientEmail').value.trim();
+          var note = document.getElementById('referralNote').value.trim();
+
+          if (!email || !email.includes('@') || !email.includes('.')) {
+            referralMsg.textContent = 'Enter a valid email address.';
+            referralMsg.style.color = '#C97B5D';
+            referralMsg.style.display = 'block';
+            return;
+          }
+
+          referralSendBtn.disabled = true;
+          referralSendBtn.textContent = 'Sending\u2026';
+          referralMsg.style.display = 'none';
+
+          var streakCount = parseInt(localStorage.getItem('hf_streak') || '0', 10) || 0;
+
+          try {
+            var resp = await fetch('/api/referral/send', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ recipientEmail: email, note: note || null, streakCount: streakCount }),
+            });
+            var data = await resp.json();
+
+            if (resp.status === 429) {
+              referralMsg.textContent = 'You\u2019ve sent 10 referrals today. Check back tomorrow.';
+              referralMsg.style.color = '#8A7F79';
+              referralMsg.style.display = 'block';
+              referralSendBtn.disabled = false;
+              referralSendBtn.textContent = 'Send it \u2192';
+              return;
+            }
+
+            if (!resp.ok || !data.ok) {
+              referralMsg.textContent = data.error || 'Something went wrong. Try again.';
+              referralMsg.style.color = '#C97B5D';
+              referralMsg.style.display = 'block';
+              referralSendBtn.disabled = false;
+              referralSendBtn.textContent = 'Send it \u2192';
+              return;
+            }
+
+            // Success
+            referralMsg.textContent = 'Sent. They\u2019ll get it in a few seconds.';
+            referralMsg.style.color = '#5A8F6A';
+            referralMsg.style.display = 'block';
+            referralSendBtn.textContent = 'Sent \u2713';
+            setTimeout(closeReferralModal, 2200);
+
+          } catch (err) {
+            referralMsg.textContent = 'Network error. Try again.';
+            referralMsg.style.color = '#C97B5D';
+            referralMsg.style.display = 'block';
+            referralSendBtn.disabled = false;
+            referralSendBtn.textContent = 'Send it \u2192';
+          }
+        });
+      }
+
+      // Show referral CTA when a HOLD or REWRITE verdict is rendered
+      window.addEventListener('hf:verdict', function (e) {
+        var v = (e.detail.verdict || '').toUpperCase();
+        if (referralCtaBanner) {
+          referralCtaBanner.style.display = (v === 'HOLD' || v === 'REWRITE') ? 'block' : 'none';
+        }
+      });
+
+      // Hide referral banner when user goes back to input screen
+      var tryAnotherBtn2 = document.getElementById('tryAnotherBtn');
+      if (tryAnotherBtn2) {
+        tryAnotherBtn2.addEventListener('click', function () {
+          if (referralCtaBanner) referralCtaBanner.style.display = 'none';
+        }, true); // capture so it fires before the existing listener
+      }
+    })();
+  </script>
+
+  <script>
+    // Global error boundary — prevents blank screen on any uncaught JS error.
+    // Shows a minimal fallback instead of silent white-out.
+    (function () {
+      var fallbackDiv = document.createElement('div');
+      fallbackDiv.id = 'hf-error-boundary';
+      fallbackDiv.style.cssText = 'position:fixed;inset:0;background:#0E0C0B;color:#F2EDE5;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:sans-serif;text-align:center;padding:2rem;';
+      fallbackDiv.innerHTML = '<div style="font-size:2rem;margin-bottom:0.5rem;">⚠</div><div style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">HoldOff</div><div style="font-size:0.9rem;color:#9E948E;">Something went wrong. Please <a href="/filter" style="color:#C97B5D;">refresh the page</a>.</div>';
+      document.body.appendChild(fallbackDiv);
+      window.addEventListener('error', function (e) {
+        // Catch only top-level errors — let expected console.warn/silent failures pass.
+        // Errors from third-party scripts (Meta Pixel, Resend) are exempt.
+        var src = e.filename || '';
+        if (src.includes('fbevents') || src.includes('connect.facebook.net') ||
+            src.includes('resend') || src.includes('analytics')) return;
+        fallbackDiv.style.display = 'flex';
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        fallbackDiv.style.display = 'flex';
+      });
+    })();
+
+    // Service worker registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function (reg) {
+            // Activate new SW immediately — don't wait for all tabs to close.
+            // Users with the old SW would otherwise see stale cached pages indefinitely.
+            reg.waiting && reg.waiting.postMessage({ type: 'skipWaiting' });
+            window.__hf_sw_ready = true;
+            window.dispatchEvent(new CustomEvent('hf:sw-ready'));
+          })
+          .catch(function (err) {
+            console.warn('SW registration failed:', err);
+          });
+      });
+    }
+
+    // ── Android beforeinstallprompt — captured here (not in SW) so page can fire install UI ──
+    window.addEventListener('beforeinstallprompt', function (evt) {
+      evt.preventDefault();
+      window.__hf_install_prompt = evt;
+      window.dispatchEvent(new CustomEvent('hf:install-ready'));
+    });
+
+    // iOS install prompt logic
+    (function () {
+      const COOKIE_KEY = 'hf_install_dismissed';
+      const sheet = document.getElementById('pwaInstallSheet');
+      const closeBtn = document.getElementById('pwaInstallClose');
+
+      function getCookie(name) {
+        return document.cookie.split('; ').some(function (c) { return c.startsWith(name + '='); });
+      }
+
+      function setCookie(name, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = name + '=1; expires=' + d.toUTCString() + '; path=/; SameSite=Lax';
+      }
+
+      // Only show on iOS Safari and only when NOT already installed
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                           window.navigator.standalone === true;
+
+      if (isIOS && !isStandalone && !getCookie(COOKIE_KEY)) {
+        // Delay 3s before showing — let the user engage first
+        setTimeout(function () {
+          sheet.style.display = 'flex';
+          sheet.classList.add('pwa-install-sheet--visible');
+        }, 3000);
+      }
+
+      closeBtn.addEventListener('click', function () {
+        sheet.classList.remove('pwa-install-sheet--visible');
+        setCookie(COOKIE_KEY, 30); // Don't show again for 30 days
+        setTimeout(function () { sheet.style.display = 'none'; }, 300);
+      });
+    })();
+  </script>
+
+  <!-- Push Notification Settings Panel -->
+  <div id="pushSettingsOverlay" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(14,12,11,0.6);"></div>
+  <div id="pushSettingsPanel" role="dialog" aria-label="Notification settings" style="display:none;position:fixed;top:0;right:0;bottom:0;width:320px;max-width:92vw;background:#FAF6F0;z-index:251;padding:1.75rem 1.5rem;box-shadow:-4px 0 24px rgba(0,0,0,0.25);overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.1rem;color:#2A2522;margin:0;">Reminders</h2>
+      <button id="pushSettingsClose" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:#8A7F79;padding:0.25rem;" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Push permission status -->
+    <div id="pushPermStatus" style="margin-bottom:1.25rem;">
+      <!-- Filled by JS based on permission state -->
+    </div>
+
+    <!-- Enable toggle -->
+    <div id="pushToggleBlock" style="display:none;margin-bottom:1.25rem;">
+      <label style="display:flex;align-items:center;justify-content:space-between;font-size:0.875rem;color:#2A2522;cursor:pointer;">
+        <span>Daily reminder</span>
+        <div style="position:relative;width:44px;height:24px;">
+          <input type="checkbox" id="pushEnabledToggle" style="opacity:0;width:0;height:0;position:absolute;">
+          <span id="pushToggleTrack" style="position:absolute;inset:0;border-radius:12px;background:#E5DED4;transition:background 0.2s;cursor:pointer;"
+            onclick="document.getElementById('pushEnabledToggle').click()">
+            <span id="pushToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+          </span>
+        </div>
+      </label>
+      <p id="pushToggleMsg" style="font-size:0.75rem;color:#9A8F8A;margin:0.4rem 0 0;"></p>
+    </div>
+
+    <!-- Reminder time picker (shown when enabled) -->
+    <div id="pushTimeBlock" style="display:none;margin-bottom:1.25rem;">
+      <label style="display:block;font-size:0.8rem;color:#8A7F79;margin-bottom:0.5rem;">Remind me at</label>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="push-time-btn" data-time="9am" style="flex:1;padding:0.5rem;border:1px solid #E5DED4;border-radius:6px;background:#fff;font-family:inherit;font-size:0.85rem;color:#2A2522;cursor:pointer;">9 AM</button>
+        <button class="push-time-btn" data-time="8pm" style="flex:1;padding:0.5rem;border:1px solid #E5DED4;border-radius:6px;background:#fff;font-family:inherit;font-size:0.85rem;color:#2A2522;cursor:pointer;">8 PM</button>
+        <button class="push-time-btn" data-time="10pm" style="flex:1;padding:0.5rem;border:1px solid #E5DED4;border-radius:6px;background:#fff;font-family:inherit;font-size:0.85rem;color:#2A2522;cursor:pointer;">10 PM</button>
+      </div>
+    </div>
+
+    <!-- Quiet hours note -->
+    <div id="pushQuietNote" style="display:none;margin-bottom:1.25rem;">
+      <p style="font-size:0.75rem;color:#9A8F8A;margin:0;line-height:1.5;">
+        Quiet hours: 11 PM – 8 AM. No notifications during that window.
+      </p>
+    </div>
+
+    <!-- Unsubscribe link -->
+    <div id="pushUnsubscribeBlock" style="display:none;text-align:center;margin-top:1rem;">
+      <button id="pushUnsubscribeBtn" style="background:none;border:none;font-size:0.8rem;color:#9A8F8A;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">
+        Turn off all reminders
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // Push Notification Settings
+    // =========================================================
+    (function () {
+      var panel        = document.getElementById('pushSettingsPanel');
+      var overlay      = document.getElementById('pushSettingsOverlay');
+      var closeBtn     = document.getElementById('pushSettingsBtn');
+      var settingsClose = document.getElementById('pushSettingsClose');
+      var permStatusEl  = document.getElementById('pushPermStatus');
+      var toggleBlock  = document.getElementById('pushToggleBlock');
+      var timeBlock    = document.getElementById('pushTimeBlock');
+      var quietNote    = document.getElementById('pushQuietNote');
+      var unsubBlock   = document.getElementById('pushUnsubscribeBlock');
+      var toggle        = document.getElementById('pushEnabledToggle');
+      var trackEl       = document.getElementById('pushToggleTrack');
+      var thumbEl       = document.getElementById('pushToggleThumb');
+      var toggleMsg     = document.getElementById('pushToggleMsg');
+      var timeBtns      = document.querySelectorAll('.push-time-btn');
+      var unsubBtn      = document.getElementById('pushUnsubscribeBtn');
+
+      // Open the panel
+      function openPanel() {
+        panel.style.display = 'block';
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        loadPreferences();
+      }
+
+      function closePanel() {
+        panel.style.display = 'none';
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+
+      if (closeBtn)     closeBtn.addEventListener('click', openPanel);
+      if (settingsClose) settingsClose.addEventListener('click', closePanel);
+      if (overlay)      overlay.addEventListener('click', closePanel);
+
+      // Show/hide toggle visual
+      function updateToggleVisual(enabled) {
+        if (enabled) {
+          trackEl.style.background = '#C97B5D';
+          thumbEl.style.transform = 'translateX(20px)';
+        } else {
+          trackEl.style.background = '#E5DED4';
+          thumbEl.style.transform = 'translateX(0)';
+        }
+      }
+
+      // Highlight active time button
+      function highlightTimeBtn(time) {
+        timeBtns.forEach(function (btn) {
+          if (btn.dataset.time === time) {
+            btn.style.background = '#C97B5D';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#C97B5D';
+          } else {
+            btn.style.background = '#fff';
+            btn.style.color = '#2A2522';
+            btn.style.borderColor = '#E5DED4';
+          }
+        });
+      }
+
+      // Load preferences and permission state
+      var currentEnabled = false;
+      var currentTime    = '9am';
+
+      function loadPreferences() {
+        // First check push permission
+        if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+          permStatusEl.innerHTML = '<p style="font-size:0.85rem;color:#8A7F79;margin:0;">Push notifications aren\u2019t supported in this browser.</p>';
+          toggleBlock.style.display = 'none';
+          timeBlock.style.display    = 'none';
+          return;
+        }
+
+        var perm = Notification.permission; // 'granted' | 'denied' | 'default'
+
+        if (perm === 'denied') {
+          permStatusEl.innerHTML = '<p style="font-size:0.85rem;color:#C97B5D;margin:0;">Notifications are blocked. Enable them in your browser settings to receive reminders.</p>';
+          toggleBlock.style.display = 'none';
+          timeBlock.style.display    = 'none';
+          return;
+        }
+
+        if (perm === 'default') {
+          permStatusEl.innerHTML = '<p style="font-size:0.85rem;color:#8A7F79;margin:0 0 0.75rem;">Get a daily nudge to check in. One tap to dismiss — no urgency.</p>' +
+            '<button id="pushRequestPermBtn" style="width:100%;padding:0.6rem;background:#C97B5D;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;">Enable notifications</button>';
+          toggleBlock.style.display = 'none';
+          timeBlock.style.display    = 'none';
+          unsubBlock.style.display  = 'none';
+          var reqBtn = document.getElementById('pushRequestPermBtn');
+          if (reqBtn) reqBtn.addEventListener('click', requestPermission);
+          return;
+        }
+
+        // perm === 'granted' — show the full settings UI
+        permStatusEl.innerHTML = '<p style="font-size:0.8rem;color:#5A8F6A;margin:0;">Notifications enabled.</p>';
+        toggleBlock.style.display = 'block';
+        quietNote.style.display   = 'block';
+
+        // Fetch server preferences
+        fetch('/api/push/preferences', { credentials: 'include' })
+          .then(function (r) { return r.json(); })
+          .then(function (prefs) {
+            currentEnabled = !!prefs.enabled;
+            currentTime    = prefs.reminder_time || '9am';
+            updateToggleVisual(currentEnabled);
+            toggle.checked = currentEnabled;
+            highlightTimeBtn(currentTime);
+            toggleMsg.textContent = currentEnabled ? 'You\u2019ll get a reminder at ' + currentTime + '.' : 'Reminders are off.';
+            if (currentEnabled) {
+              timeBlock.style.display = 'block';
+              unsubBlock.style.display = 'block';
+            }
+          })
+          .catch(function () {});
+      }
+
+      async function requestPermission() {
+        var btn = document.getElementById('pushRequestPermBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Asking...'; }
+
+        var reg = await navigator.serviceWorker.ready;
+        var permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          // Subscribe to push
+          var keyResp = await fetch('/api/push/vapid-key', { credentials: 'include' });
+          if (!keyResp.ok) { alert('Push not configured on this site.'); return; }
+          var keyData = await keyResp.json();
+          var sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(keyData.key),
+          });
+          await fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ subscription: sub.toJSON() }),
+          });
+          // Reload panel
+          openPanel();
+        } else {
+          if (btn) { btn.disabled = false; btn.textContent = 'Enable notifications'; }
+        }
+      }
+
+      // Decode VAPID key
+      function urlBase64ToUint8Array(base64String) {
+        var padding = '='.repeat((4 - base64String.length % 4) % 4);
+        var base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        var rawData = window.atob(base64);
+        var outputArray = new Uint8Array(rawData.length);
+        for (var i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      }
+
+      // Toggle change handler
+      toggle.addEventListener('change', async function () {
+        var enabled = toggle.checked;
+        updateToggleVisual(enabled);
+
+        if (enabled) {
+          toggleMsg.textContent = 'Enabling...';
+          try {
+            var resp = await fetch('/api/push/preferences', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ enabled: true }),
+            });
+            var data = await resp.json();
+            if (resp.ok) {
+              currentEnabled = true;
+              toggleMsg.textContent = 'You\u2019ll get a reminder at ' + currentTime + '.';
+              timeBlock.style.display = 'block';
+              unsubBlock.style.display = 'block';
+            } else {
+              toggle.checked = false;
+              updateToggleVisual(false);
+              toggleMsg.textContent = data.error || 'Could not enable.';
+            }
+          } catch (err) {
+            toggle.checked = false;
+            updateToggleVisual(false);
+            toggleMsg.textContent = 'Network error. Try again.';
+          }
+        } else {
+          toggleMsg.textContent = 'Reminders are off.';
+          timeBlock.style.display    = 'none';
+          unsubBlock.style.display  = 'none';
+          try {
+            await fetch('/api/push/preferences', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ enabled: false }),
+            });
+            currentEnabled = false;
+          } catch (_) {}
+        }
+      });
+
+      // Time button clicks
+      timeBtns.forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          var time = btn.dataset.time;
+          highlightTimeBtn(time);
+          currentTime = time;
+          toggleMsg.textContent = 'You\u2019ll get a reminder at ' + time + '.';
+          try {
+            await fetch('/api/push/preferences', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ reminder_time: time }),
+            });
+          } catch (_) {}
+        });
+      });
+
+      // Unsubscribe
+      if (unsubBtn) {
+        unsubBtn.addEventListener('click', async function () {
+          if (!confirm('Turn off all reminders? You can re-enable anytime.')) return;
+          try {
+            await fetch('/api/push/unsubscribe', {
+              method: 'DELETE',
+              credentials: 'include',
+            });
+            currentEnabled = false;
+            currentTime    = '9am';
+            updateToggleVisual(false);
+            toggle.checked = false;
+            toggleBlock.style.display = 'none';
+            timeBlock.style.display    = 'none';
+            unsubBlock.style.display  = 'none';
+            permStatusEl.innerHTML = '<p style="font-size:0.8rem;color:#8A7F79;margin:0;">Reminders off. <button onclick="location.reload()" style="background:none;border:none;color:#C97B5D;cursor:pointer;font-family:inherit;font-size:inherit;">Re-enable</button></p>';
+          } catch (err) {
+            alert('Could not turn off reminders. Try again.');
+          }
+        });
+      }
+    })();
+
+    // =========================================================
+    // Focus textarea on ?focus=1 (notification tap deep-link)
+    // =========================================================
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('focus') === '1') {
+        var msgInput = document.getElementById('messageInput');
+        if (msgInput) {
+          msgInput.focus();
+          // Clean the URL without reloading
+          history.replaceState({}, '', '/filter');
+        }
+      }
+    })();
+  </script>
+
+  <!-- Exit-intent modal — fires when free user has 4+ verdicts and shows exit intent -->
+  <div id="exitIntentOverlay" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(14,12,11,0.72);" aria-hidden="true"></div>
+  <div id="exitIntentModal" role="dialog" aria-modal="true" aria-labelledby="exitIntentTitle"
+    style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:401;
+           background:#1A1410;border:1px solid #3A2E28;border-radius:12px;padding:2rem 1.75rem;
+           max-width:380px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,0.5);">
+    <button id="exitIntentClose" aria-label="Dismiss"
+      style="position:absolute;top:0.75rem;right:0.75rem;background:none;border:none;
+             font-size:1.1rem;cursor:pointer;color:#6A5F59;line-height:1;">✕</button>
+
+    <h2 id="exitIntentTitle"
+      style="font-family:'Fraunces',Georgia,serif;font-size:1.35rem;font-weight:600;
+             color:#FAF6F0;margin:0 0 0.5rem;letter-spacing:-0.02em;line-height:1.2;">
+      Out of verdicts. Not out of moments.
+    </h2>
+    <p style="font-size:0.875rem;color:#9A8F8A;margin:0 0 1.25rem;line-height:1.5;">
+      Get the 5-day text detox. Free. We'll send the first one tonight.
+    </p>
+
+    <div id="exitIntentForm">
+      <input type="email" id="exitIntentEmail" autocomplete="email"
+        placeholder="your@email.com"
+        style="width:100%;padding:0.65rem 0.75rem;border:1px solid #3A2E28;border-radius:6px;
+               background:#0E0C0B;color:#FAF6F0;font-family:inherit;font-size:0.95rem;
+               box-sizing:border-box;margin-bottom:0.65rem;outline:none;" />
+      <button id="exitIntentSubmit"
+        style="width:100%;padding:0.7rem;background:#C97B5D;color:#fff;border:none;
+               border-radius:6px;font-family:inherit;font-size:0.95rem;font-weight:600;
+               cursor:pointer;letter-spacing:0.01em;">
+        Send it.
+      </button>
+      <p id="exitIntentError" style="display:none;font-size:0.8rem;color:#C97B5D;margin-top:0.4rem;"></p>
+    </div>
+    <div id="exitIntentDone" style="display:none;text-align:center;padding:0.5rem 0;">
+      <p style="font-size:0.9rem;color:#9A8F8A;margin:0;">Check your inbox. Day 1 is on its way.</p>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // Exit-intent modal — fires once per 7 days for free users
+    // with 4+ verdicts who show exit intent.
+    // Suppressed for: paid users, already-on-detox-list, anonymous (0 verdicts).
+    // =========================================================
+    (function () {
+      var EI_KEY = 'hf_ei_shown'; // localStorage key — stores last shown timestamp
+      var EI_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+      var VERDICT_THRESHOLD = 4; // must have used 4+ verdicts
+
+      var modal   = document.getElementById('exitIntentModal');
+      var overlay = document.getElementById('exitIntentOverlay');
+      var closeBtn = document.getElementById('exitIntentClose');
+      var emailEl = document.getElementById('exitIntentEmail');
+      var submitBtn = document.getElementById('exitIntentSubmit');
+      var formEl  = document.getElementById('exitIntentForm');
+      var doneEl  = document.getElementById('exitIntentDone');
+      var errEl   = document.getElementById('exitIntentError');
+
+      var _shown = false;
+      var _submitted = false;
+
+      // ---------- Suppression checks ----------
+
+      // pro_token cookie: base64url-encoded JSON { email, membership }. Present for active Pro subscribers.
+      function isPaidUser() {
+        try {
+          var cookies = document.cookie.split('; ');
+          var match = cookies.find(function(c) { return c.startsWith('pro_token='); });
+          if (!match) return false;
+          var token = match.split('=')[1];
+          var payload = JSON.parse(atob(token));
+          return !!(payload && payload.email);
+        } catch (e) { return false; }
+      }
+
+      // hf_vc cookie: authoritative server-set verdict counter for the current device.
+      function hasExceededVerdictThreshold() {
+        try {
+          var cookies = document.cookie.split('; ');
+          var match = cookies.find(function(c) { return c.startsWith('hf_vc='); });
+          if (!match) return false;
+          var count = parseInt(match.split('=')[1], 10);
+          return count >= VERDICT_THRESHOLD;
+        } catch (e) { return false; }
+      }
+
+      function isOnCooldown() {
+        try {
+          var last = parseInt(localStorage.getItem(EI_KEY) || '0', 10);
+          return Date.now() - last < EI_COOLDOWN_MS;
+        } catch (e) { return false; }
+      }
+
+      // Logged-in users see the nav Sign up free button hidden (pro users + full subscribers).
+      // Anonymous users see it visible.
+      function isLoggedIn() {
+        var navSignupBtn = document.getElementById('openSignupBtn');
+        return !navSignupBtn;
+      }
+
+      function shouldShow() {
+        if (_shown || _submitted) return false;
+        if (isPaidUser()) return false;
+        if (isLoggedIn()) return false;
+        if (!hasExceededVerdictThreshold()) return false;
+        if (isOnCooldown()) return false;
+        return true;
+      }
+
+      // ---------- Show / hide ----------
+      function showModal() {
+        if (!shouldShow()) return;
+        _shown = true;
+        try { localStorage.setItem(EI_KEY, String(Date.now())); } catch (e) {}
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        // Log modal_shown event
+        var deviceId = getDeviceId();
+        fetch('/api/detox/exit-intent-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event_type: 'modal_shown', device_id: deviceId }),
+        }).catch(function () {});
+      }
+
+      function hideModal(dismissed) {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        if (dismissed && !_submitted) {
+          var deviceId = getDeviceId();
+          fetch('/api/detox/exit-intent-event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event_type: 'modal_dismissed', device_id: deviceId }),
+          }).catch(function () {});
+        }
+      }
+
+      // ---------- Device ID ----------
+      function getDeviceId() {
+        try {
+          var id = localStorage.getItem('hf_device_id');
+          if (!id) {
+            id = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+            localStorage.setItem('hf_device_id', id);
+          }
+          return id;
+        } catch (e) { return null; }
+      }
+
+      // ---------- Submit ----------
+      submitBtn.addEventListener('click', async function () {
+        var email = (emailEl.value || '').trim();
+        if (!email || !email.includes('@')) {
+          errEl.textContent = 'Enter a valid email.';
+          errEl.style.display = 'block';
+          return;
+        }
+        errEl.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        try {
+          var resp = await fetch('/api/detox/exit-intent-signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, device_id: getDeviceId() }),
+          });
+          var data = await resp.json();
+          if (resp.ok && (data.ok || data.already)) {
+            _submitted = true;
+            formEl.style.display = 'none';
+            doneEl.style.display = 'block';
+            if (typeof fbq !== 'undefined') fbq('track', 'Lead', { content_name: 'exit_intent_detox' });
+            setTimeout(function () { hideModal(false); }, 2800);
+          } else {
+            errEl.textContent = (data && data.error) || 'Something went wrong. Try again.';
+            errEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send it.';
+          }
+        } catch (err) {
+          errEl.textContent = 'Network error. Try again.';
+          errEl.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send it.';
+        }
+      });
+
+      // Also submit on Enter in the email field
+      emailEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitBtn.click(); }
+      });
+
+      // ---------- Dismiss ----------
+      closeBtn.addEventListener('click', function () { hideModal(true); });
+      overlay.addEventListener('click', function () { hideModal(true); });
+
+      // ---------- Exit-intent triggers ----------
+
+      // Desktop: mouse moves toward top of page (tab-bar area)
+      document.addEventListener('mouseleave', function (e) {
+        if (e.clientY <= 20) showModal();
+      });
+
+      // Mobile: scroll up quickly + idle (user going back to top to leave)
+      var lastScrollY = window.scrollY;
+      var scrollUpVelocity = 0;
+      var mobileIdleTimer = null;
+
+      window.addEventListener('scroll', function () {
+        var currentY = window.scrollY;
+        var delta = lastScrollY - currentY; // positive = scrolling up
+        lastScrollY = currentY;
+
+        if (delta > 30) {
+          // Fast scroll up — candidate for exit intent on mobile
+          scrollUpVelocity += delta;
+          clearTimeout(mobileIdleTimer);
+          mobileIdleTimer = setTimeout(function () {
+            if (scrollUpVelocity > 80) showModal();
+            scrollUpVelocity = 0;
+          }, 400);
+        } else {
+          scrollUpVelocity = Math.max(0, scrollUpVelocity - 10);
+        }
+      }, { passive: true });
+
+      // Note: beforeunload removed — it fires on all navigation away (internal links,
+      // refresh, tab switches), causing false triggers. _shown guard in shouldShow()
+      // and the mouseleave + mobile-scroll triggers handle the real exit-intent cases.
+
+      // Also expose for programmatic trigger from paywall screen
+      window.__hf_showExitIntent = showModal;
+    })();
+  </script>
+
+  <!-- Global error boundary — prevents blank screen on uncaught JS error -->
+  <script>
+    (function () {
+      var fallbackDiv = document.createElement('div');
+      fallbackDiv.style.cssText = 'position:fixed;inset:0;background:#FAF6F0;color:#2A2522;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:sans-serif;text-align:center;padding:2rem;';
+      fallbackDiv.innerHTML = '<div style="font-size:2rem;margin-bottom:0.5rem;">⚠</div><div style="font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;">HoldOff</div><div style="font-size:0.9rem;color:#6B5E55;">Something went wrong. <a href="/filter" style="color:#C97B5D;">Refresh</a> to try again.</div>';
+      document.body.appendChild(fallbackDiv);
+      window.addEventListener('error', function (e) {
+        var src = e.filename || '';
+        if (src.includes('fbevents') || src.includes('connect.facebook.net') ||
+            src.includes('resend') || src.includes('analytics')) return;
+        fallbackDiv.style.display = 'flex';
+      });
+      window.addEventListener('unhandledrejection', function () {
+        fallbackDiv.style.display = 'flex';
+      });
+    })();
+  </script>
+
+  <!-- Bottom navigation -->
+  <nav style="position:fixed;bottom:0;left:0;right:0;background:#0E0C0B;border-top:1px solid #2E2924;display:flex;padding:.45rem 0 max(.45rem,env(safe-area-inset-bottom));z-index:200;">
+    <a href="/filter" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#C97B5D;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">🛡️</span><span>Filter</span></a>
+    <a href="/journal" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">📓</span><span>Journal</span></a>
+    <a href="/community" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">💬</span><span>Community</span></a>
+    <a href="/profile" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;text-decoration:none;color:#9E948E;font-size:.62rem;padding:.35rem 0;"><span style="font-size:1.15rem;line-height:1;">👤</span><span>Profile</span></a>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HoldOff: so love can still see tomorrow</string>
+    <string name="tagline">Pause. Breathe. Then decide.</string>
+    <string name="verdict_hold_off">Hold Off</string>
+    <string name="verdict_reach_out">Reach Out</string>
+    <string name="verdict_maybe">Maybe</string>
+    <string name="mental_health_disclaimer">HoldOff is not therapy, not diagnosis, and not a substitute for professional mental health care.</string>
+    <string name="accessibility_service_description">HoldOff watches for send button taps in your messaging apps so Sadie can check your message before it sends.</string>
+    <string name="holdoff_message_cleared">Message cleared. Good call.</string>
+</resources>

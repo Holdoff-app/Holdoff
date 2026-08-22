@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redeem Free Access · HoldOff</title>
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root {
+      --bg: #0b0617;
+      --bg2: #140a2b;
+      --primary: #8B5CF6;
+      --primary-deep: #6D28D9;
+      --blue: #1E40AF;
+      --text: #ECE9F6;
+      --muted: #A99FC7;
+      --card: rgba(30, 20, 58, 0.72);
+      --ok: #34D399;
+      --err: #F87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, #241046 0%, transparent 60%),
+                  radial-gradient(1000px 700px at 90% 20%, #15225e 0%, transparent 55%),
+                  linear-gradient(160deg, var(--bg), var(--bg2));
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .aurora span { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4; mix-blend-mode: screen; animation: drift 22s ease-in-out infinite alternate; }
+    .a1 { width: 420px; height: 420px; top: -120px; left: -80px; background: radial-gradient(circle, var(--primary-deep), transparent 70%); }
+    .a2 { width: 480px; height: 480px; bottom: -160px; right: -120px; background: radial-gradient(circle, var(--blue), transparent 70%); animation-delay: -8s; }
+    @keyframes drift { 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(50px,-40px) scale(1.15);} 100%{transform:translate(-30px,30px) scale(.95);} }
+
+    .card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 440px;
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(139,92,246,0.28);
+      border-radius: 22px;
+      padding: 40px 32px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+      animation: rise 0.7s cubic-bezier(.2,.7,.2,1) both;
+    }
+    @keyframes rise { from{opacity:0; transform:translateY(28px);} to{opacity:1; transform:translateY(0);} }
+    .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: .3px; margin-bottom: 18px; }
+    h1 { font-size: 1.7rem; line-height: 1.2; margin-bottom: 8px;
+      background: linear-gradient(90deg, #fff, var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    p.sub { color: var(--muted); font-size: 0.98rem; line-height: 1.5; margin-bottom: 24px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; letter-spacing: .4px; text-transform: uppercase; }
+    input {
+      width: 100%; padding: 15px 16px; font-size: 1.15rem; letter-spacing: 3px; text-transform: uppercase; text-align: center; font-weight: 700;
+      background: rgba(11,6,23,0.6); border: 1px solid rgba(139,92,246,0.35); border-radius: 13px; color: var(--text); outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139,92,246,0.25); }
+    button {
+      width: 100%; margin-top: 18px; padding: 15px; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--primary-deep)); color: #fff; border: none; border-radius: 13px;
+      transition: transform .15s, box-shadow .2s; box-shadow: 0 8px 24px rgba(139,92,246,0.35);
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(139,92,246,0.5); }
+    button:disabled { opacity: .6; cursor: default; transform: none; }
+    .msg { margin-top: 18px; padding: 14px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.45; display: none; }
+    .msg.ok { display: block; background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.4); color: var(--ok); }
+    .msg.err { display: block; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.4); color: var(--err); }
+    .alt { margin-top: 22px; text-align: center; font-size: 0.9rem; color: var(--muted); }
+    .alt a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .open-btn { display: none; margin-top: 16px; text-align: center; }
+    .open-btn a { display: inline-block; padding: 14px 26px; border-radius: 12px; background: linear-gradient(135deg, var(--ok), #059669); color:#04231a; font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span></div>
+  <div class="card">
+    <div class="logo">💜 HoldOff</div>
+    <h1>Redeem Free Access</h1>
+
+    <% if (!user) { %>
+      <p class="sub">Sign in or create your free account first — then your code unlocks full lifetime access instantly.</p>
+      <div class="open-btn" style="display:block;">
+        <a href="/login?returnTo=<%= encodeURIComponent('/redeem' + (code ? ('?code=' + code) : '')) %>">Sign in to redeem</a>
+      </div>
+      <div class="alt">New here? <a href="/signup?returnTo=<%= encodeURIComponent('/redeem' + (code ? ('?code=' + code) : '')) %>">Create your free account</a></div>
+    <% } else { %>
+      <p class="sub">Enter your access code below and you'll unlock <strong>full lifetime access</strong> to HoldOff — on the house. 💜</p>
+      <form id="redeemForm" autocomplete="off">
+        <label for="code">Access code</label>
+        <input id="code" name="code" placeholder="ENTER CODE" value="<%= code || '' %>" maxlength="32" />
+        <button type="submit" id="submitBtn">Unlock free access</button>
+      </form>
+      <div class="msg" id="msg"></div>
+      <div class="open-btn" id="openBtn"><a href="/inbox">Open HoldOff →</a></div>
+      <div class="alt">Signed in as <%= user.email %></div>
+    <% } %>
+  </div>
+
+  <script>
+    var form = document.getElementById('redeemForm');
+    if (form) {
+      var msg = document.getElementById('msg');
+      var btn = document.getElementById('submitBtn');
+      var openBtn = document.getElementById('openBtn');
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var code = document.getElementById('code').value.trim();
+        if (!code) { return; }
+        btn.disabled = true; btn.textContent = 'Unlocking…';
+        msg.className = 'msg'; msg.textContent = '';
+        try {
+          var r = await fetch('/api/redeem', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: code })
+          });
+          var data = await r.json();
+          if (r.ok && data.ok) {
+            msg.className = 'msg ok';
+            msg.textContent = '🎉 You\'re in! Full lifetime access is now unlocked on your account.';
+            form.style.display = 'none';
+            openBtn.style.display = 'block';
+          } else {
+            msg.className = 'msg err';
+            msg.textContent = data.error || 'That code didn\'t work. Try again.';
+            btn.disabled = false; btn.textContent = 'Unlock free access';
+          }
+        } catch (err) {
+          msg.className = 'msg err';
+          msg.textContent = 'Network hiccup — please try again.';
+          btn.disabled = false; btn.textContent = 'Unlock free access';
+        }
+      });
+      // Auto-submit if a code was prefilled via link (?code=DNA) for one-tap unlock
+      if (document.getElementById('code').value.trim()) {
+        setTimeout(function () { form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', {cancelable:true})); }, 350);
+      }
+    }
+  </script>
+  <script src="/js/floating-companions.js" defer></script>
+</body>
+</html>

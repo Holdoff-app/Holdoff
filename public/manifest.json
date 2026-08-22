@@ -1,0 +1,15 @@
+{
+  "name": "HoldOff",
+  "short_name": "HoldOff",
+  "description": "AI-powered messaging pause, verdict, and interpreter for emotionally charged texts.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#11051f",
+  "theme_color": "#241047",
+  "categories": ["productivity", "health", "social"],
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,39 @@
+name: Build HoldOff APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android-app/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        env:
+          HOLDOFF_API_KEY: ${{ secrets.HOLDOFF_API_KEY }}
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: holdoff-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

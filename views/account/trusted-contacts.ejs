@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>HoldOff — Trusted Contacts</title>
+  <style>
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-size:0.9rem; margin-bottom:16px; }
+    .back-link:hover { color:var(--primary-light); }
+    .tc-info { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:20px; }
+    .tc-info p { color:var(--text-muted); font-size:0.9rem; line-height:1.5; }
+    .tc-info .highlight { color:var(--primary-light); font-weight:600; }
+    .contact-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:16px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;
+    }
+    .contact-left { display:flex; align-items:center; gap:12px; }
+    .contact-avatar {
+      width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--rose));
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:white; font-weight:600;
+    }
+    .contact-name { font-weight:600; font-size:0.95rem; }
+    .contact-relation { font-size:0.8rem; color:var(--text-muted); }
+    .btn-remove { background:transparent; border:1px solid var(--danger, #ff4757); color:var(--danger, #ff4757); border-radius:var(--radius); padding:6px 12px; font-size:0.8rem; cursor:pointer; }
+    .btn-remove:hover { background:rgba(255,71,87,0.1); }
+    .add-contact-form {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-top:16px;
+    }
+    .form-row { margin-bottom:14px; }
+    .form-row label { display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:6px; font-weight:500; }
+    .form-row input, .form-row select {
+      width:100%; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border);
+      border-radius:var(--radius); color:var(--text); font-size:0.95rem;
+    }
+    .form-row input:focus, .form-row select:focus { border-color:var(--primary); outline:none; }
+    .empty-state { text-align:center; padding:30px 20px; color:var(--text-muted); }
+    .empty-state .emoji { font-size:2.5rem; margin-bottom:12px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="screen-header">
+      <h1>👥 Trusted Contacts</h1>
+    </div>
+    <div class="screen-content">
+      <a href="/account" class="back-link">← Back to Account</a>
+
+      <div class="tc-info">
+        <p>During <span class="highlight">Spiral Lock</span>, all messaging is paused — except to your trusted contacts. Choose up to <span class="highlight">2 people</span> you can always reach.</p>
+      </div>
+
+      <div id="contacts-list">
+        <div class="empty-state" id="empty-state">
+          <div class="emoji">👥</div>
+          <p>No trusted contacts yet</p>
+          <p style="font-size:0.8rem;">Add someone you trust to reach during lockout</p>
+        </div>
+      </div>
+
+      <div class="add-contact-form">
+        <h3 style="margin-bottom:14px; font-size:1rem;">Add Trusted Contact</h3>
+        <div class="form-row">
+          <label>Name</label>
+          <input type="text" id="tc-name" placeholder="e.g. Sarah" />
+        </div>
+        <div class="form-row">
+          <label>Phone Number</label>
+          <input type="tel" id="tc-phone" placeholder="(555) 123-4567" />
+        </div>
+        <div class="form-row">
+          <label>Relationship</label>
+          <select id="tc-relation">
+            <option value="">Select...</option>
+            <option value="Best Friend">Best Friend</option>
+            <option value="Sister">Sister</option>
+            <option value="Brother">Brother</option>
+            <option value="Mom">Mom</option>
+            <option value="Dad">Dad</option>
+            <option value="Therapist">Therapist</option>
+            <option value="Sponsor">Sponsor</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="addContact()">Add Contact</button>
+      </div>
+    </div>
+    <%- include('../partials/bottom_nav') %>
+  </div>
+
+  <script>
+    let contacts = JSON.parse(localStorage.getItem('holdoff_trusted_contacts') || '[]');
+
+    function renderContacts() {
+      const list = document.getElementById('contacts-list');
+      const empty = document.getElementById('empty-state');
+      if (contacts.length === 0) { empty.style.display = 'block'; list.innerHTML = ''; list.appendChild(empty); return; }
+      empty.style.display = 'none';
+      list.innerHTML = contacts.map((c, i) => `
+        <div class="contact-card">
+          <div class="contact-left">
+            <div class="contact-avatar">${c.name.charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="contact-name">${c.name}</div>
+              <div class="contact-relation">${c.relation} • ${c.phone}</div>
+            </div>
+          </div>
+          <button class="btn-remove" onclick="removeContact(${i})">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function addContact() {
+      if (contacts.length >= 2) { alert('Maximum 2 trusted contacts allowed'); return; }
+      const name = document.getElementById('tc-name').value.trim();
+      const phone = document.getElementById('tc-phone').value.trim();
+      const relation = document.getElementById('tc-relation').value;
+      if (!name || !phone || !relation) { alert('Please fill in all fields'); return; }
+      contacts.push({ name, phone, relation });
+      localStorage.setItem('holdoff_trusted_contacts', JSON.stringify(contacts));
+      document.getElementById('tc-name').value = '';
+      document.getElementById('tc-phone').value = '';
+      document.getElementById('tc-relation').value = '';
+      renderContacts();
+    }
+
+    function removeContact(i) {
+      contacts.splice(i, 1);
+      localStorage.setItem('holdoff_trusted_contacts', JSON.stringify(contacts));
+      renderContacts();
+    }
+
+    renderContacts();
+  </script>
+</body>
+</html>
