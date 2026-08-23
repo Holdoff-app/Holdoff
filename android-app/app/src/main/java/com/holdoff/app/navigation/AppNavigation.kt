@@ -171,7 +171,15 @@ fun AppNavigation(
         }
 
         composable(Routes.SETTINGS) {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onConsentRevoked = {
+                    // Consent revoked: clear the back stack and restart at onboarding
+                    navController.navigate(Routes.ONBOARDING) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
