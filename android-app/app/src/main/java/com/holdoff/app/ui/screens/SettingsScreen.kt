@@ -15,21 +15,35 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.holdoff.app.data.prefs.ConsentManager
 import com.holdoff.app.service.HoldOffAccessibilityService
 import com.holdoff.app.ui.theme.*
+import java.text.DateFormat
+import java.util.Date
 
 /**
- * Settings — Message Guardian (accessibility), Launch Conditions (user-checkbox, editable),
- * pattern tracking, notifications, account, legal.
+ * Settings — Privacy & Consent (revocable), Message Guardian (accessibility),
+ * Launch Conditions (user-checkbox, editable), pattern tracking, notifications.
  */
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsScreen(
+    onBack: () -> Unit,
+    onConsentRevoked: () -> Unit = {}
+) {
     val context = LocalContext.current
     var notificationsEnabled by remember { mutableStateOf(true) }
     var patternTracking by remember { mutableStateOf(true) }
     var rapidTypingDetection by remember { mutableStateOf(true) }
     var launchConditions by remember {
         mutableStateOf(setOf("anxious_spiral", "late_night_send"))
+    }
+    var setupMode by remember { mutableStateOf(ConsentManager.getSetupMode(context)) }
+    var showRevokeDialog by remember { mutableStateOf(false) }
+
+    val consentAt = remember { ConsentManager.consentGivenAt(context) }
+    val consentDate = remember(consentAt) {
+        if (consentAt > 0L) DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(consentAt))
+        else "Not recorded"
     }
 
     // Re-check accessibility state every time this composable recomposes
@@ -56,6 +70,46 @@ fun SettingsScreen(onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
+            // ── Privacy & Consent ────────────────────────────────────────────
+            SettingsSection("Privacy & Consent") {
+                Text(
+                    "You agreed to message processing on:\n$consentDate",
+                    color = OnDarkTextMuted,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Setup mode", color = OnDarkText, fontWeight = FontWeight.Medium)
+                        Text(
+                            if (setupMode == ConsentManager.MODE_FULL)
+                                "Full setup — SMS & contact sync (permissions asked only when you enable them)"
+                            else
+                                "Limited mode — manual share/copy, no SMS permissions",
+                            color = OnDarkTextMuted,
+                            fontSize = 12.sp
+                        )
+                    }
+                    TextButton(onClick = {
+                        setupMode = if (setupMode == ConsentManager.MODE_FULL)
+                            ConsentManager.MODE_MANUAL else ConsentManager.MODE_FULL
+                        ConsentManager.setSetupMode(context, setupMode)
+                    }) {
+                        Text("Switch", color = GlowPurple)
+                    }
+                }
+                OutlinedButton(
+                    onClick = { showRevokeDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorRed)
+                ) {
+                    Text("Revoke consent & reset onboarding")
+                }
+            }
+
             // ── Message Guardian (Accessibility Service) ──────────────────────
             SettingsSection("Message Guardian") {
                 Text(
@@ -76,7 +130,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                         )
                         Text(
                             if (isAccessibilityEnabled) "Active — Sadie is watching" else "Tap to enable in Settings",
-                            color = if (isAccessibilityEnabled) GlowPurple else androidx.compose.ui.graphics.Color(0xFFEF4444),
+                            color = if (isAccessibilityEnabled) GlowPurple else ErrorRed,
                             fontSize = 12.sp
                         )
                     }
@@ -107,7 +161,7 @@ fun SettingsScreen(onBack: () -> Unit) {
             // ── Launch Conditions ─────────────────────────────────────────────
             SettingsSection("Launch Conditions") {
                 Text(
-                    "Choose what triggers a HoldOff alert. Required \u2014 you can add or remove these anytime.",
+                    "Choose what triggers a HoldOff alert. Required — you can add or remove these anytime.",
                     color = OnDarkTextMuted, style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(8.dp))
@@ -137,6 +191,31 @@ fun SettingsScreen(onBack: () -> Unit) {
                 }
             }
         }
+    }
+
+    if (showRevokeDialog) {
+        AlertDialog(
+            onDismissRequest = { showRevokeDialog = false },
+            containerColor = SurfaceVariant,
+            title = { Text("Revoke consent?", color = OnDarkText, fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "This stops all message processing and returns you to onboarding. " +
+                        "Your account and saved data are not deleted. You can consent again anytime.",
+                    color = OnDarkTextMuted
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    ConsentManager.revokeConsent(context)
+                    showRevokeDialog = false
+                    onConsentRevoked()
+                }) { Text("Revoke", color = ErrorRed, fontWeight = FontWeight.Bold) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRevokeDialog = false }) { Text("Cancel", color = OnDarkTextMuted) }
+            }
+        )
     }
 }
 
