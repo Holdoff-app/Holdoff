@@ -4,6 +4,13 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
+// Fix duplicate annotations classpath conflict (SQLCipher/Room integration)
+configurations {
+    all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+}
+
 // Redirect build output to app/build/ so the CI workflow can find artifacts
 // at the expected path: app/build/outputs/...
 layout.buildDirectory.set(rootProject.layout.projectDirectory.dir("app/build"))
